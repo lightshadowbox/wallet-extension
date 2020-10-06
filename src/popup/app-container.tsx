@@ -6,12 +6,15 @@ import { AppRouter } from './app-router'
 import './styles/global.css'
 
 import * as styles from './app-container.module.css'
+import { BoxLayout } from './components/layout'
 
 export const AppContainer = () => {
   return (
     <div className={classNames('container max-w-xs mx-auto shadow-sm', styles.appContainer)}>
       <ReactQueryCacheProvider queryCache={queryCache}>
-        <AppRouter />
+        <BoxLayout>
+          <AppRouter />
+        </BoxLayout>
       </ReactQueryCacheProvider>
     </div>
   )
