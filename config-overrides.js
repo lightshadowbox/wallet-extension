@@ -3,6 +3,7 @@ const { override, overrideDevServer, addWebpackPlugin, addPostcssPlugins } = req
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
+const path = require('path')
 const devServerConfig = () => (config) => {
   return {
     ...config,
@@ -34,7 +35,7 @@ module.exports = {
         }),
       ]),
       addReactRefresh(),
-      addWebpackPlugin(new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: true })),
+      // addWebpackPlugin(new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: true })),
       addWebpackPlugin(
         new webpack.optimize.LimitChunkCountPlugin({
           maxChunks: 1,
@@ -43,10 +44,13 @@ module.exports = {
       addWebpackPlugin(copyPlugin),
     )(config, env)
 
-    if (env === 'background') {
+    if (process.env.TARGET === 'background') {
       config.entry = path.resolve('./src/background/main.ts')
-      config.output.filename = 'bundle.background.js'
+      config.output.filename = 'bundle.[name].js'
+      config.output.path = __dirname + '/dist/background'
+      config.plugins[0].options.template = path.resolve('./public/background.html')
     }
+
     config.optimization.runtimeChunk = false
     config.optimization.splitChunks = {
       cacheGroups: {
@@ -54,6 +58,8 @@ module.exports = {
       },
     }
     config.bail = true
+    // const fs = require('fs')
+    // fs.appendFile(`${process.env.TARGET}.config.log`, JSON.stringify(config, null, 2), () => console.log('ahihih'))
     return config
   },
   devServer: overrideDevServer(devServerConfig()),

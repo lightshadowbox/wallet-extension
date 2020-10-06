@@ -10,10 +10,13 @@ export const asyncFunc = async () => {
   console.dir(walletServices.rpc)
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  console.log('onInstalled....')
-})
+if (chrome.runtime?.id) {
+  console.log('Test model...')
+  chrome.runtime.onInstalled.addListener(() => {
+    console.log('onInstalled....')
+  })
 
-chrome.runtime.onStartup.addListener(() => {
-  console.log('onStartup....')
-})
+  chrome.runtime.onStartup.addListener(() => {
+    console.log('onStartup....')
+  })
+}
