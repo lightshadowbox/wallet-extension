@@ -1,0 +1,19 @@
+{
+  "name": "LSB Wallet",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Light Shadow Box - Wallet Extension",
+  "icons": {
+    "128": "logo.png"
+  },
+  "permissions": [],
+  "background": {
+    "page": "index.html",
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": "logo.png",
+    "default_popup": "index.html"
+  },
+  "options_page": "index.html"
+}

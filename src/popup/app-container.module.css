@@ -1,0 +1,5 @@
+.appContainer {
+  min-width: 480px;
+  min-height: 680px;
+  @apply bg-red-300;
+}

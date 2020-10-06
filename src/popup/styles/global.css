@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import-normalize;
+
+body {
+  min-width: 480px;
+  min-height: 640px;
+  @apply bg-red-500;
+}
