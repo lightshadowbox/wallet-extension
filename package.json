@@ -28,6 +28,16 @@
     "react-window": "^1.8.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@storybook/addon-actions": "^6.0.26",
+    "@storybook/addon-essentials": "^6.0.26",
+    "@storybook/addon-info": "^5.3.21",
+    "@storybook/addon-knobs": "^6.0.26",
+    "@storybook/addon-links": "^6.0.26",
+    "@storybook/addon-notes": "^5.3.21",
+    "@storybook/node-logger": "^6.0.26",
+    "@storybook/preset-create-react-app": "^3.1.4",
+    "@storybook/react": "^6.0.26",
     "@types/axios": "0.14.0",
     "@types/chrome": "^0.0.124",
     "@types/classnames": "2.2.10",
@@ -43,6 +53,7 @@
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "4.4.0",
     "autoprefixer": "^10.0.1",
+    "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.2.0",
     "customize-cra": "^1.0.0",
@@ -65,11 +76,15 @@
     "prettier": "^2.1.2",
     "react-app-rewire-multiple-entry": "^2.2.0",
     "react-app-rewired": "^2.1.6",
+    "react-docgen-typescript": "^1.20.5",
+    "react-docgen-typescript-loader": "^3.7.2",
+    "react-is": "^16.13.1",
     "react-scripts": "3.4.3",
     "rimraf": "^3.0.2",
     "sb": "^6.0.26",
     "tailwindcss": "^1.8.10",
-    "typescript": "~4.0.3"
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.0.3"
   },
   "scripts": {
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
@@ -77,7 +92,9 @@
     "start:background": "PORT=9389 react-app-rewired start --env=background",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "browserslist": {
     "production": [

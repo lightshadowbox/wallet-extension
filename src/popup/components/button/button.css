@@ -1,0 +1,28 @@
+.storybook-button {
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1;
+}
+
+.storybook-button--primary {
+  color: white;
+  @apply bg-primary;
+  @apply shadow-md;
+}
+.storybook-button--secondary {
+  background-color: transparent;
+  @apply bg-secondary;
+  @apply shadow-md;
+}
+.storybook-button--small {
+  font-size: 12px;
+  padding: 10px 16px;
+}
+.storybook-button--medium {
+  font-size: 14px;
+  padding: 11px 20px;
+}
+.storybook-button--large {
+  font-size: 16px;
+  padding: 12px 24px;
+}

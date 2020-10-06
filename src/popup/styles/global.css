@@ -1,3 +1,8 @@
+:root {
+  --color-primary: #2b6cb0;
+  --color-secondary: #2c5282;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,5 +11,4 @@
 body {
   min-width: 480px;
   min-height: 640px;
-  @apply bg-red-500;
 }
