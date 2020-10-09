@@ -1,48 +1,63 @@
-import React from 'react'
-import './button.css'
+import styled from 'styled-components'
+import { PrimaryButton } from '@fluentui/react'
 
 export interface ButtonProps {
   /**
-   * Is this the principal call to action on the page?
+   * Whether button expands full-width (only contained within flex)
    */
-  primary?: boolean
+  full?: boolean
   /**
-   * What background color to use
+   * What text color to use
    */
-  backgroundColor?: string
+  textColor?: string
   /**
    * How large should the button be?
    */
-  size?: 'small' | 'medium' | 'large'
-  /**
-   * Button contents
-   */
-  label: string
-  /**
-   * Optional click handler
-   */
-  onClick?: () => void
+  widthSize?: 'small' | 'medium'
 }
 
-/**
- * Primary UI component for user interaction
- */
-export const Button: React.FC<ButtonProps> = ({
-  primary = false,
-  size = 'medium',
-  backgroundColor,
-  label,
-  ...props
-}) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary'
-  return (
-    <button
-      type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
-      style={{ backgroundColor }}
-      {...props}
-    >
-      {label}
-    </button>
-  )
-}
+export const BaseButton = styled(PrimaryButton)<ButtonProps>`
+  flex-grow: ${(props) => (props.full ? 1 : 0)};
+  min-width: ${(props) => (props.widthSize === 'small' ? '100px' : '142px')};
+  min-height: 48px;
+  border: none;
+
+  .ms-Button-flexContainer {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &:hover {
+    border: none;
+  }
+
+  &:hover {
+    border: none;
+  }
+`
+
+export const SecondaryButton = styled(PrimaryButton)<ButtonProps>`
+  flex-grow: ${(props) => (props.full ? 1 : 0)};
+  min-width: ${(props) => (props.widthSize === 'small' ? '100px' : '142px')};
+  min-height: 48px;
+  border: none;
+  background-color: ${(props) => props.theme.palette.themeLighterAlt};
+  color: ${(props) => props.textColor || props.theme.palette.themePrimary};
+
+  .ms-Button-flexContainer {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &:hover {
+    color: ${(props) => props.textColor || props.theme.palette.themePrimary};
+    border: none;
+    background-color: ${(props) => props.theme.palette.themeLighter};
+  }
+
+  &:active {
+    color: ${(props) => props.textColor || props.theme.palette.themePrimary};
+    border: none;
+    background-color: ${(props) => props.theme.palette.themeLight};
+  }
+`
