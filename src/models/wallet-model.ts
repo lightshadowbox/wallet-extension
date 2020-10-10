@@ -1,6 +1,13 @@
-import * as i from 'incognito-js'
-import { Dictionary, keyBy } from 'lodash'
-import { AccountModelType, serializeAccount } from './account-model'
+import * as i from 'incognito-js/build/web/module'
+import {
+  Dictionary,
+  keyBy
+} from 'lodash'
+
+import {
+  AccountModelType,
+  serializeAccount
+} from './account-model'
 
 export type WalletModelType = {
   name?: string

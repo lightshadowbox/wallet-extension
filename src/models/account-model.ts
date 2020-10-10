@@ -1,4 +1,4 @@
-import * as i from 'incognito-js'
+import * as i from 'incognito-js/build/web/module'
 import { keyBy } from 'lodash'
 
 export type AccountModelType = {
@@ -16,7 +16,7 @@ export type AccountModelType = {
 
 const getTokenBalances = async (
   account: i.AccountInstance,
-  tokenId: string,
+  tokenId: string
 ): Promise<{ tokenId: string; availableBallance: any; totalBalance: any }> => {
   if (tokenId === account.nativeToken.tokenId) {
     return {

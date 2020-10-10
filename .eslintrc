@@ -5,7 +5,9 @@
     "ecmaFeatures": {
       "jsx": true // Allows for the parsing of JSX
     },
-    "project": ["./tsconfig.json"]
+    "project": [
+      "./tsconfig.json"
+    ]
   },
   "env": {
     "es6": true,
@@ -17,13 +19,19 @@
     },
     "import/resolver": {
       "node": {
-        "paths": ["src"]
+        "paths": [
+          "src"
+        ]
       }
     }
   },
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "jest", "unicorn"],
+  "plugins": [
+    "@typescript-eslint",
+    "jest",
+    "unicorn"
+  ],
   "extends": [
     "airbnb-typescript",
     "prettier",
@@ -34,8 +42,14 @@
     "plugin:prettier/recommended"
   ],
   "rules": {
-    "semi": ["error", "never"],
-    "quotes": ["error", "single"],
+    "semi": [
+      "error",
+      "never"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
     "@typescript-eslint/no-unused-expressions": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-shadow": "off",
@@ -44,7 +58,10 @@
     "no-param-reassign": "off",
     "react/jsx-props-no-spreading": "off",
     "consistent-return": "off",
-    "object-curly-spacing": ["error", "always"],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
     "no-return-assign": "off",
     "@typescript-eslint/no-use-before-define": "off",
     // Too restrictive, writing ugly code to defend against a very unlikely scenario: https://eslint.org/docs/rules/no-prototype-builtins

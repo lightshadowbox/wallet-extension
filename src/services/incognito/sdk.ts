@@ -1,11 +1,11 @@
-import * as incognitos from 'incognito-js'
+import * as incognitos from 'incognito-js/build/web/module'
 
 export class SDK {
   isWASMRunned = false
 
   walletInstance = new incognitos.WalletInstance()
 
-  async initSDK(wasmPath: string) {
+  async initSDK(wasmPath = '/privacy.wasm') {
     if (this.isWASMRunned) {
       return
     }
