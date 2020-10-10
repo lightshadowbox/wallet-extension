@@ -4,19 +4,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
 const path = require('path')
-const devServerConfig = () => (config) => {
-  return {
-    ...config,
-    writeToDisk: true,
-  }
-}
+const WorkerPlugin = require('worker-plugin')
 
-const copyPlugin = new CopyPlugin({
-  patterns: [
-    // copy assets
-    { from: 'public', to: '' },
-  ],
-})
 
 module.exports = {
   webpack: function (config, env) {
@@ -35,32 +24,10 @@ module.exports = {
         }),
       ]),
       addReactRefresh(),
-      // addWebpackPlugin(new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: true })),
-      addWebpackPlugin(
-        new webpack.optimize.LimitChunkCountPlugin({
-          maxChunks: 1,
-        }),
-      ),
-      addWebpackPlugin(copyPlugin),
+      addWebpackPlugin(new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: true })),
+      addWebpackPlugin(new WorkerPlugin()),
     )(config, env)
-
-    if (process.env.TARGET === 'background') {
-      config.entry = path.resolve('./src/background/main.ts')
-      config.output.filename = 'bundle.[name].js'
-      config.output.path = __dirname + '/dist/background'
-      config.plugins[0].options.template = path.resolve('./public/background.html')
-    }
-
-    config.optimization.runtimeChunk = false
-    config.optimization.splitChunks = {
-      cacheGroups: {
-        default: false,
-      },
-    }
-    config.bail = true
-    // const fs = require('fs')
-    // fs.appendFile(`${process.env.TARGET}.config.log`, JSON.stringify(config, null, 2), () => console.log('ahihih'))
+    config.output.filename = 'static/js/[name].bundle.js'
     return config
   },
-  devServer: overrideDevServer(devServerConfig()),
 }
