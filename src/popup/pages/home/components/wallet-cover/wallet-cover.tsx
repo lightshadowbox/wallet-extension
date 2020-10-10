@@ -4,7 +4,7 @@ import { ActionButton, Icon, Label, Persona, PersonaSize, Stack } from '@fluentu
 import Avatar from 'popup/assets/avatar.png'
 import styled from 'styled-components'
 import { useTheme } from 'popup/services'
-import { BaseButton, SecondaryButton } from 'popup/components/button'
+import { Button, SecondaryButton } from 'popup/components/button'
 
 export const WalletCover = () => {
   const theme = useTheme()
@@ -26,7 +26,7 @@ export const WalletCover = () => {
         <span className={classNames('ml-1 text-2xl text-gray-2')}>USD</span>
       </Label>
       <Stack className={classNames('w-full mt-5 justify-between')} horizontal horizontalAlign="center">
-        <BaseButton iconProps={{ iconName: 'QRCode' }} text="Receive" />
+        <Button iconProps={{ iconName: 'QRCode' }} text="Receive" />
         <SecondaryButton iconProps={{ iconName: 'Send' }} text="Send" />
       </Stack>
     </div>
