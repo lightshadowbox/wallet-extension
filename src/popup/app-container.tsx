@@ -5,11 +5,11 @@ import React from 'react'
 import classNames from 'classnames'
 import { ReactQueryCacheProvider } from 'react-query'
 import { RecoilRoot } from 'recoil'
+import { queryCache } from 'services/query-cache'
 
 import * as styles from './app-container.module.css'
 import { AppRouter } from './app-router'
 import { BoxLayout } from './components/layout'
-import { queryCache } from './services/query-cache'
 
 export const AppContainer = () => {
   return (
