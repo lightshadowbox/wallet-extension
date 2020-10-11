@@ -1,0 +1,33 @@
+.lsb-WalletBalance--container {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+.lsb-WalletBalance--container::after {
+	content: "";
+	width: 100%;
+	padding: 24px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+
+	background-image: linear-gradient(to bottom, transparent, white);
+}
+
+.lsb-WalletBalance--list {
+	-ms-overflow-style: none !important;
+	scrollbar-width: none;
+	max-height: 100%;
+	overflow: auto;
+	max-height: calc((600px - 12rem - 8rem) * 0.78);
+
+}
+
+.lsb-WalletBalance--list .ms-List {
+	padding-bottom: 24px;
+}
+
+.lsb-WalletBalance--list:-webkit-scrollbar {
+	display: none;
+}

@@ -1,11 +1,16 @@
-import React from 'react'
-import './button.css'
+import styled from 'styled-components'
+import { PrimaryButton, IconButton } from '@fluentui/react'
+import { fade } from 'popup/services/utils'
 
 export interface ButtonProps {
   /**
-   * Is this the principal call to action on the page?
+   * Whether button expands full-width (only contained within flex)
    */
-  primary?: boolean
+  full?: boolean
+  /**
+   * What text color to use
+   */
+  textColor?: string
   /**
    * What background color to use
    */
@@ -13,36 +18,98 @@ export interface ButtonProps {
   /**
    * How large should the button be?
    */
-  size?: 'small' | 'medium' | 'large'
+  coverSize?: 'small' | 'medium'
   /**
-   * Button contents
+   * Whether button corner is rounded
    */
-  label: string
+  rounded?: boolean
   /**
-   * Optional click handler
+   * Whether having right space
    */
-  onClick?: () => void
+  spacious?: boolean
 }
 
-/**
- * Primary UI component for user interaction
- */
-export const Button: React.FC<ButtonProps> = ({
-  primary = false,
-  size = 'medium',
-  backgroundColor,
-  label,
-  ...props
-}) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary'
-  return (
-    <button
-      type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
-      style={{ backgroundColor }}
-      {...props}
-    >
-      {label}
-    </button>
-  )
+export interface FabProps {
+  /**
+   * What icon color is being used
+   */
+  iconColor?: string
+  /**
+   * Which size is being displayed
+   */
+  iconSize?: 'small' | 'medium'
 }
+
+export const Button = styled(PrimaryButton)<ButtonProps>`
+  flex-grow: ${(props) => (props.full ? 1 : 0)};
+  min-width: ${(props) => (props.coverSize === 'small' ? '100px' : '142px')};
+  border-radius: ${(props) => props.rounded && '9999px'};
+  margin: 0px ${(props) => props.spacious && props.theme.spacing?.s1};
+  min-height: 48px;
+  border: none;
+
+  .ms-Button-flexContainer {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &:hover {
+    border: none;
+  }
+
+  &:hover {
+    border: none;
+  }
+`
+
+export const SecondaryButton = styled(PrimaryButton)<ButtonProps>`
+  flex-grow: ${(props) => (props.full ? 1 : 0)};
+  min-width: ${(props) => (props.coverSize === 'small' ? '100px' : '142px')};
+  min-height: ${(props) => (props.coverSize === 'small' ? '32px' : '48px')};
+  border-radius: ${(props) => props.rounded && '9999px'};
+  border: none;
+  background-color: ${(props) => props.backgroundColor || props.theme.palette.themeLighterAlt};
+  color: ${(props) => props.textColor || props.theme.palette?.themePrimary};
+  margin: 0px ${(props) => props.spacious && props.theme.spacing?.s1};
+
+  .ms-Button-flexContainer {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &:hover {
+    color: ${(props) => props.textColor || props.theme.palette?.themePrimary};
+    border: none;
+    background-color: ${(props) =>
+      props.backgroundColor ? fade(props.backgroundColor, 0.1) : props.theme.palette.themeLighterAlt};
+  }
+
+  &:active {
+    color: ${(props) => props.textColor || props.theme.palette?.themePrimary};
+    border: none;
+    background-color: ${(props) =>
+      props.backgroundColor ? fade(props.backgroundColor, 0.2) : props.theme.palette.themeLighter};
+  }
+`
+
+export const FaButton = styled(IconButton)<FabProps>`
+  &.ms-Button {
+    color: ${(props) => props.iconColor};
+    background-color: transparent;
+    border-radius: 9999px;
+
+    &:hover {
+      color: ${(props) => props.iconColor};
+      background-color: ${(props) => (props.iconColor ? fade(props.iconColor, 0.15) : null)};
+    }
+
+    &:active {
+      color: ${(props) => props.iconColor};
+      background-color: ${(props) => (props.iconColor ? fade(props.iconColor, 0.3) : null)};
+    }
+  }
+
+  .ms-Icon {
+    font-size: ${(props) => (props.iconSize === 'small' ? '1rem' : '1.25rem')};
+  }
+`

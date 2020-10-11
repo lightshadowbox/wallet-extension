@@ -1,44 +1,34 @@
 import React from 'react'
-
-import {
-  Meta,
-  Story
-} from '@storybook/react'
-
-import {
-  Button,
-  ButtonProps
-} from './button'
+// also exported from '@storybook/react' if you can deal with breaking changes in 6.1
+import { Story, Meta } from '@storybook/react/types-6-0'
+import { Button, SecondaryButton, FaButton, ButtonProps, FabProps } from './button'
 
 export default {
   title: 'Example/Button',
   component: Button,
   argTypes: {
+    children: { control: 'text' },
+    textColor: { control: 'color' },
     backgroundColor: { control: 'color' },
   },
 } as Meta
 
-const Template: Story<ButtonProps> = (args) => <Button {...args} />
+const PrimaryTemplate: Story<ButtonProps> = (args) => <Button {...args} iconProps={{ iconName: 'Send' }} />
+const SecondaryTemplate: Story<ButtonProps> = (args) => <SecondaryButton {...args} iconProps={{ iconName: 'Send' }} />
+const FabTemplate: Story<FabProps> = (args) => <FaButton {...args} iconProps={{ iconName: 'ChevronLeft' }} />
 
-export const Primary = Template.bind({})
+export const Primary = PrimaryTemplate.bind({})
 Primary.args = {
-  primary: true,
-  label: 'Button',
+  children: 'Send',
 }
 
-export const Secondary = Template.bind({})
+export const Secondary = SecondaryTemplate.bind({})
 Secondary.args = {
-  label: 'Button',
+  children: 'Send',
 }
 
-export const Large = Template.bind({})
-Large.args = {
-  size: 'large',
-  label: 'Button',
-}
-
-export const Small = Template.bind({})
-Small.args = {
-  size: 'small',
-  label: 'Button',
+export const Fab = FabTemplate.bind({})
+Fab.args = {
+  iconColor: '#d50000',
+  iconSize: 'medium',
 }
