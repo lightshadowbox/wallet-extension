@@ -14,7 +14,7 @@ const classNamesIcon = mergeStyleSets({
   deepBlue: [{ color: '#276EF1' }, iconClass],
 })
 export const RecCreate = () => (
-  <div className={classNames(`border border-dashed ${styles.borderContainer}`)}>
+  <div className={`border border-dashed ${styles.borderContainer}`}>
     <div className={classNames('flex flex-row items-center')}>
       <FontIcon iconName="Add" className={classNamesIcon.deepBlue} />
       <p className={styles.paragraph}>A crypto wallet & gateway to blockchain apps.</p>

@@ -4,6 +4,7 @@
   cursor: pointer;
 }
 .containerConfirm {
+  @apply relative;
   padding: 0 16px;
   margin-top: 20px;
 }

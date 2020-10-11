@@ -15,7 +15,7 @@ const classNamesIcon = mergeStyleSets({
 })
 
 export const RecImport = () => (
-  <div className={classNames(`border border-dashed ${styles.borderContainer}`)}>
+  <div className={`border border-dashed ${styles.borderContainer}`}>
     <div className={classNames('flex flex-row')}>
       <FontIcon iconName="Up" className={classNamesIcon.deepBlue} />
       <p className={styles.paragraph}>A crypto wallet & gateway to blockchain apps.</p>
