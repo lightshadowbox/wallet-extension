@@ -16,6 +16,6 @@
     "jsx": "react",
     "baseUrl": "src"
   },
-  "include": ["src", "global.d.ts", "src/**/*.{ts,tsx}"],
+  "include": ["src", "global.d.ts", "src/**/*.{ts,tsx}", "public/worker.js"],
   "exclude": ["*.config.js", "config-*.js"]
 }

@@ -3,19 +3,9 @@ const { override, overrideDevServer, addWebpackPlugin, addPostcssPlugins } = req
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
-const devServerConfig = () => (config) => {
-  return {
-    ...config,
-    writeToDisk: true,
-  }
-}
+const path = require('path')
+const WorkerPlugin = require('worker-plugin')
 
-const copyPlugin = new CopyPlugin({
-  patterns: [
-    // copy assets
-    { from: 'public', to: '' },
-  ],
-})
 
 module.exports = {
   webpack: function (config, env) {
@@ -35,26 +25,9 @@ module.exports = {
       ]),
       addReactRefresh(),
       addWebpackPlugin(new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: true })),
-      addWebpackPlugin(
-        new webpack.optimize.LimitChunkCountPlugin({
-          maxChunks: 1,
-        }),
-      ),
-      addWebpackPlugin(copyPlugin),
+      addWebpackPlugin(new WorkerPlugin()),
     )(config, env)
-
-    if (env === 'background') {
-      config.entry = path.resolve('./src/background/main.ts')
-      config.output.filename = 'bundle.background.js'
-    }
-    config.optimization.runtimeChunk = false
-    config.optimization.splitChunks = {
-      cacheGroups: {
-        default: false,
-      },
-    }
-    config.bail = true
+    config.output.filename = 'static/js/[name].bundle.js'
     return config
   },
-  devServer: overrideDevServer(devServerConfig()),
 }

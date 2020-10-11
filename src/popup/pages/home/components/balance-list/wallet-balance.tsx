@@ -64,7 +64,7 @@ const BalanceItem = (item: IExample): JSX.Element => {
       </div>
       <div className={classNames('flex items-center justify-end')}>
         <Label className={classNames('text-gray-2 text-xs font-normal')}>{`${(balance * unitPrice).toFixed(
-          2,
+          2
         )} USD`}</Label>
       </div>
     </div>
