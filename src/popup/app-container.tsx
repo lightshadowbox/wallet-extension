@@ -1,11 +1,13 @@
+import './styles/global.css'
+
 import React from 'react'
 
 import classNames from 'classnames'
 import { ReactQueryCacheProvider } from 'react-query'
-import { ThemeProvider } from 'styled-components'
-import { RecoilRoot } from 'recoil'
+import { Provider } from 'react-redux'
 import { queryCache } from 'services/query-cache'
-import './styles/global.css'
+import { store } from 'stores/store'
+import { ThemeProvider } from 'styled-components'
 
 import * as styles from './app-container.module.css'
 import { AppRouter } from './app-router'
@@ -16,7 +18,7 @@ export const AppContainer = () => {
   const theme = useTheme()
   return (
     <div className={classNames('container max-w-xs mx-auto shadow-sm', styles.appContainer)}>
-      <RecoilRoot>
+      <Provider store={store}>
         <ReactQueryCacheProvider queryCache={queryCache}>
           <ThemeProvider theme={theme}>
             <BoxLayout>
@@ -24,7 +26,7 @@ export const AppContainer = () => {
             </BoxLayout>
           </ThemeProvider>
         </ReactQueryCacheProvider>
-      </RecoilRoot>
+      </Provider>
     </div>
   )
 }
