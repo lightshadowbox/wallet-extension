@@ -4,7 +4,13 @@
  */
 
 import React from 'react'
-import { ITheme, Customizations, CustomizerContext, ICustomizerContext } from '@fluentui/react'
+
+import {
+  Customizations,
+  CustomizerContext,
+  ICustomizerContext,
+  ITheme
+} from '@fluentui/react'
 import { useForceUpdate } from '@uifabric/react-hooks'
 
 /**

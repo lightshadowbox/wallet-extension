@@ -24,3 +24,5 @@ yarn-error.log*
 /node_modules
 
 .vercel
+
+yarn.lock

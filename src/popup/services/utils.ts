@@ -3,7 +3,7 @@ export const fade = (color: string, factor: number) => {
     const transformed = color.slice(0, 7).concat(
       Math.floor(factor * 255)
         .toString(16)
-        .padStart(2, '0'),
+        .padStart(2, '0')
     )
     return transformed
   }
