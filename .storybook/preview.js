@@ -4,11 +4,8 @@ import { addDecorator } from '@storybook/react'
 
 import Layout from './layout'
 
-const customViewports = {
-
-}
-
 addDecorator((storyFn) => <Layout>{storyFn()}</Layout>)
+
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

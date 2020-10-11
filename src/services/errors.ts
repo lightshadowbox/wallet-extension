@@ -1,0 +1,3 @@
+export const ERROR_CODE = {
+  WALLET_NOT_CREATED: 'WALLET_NOT_CREATED',
+}

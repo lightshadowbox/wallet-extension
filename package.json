@@ -35,7 +35,9 @@
     "rxjs": "6.6.3",
     "styled-components": "^5.2.0",
     "redux-logger": "3.0.6",
-    "redux-persist": "6.0.0"
+    "redux-persist": "6.0.0",
+    "bitcore-lib": "8.22.2",
+    "bitcore-mnemonic": "8.22.2"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",

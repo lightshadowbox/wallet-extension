@@ -1,8 +1,8 @@
-import * as i from 'incognito-js/build/web/module'
 import {
   Dictionary,
   keyBy
 } from 'lodash'
+import { incognitos } from 'services/incognito/sdk'
 
 import {
   AccountModelType,
@@ -14,7 +14,7 @@ export type WalletModelType = {
   accounts?: Dictionary<AccountModelType>
 }
 
-export const serializeWallet = async (wallet: i.WalletInstance): Promise<WalletModelType> => {
+export const serializeWallet = async (wallet: incognitos.WalletInstance): Promise<WalletModelType> => {
   const accounts = await Promise.all(wallet.masterAccount.getAccounts().map(serializeAccount))
   return {
     name: wallet.name,
