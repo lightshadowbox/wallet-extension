@@ -12,6 +12,28 @@ module.exports = {
       xl: '1280px',
     },
     extend: {
+      maxWidth: {
+        wc: '360px',
+      },
+      maxHeight: {
+        wc: '600px',
+      },
+      margin: {
+        sm: '8px',
+        md: '16px',
+        lg: '24px',
+        xl: '48px',
+        tl: '72px',
+        lrl: '24px',
+        bl: '68px',
+      },
+      padding: {
+        sm: '8px',
+        md: '16px',
+        lg: '24px',
+        xl: '48px',
+        tbr: '20px',
+      },
       colors: {
         'gray-1': '#333333',
         'gray-2': '#4F4F4F',
@@ -30,6 +52,7 @@ module.exports = {
         'blue-3': '#2D9CDB',
         'blue-4': '#2D9CDB',
         'cyan-1': '#9cdbff',
+        'primary-logo': '#757575',
       },
       spacing: {
         96: '24rem',

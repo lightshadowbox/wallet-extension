@@ -1,0 +1,13 @@
+.logoContainer {
+  margin-left: 24px;
+  margin-right: 24px;
+  margin-bottom: 65px;
+  margin-top: 67px;
+}
+.textLogo {
+  font-size: 14px;
+  color: #757575;
+  margin-top: 16px;
+  line-height: 20px;
+  font-weight: 400;
+}
