@@ -1,0 +1,10 @@
+.iconDelete {
+  bottom: 5px;
+  right: 50px;
+  cursor: pointer;
+}
+.containerConfirm {
+  @apply relative;
+  padding: 0 16px;
+  margin-top: 20px;
+}
