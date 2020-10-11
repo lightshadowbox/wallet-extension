@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 
+
 # testing
 /coverage
 
@@ -22,5 +23,9 @@ yarn-error.log*
 /coverage
 /dist
 /node_modules
+package.json
+src/popup/app-router.tsx
+src/popup/index.tsx
+tailwind.config.json
 
 .vercel
