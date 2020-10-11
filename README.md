@@ -130,7 +130,22 @@ export const walletSlices = createSlice({
 
 export const useWalletState = createSelectorForSlice(walletSlices)
 
-// Example usage:
-const dispatch = useDispatch()
-dispatch(walletSlices.actions.selectAccount({accountName: '123' }))
+```
+
+```TSX
+// Example usage: component.tsx
+export const ComponentWithRedux = () => {
+  const dispatch = useDispatch()
+  const selectedAccount = useWalletState((s) => s.selectAccountName)
+
+  React.useEffect(() => {
+    dispatch(walletSlices.actions.selectAccount({accountName: '123' }))
+  }, [dispatch])
+  
+  return (
+    <div>
+    accountName: {selectedAccount}
+    </div>
+  )
+}
 ```
