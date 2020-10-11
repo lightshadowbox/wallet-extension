@@ -1,5 +1,3 @@
 .borderBoxContainer {
-  @apply shadow-sm;
-  @apply border-l-4;
-  @apply bg-primary;
+  
 }

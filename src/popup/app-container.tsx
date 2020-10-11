@@ -1,16 +1,14 @@
-import './styles/global.css'
-
 import React from 'react'
 
 import classNames from 'classnames'
 import { ReactQueryCacheProvider } from 'react-query'
 import { ThemeProvider } from 'styled-components'
-import { AppRouter } from './app-router'
 import './styles/global.css'
 import { RecoilRoot } from 'recoil'
 import { queryCache } from 'services/query-cache'
 
 import * as styles from './app-container.module.css'
+import { AppRouter } from './app-router'
 import { BoxLayout } from './components/layout'
 import { useTheme } from './services/use-theme'
 
@@ -20,11 +18,11 @@ export const AppContainer = () => {
     <div className={classNames('container max-w-xs mx-auto shadow-sm', styles.appContainer)}>
       <RecoilRoot>
         <ReactQueryCacheProvider queryCache={queryCache}>
-        <ThemeProvider theme={theme}>
-          <BoxLayout>
-            <AppRouter />
-          </BoxLayout>
-        </ThemeProvider>
+          <ThemeProvider theme={theme}>
+            <BoxLayout>
+              <AppRouter />
+            </BoxLayout>
+          </ThemeProvider>
         </ReactQueryCacheProvider>
       </RecoilRoot>
     </div>
