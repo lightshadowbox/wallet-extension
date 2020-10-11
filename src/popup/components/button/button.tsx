@@ -23,6 +23,10 @@ export interface ButtonProps {
    * Whether button corner is rounded
    */
   rounded?: boolean
+  /**
+   * Whether having right space
+   */
+  spacious?: boolean
 }
 
 export interface FabProps {
@@ -40,6 +44,7 @@ export const Button = styled(PrimaryButton)<ButtonProps>`
   flex-grow: ${(props) => (props.full ? 1 : 0)};
   min-width: ${(props) => (props.coverSize === 'small' ? '100px' : '142px')};
   border-radius: ${(props) => props.rounded && '9999px'};
+  margin: 0px ${(props) => props.spacious && props.theme.spacing?.s1};
   min-height: 48px;
   border: none;
 
@@ -65,6 +70,7 @@ export const SecondaryButton = styled(PrimaryButton)<ButtonProps>`
   border: none;
   background-color: ${(props) => props.backgroundColor || props.theme.palette.themeLighterAlt};
   color: ${(props) => props.textColor || props.theme.palette?.themePrimary};
+  margin: 0px ${(props) => props.spacious && props.theme.spacing?.s1};
 
   .ms-Button-flexContainer {
     font-size: 1rem;
@@ -74,13 +80,15 @@ export const SecondaryButton = styled(PrimaryButton)<ButtonProps>`
   &:hover {
     color: ${(props) => props.textColor || props.theme.palette?.themePrimary};
     border: none;
-    background-color: ${(props) => props.theme.palette?.themeLighter};
+    background-color: ${(props) =>
+      props.backgroundColor ? fade(props.backgroundColor, 0.1) : props.theme.palette.themeLighterAlt};
   }
 
   &:active {
     color: ${(props) => props.textColor || props.theme.palette?.themePrimary};
     border: none;
-    background-color: ${(props) => props.theme.palette?.themeLight};
+    background-color: ${(props) =>
+      props.backgroundColor ? fade(props.backgroundColor, 0.2) : props.theme.palette.themeLighter};
   }
 `
 
