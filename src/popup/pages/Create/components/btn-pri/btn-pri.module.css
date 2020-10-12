@@ -1,0 +1,12 @@
+.btn {
+  background-color: #276ef1;
+  height: 48px;
+  width: 100%;
+  color: white;
+  border-radius: 4px;
+  margin-top: 264px;
+  font-weight: 500;
+}
+.containerBtn {
+  padding: 16px;
+}
