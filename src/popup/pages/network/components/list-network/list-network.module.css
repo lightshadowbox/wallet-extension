@@ -1,0 +1,15 @@
+.item {
+    @apply align-middle;
+    @apply justify-between;
+    padding: 20px 16px;
+    padding-left:24px;
+}
+.front {
+    @apply flex;
+    @apply flex-row;
+
+}
+.name {
+    margin-left:24px;
+    font-size: 16px;
+}

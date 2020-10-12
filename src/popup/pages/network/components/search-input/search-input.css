@@ -1,0 +1,9 @@
+.search i {
+    transform: rotate(270deg);
+    font-weight: 600;
+    font-size: 18px;
+    color: #AFAFAF;
+}
+.search input::placeholder{
+    color: #AFAFAF;
+}

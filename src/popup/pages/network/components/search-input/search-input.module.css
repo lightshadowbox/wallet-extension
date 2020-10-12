@@ -1,0 +1,17 @@
+.input {
+    width:100%;
+    border-bottom:1px solid #F5F5F5;
+    height:60px;
+    padding-left:80px;
+    font-size: 14px;
+    outline:none;
+}
+.icon {
+    font-size: 25px;
+    position: absolute;
+    top:50%;
+    left:8%;
+    transform:translate(0,-50%);
+
+}
+
