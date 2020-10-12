@@ -15,7 +15,10 @@ const NetworkContainer: React.FC<{
 )
 export const NetworkPage = () => {
   return (
-    <NetworkContainer header={<Header />} searchInput={<SearchInput />} list={<ListNetwork />}>
+    <NetworkContainer
+      header={<Header title="Choose Network" icon="SkypeArrow" />}
+      searchInput={<SearchInput placeholder="Choose network name..." />}
+      list={<ListNetwork />}>
       <div>Body will coming soon </div>
     </NetworkContainer>
   )

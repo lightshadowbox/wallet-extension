@@ -5,12 +5,20 @@ import { Header } from './header'
 export default {
   title: 'Example/Header',
   component: Header,
+  argTypes: {
+    title: {
+      control: 'text',
+    },
+    icon: {
+      control: 'text',
+    },
+  },
 } as Meta
 
-const Template: Story = () => <Header />
+const Template: Story = (args) => <Header title="Choose Network" icon="CircleFill" {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
-  primary: true,
-  label: 'Header',
+  title: 'Choose Network',
+  icon: 'CircleFill',
 }
