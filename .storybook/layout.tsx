@@ -4,10 +4,7 @@ import React from 'react'
 
 import { ThemeProvider } from 'styled-components'
 
-import {
-  initializeIcons,
-  loadTheme
-} from '@fluentui/react'
+import { initializeIcons, loadTheme } from '@fluentui/react'
 
 import { useTheme } from '../src/popup/services'
 import { globalTheme } from '../src/popup/theme'
@@ -17,13 +14,11 @@ sdk.initSDK().then(console.log)
 loadTheme(globalTheme)
 initializeIcons()
 
-
-
 const Layout = ({ children }) => {
   const theme = useTheme()
   return (
     <ThemeProvider theme={theme}>
-      <div className="px-20 py-10">{children}</div>
+      <div>{children}</div>
     </ThemeProvider>
   )
 }
