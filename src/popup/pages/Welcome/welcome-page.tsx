@@ -10,9 +10,8 @@ const WelcomeContainer: React.FC<{ logo: React.ReactNode; recCreate: React.React
 }) => (
   <div
     className={classNames(
-      `flex flex-col relative justify-center items-center p-md bg-white ${styles.welcomeContainer}`,
-    )}
-  >
+      `flex flex-col relative justify-center items-center p-md bg-white ${styles.welcomeContainer}`
+    )}>
     <div className={classNames('w-wl h-hl')}>{logo}</div>
     <div className={classNames('w-wl h-hl')}>{recCreate}</div>
     <div className={classNames('w-wl h-hl')}>{recImport}</div>

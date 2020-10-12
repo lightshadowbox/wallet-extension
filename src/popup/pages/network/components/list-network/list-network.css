@@ -1,0 +1,7 @@
+.list .item {
+    cursor: pointer;
+    background-color: white;
+}
+.list .item:hover {
+    background-color: #EFF3FE;
+}
