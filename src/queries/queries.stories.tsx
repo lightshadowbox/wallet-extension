@@ -36,15 +36,7 @@ const WalletProfile = () => {
 
 const HookGetWalletExample = () => {
   const isCreated = useIsAlreadyHaveWallet()
-  if (isCreated.isLoading) {
-    return <div>Loading</div>
-  }
-
-  if (isCreated.error) {
-    return <div>ERROR</div>
-  }
-
-  if (isCreated.data === true) {
+  if (isCreated) {
     return <WalletProfile />
   }
   return <HookCreateWallet />

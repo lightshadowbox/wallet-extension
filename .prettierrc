@@ -7,6 +7,5 @@
   "useTabs": false,
   "bracketSpacing": true,
   "endOfLine": "auto",
-  "jsxBracketSameLine": true,
   "parser": "typescript"
 }
