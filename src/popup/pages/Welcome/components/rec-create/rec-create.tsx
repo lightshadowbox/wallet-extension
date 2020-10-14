@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import React from 'react'
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react'
 import styles from './rec-create.module.css'
+import { Button } from '../../../../components/button/button'
 
 const iconClass = mergeStyles({
   fontSize: 26,
@@ -19,6 +20,8 @@ export const RecCreate = () => (
       <FontIcon iconName="Add" className={classNamesIcon.deepBlue} />
       <p className={styles.paragraph}>A crypto wallet & gateway to blockchain apps.</p>
     </div>
-    <button className={styles.btn}>Create</button>
+    <div className={`flex w-full ${styles.btn}`}>
+      <Button full>Create</Button>
+    </div>
   </div>
 )

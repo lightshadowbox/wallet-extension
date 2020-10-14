@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
-import { Header, Password, ConfirmPassword, BtnPri } from './components/index'
+import { Button } from '../../components/button/index'
+import { Header, Password, ConfirmPassword } from './components/index'
 import styles from './create-page.module.css'
 
 const CreateContainer: React.FC<{
@@ -9,15 +10,21 @@ const CreateContainer: React.FC<{
   confirm: React.ReactNode
   btn: React.ReactNode
 }> = ({ header, password, confirm, btn }) => (
-  <div className={classNames(`flex flex-col relative items-center ${styles.createContainer}`)}>
-    <div className={classNames('w-full h-full')}>{header}</div>
-    <div className={classNames('w-full h-full')}>{password}</div>
-    <div className={classNames('w-full h-full')}>{confirm}</div>
-    <div className={classNames('w-full h-full')}>{btn}</div>
+  <div className={classNames(`flex flex-col w-full justify-between relative ${styles.createContainer}`)}>
+    <div className={classNames('flex flex-col')}>
+      <div className={classNames('w-full')}>{header}</div>
+      <div className={classNames('w-full')}>{password}</div>
+      <div className={classNames('w-full')}>{confirm}</div>
+    </div>
+    <div className={classNames('w-full flex')}>{btn}</div>
   </div>
 )
 export const CreatePage = () => (
-  <CreateContainer header={<Header />} password={<Password />} confirm={<ConfirmPassword />} btn={<BtnPri />}>
+  <CreateContainer
+    header={<Header />}
+    password={<Password />}
+    confirm={<ConfirmPassword />}
+    btn={<Button full>Next</Button>}>
     <div>Button password coming soon</div>
   </CreateContainer>
 )

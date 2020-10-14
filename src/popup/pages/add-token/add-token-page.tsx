@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import React from 'react'
-import { Header, SearchInput, ListNetwork } from './components/index'
+import { Header, SearchInput, TokenList } from './components/index'
 
-const NetworkContainer: React.FC<{
+const AddTokenContainer: React.FC<{
   header: React.ReactNode
   searchInput: React.ReactNode
   list: React.ReactNode
@@ -13,13 +13,13 @@ const NetworkContainer: React.FC<{
     <div className={classNames('w-full h-full')}>{list}</div>
   </div>
 )
-export const NetworkPage = () => {
+export const AddTokenPage = () => {
   return (
-    <NetworkContainer
-      header={<Header title="Choose Network" icon="ChromeBack" />}
-      searchInput={<SearchInput placeholder="Choose network name..." />}
-      list={<ListNetwork />}>
+    <AddTokenContainer
+      header={<Header title="Add Token" icon="ChromeClose" />}
+      searchInput={<SearchInput placeholder="Choose token..." />}
+      list={<TokenList />}>
       <div>Body will coming soon </div>
-    </NetworkContainer>
+    </AddTokenContainer>
   )
 }
