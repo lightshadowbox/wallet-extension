@@ -1,5 +1,8 @@
+import {
+  AccountInstance,
+  PrivacyTokenInstance,
+} from 'incognito-sdk'
 import { keyBy } from 'lodash'
-import { incognitos } from 'services/incognito/sdk'
 
 export type AccountModelType = {
   name?: string
@@ -14,10 +17,7 @@ export type AccountModelType = {
   followingTokens?: string[]
 }
 
-const getTokenBalances = async (
-  account: incognitos.AccountInstance,
-  tokenId: string
-): Promise<{ tokenId: string; availableBallance: any; totalBalance: any }> => {
+const getTokenBalances = async (account: AccountInstance, tokenId: string): Promise<{ tokenId: string; availableBallance: any; totalBalance: any }> => {
   if (tokenId === account.nativeToken.tokenId) {
     return {
       tokenId,
@@ -25,7 +25,7 @@ const getTokenBalances = async (
       totalBalance: await account.nativeToken.getTotalBalance(),
     }
   }
-  const pToken = (await account.getFollowingPrivacyToken(tokenId)) as incognitos.PrivacyTokenInstance
+  const pToken = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyTokenInstance
   return {
     tokenId,
     availableBallance: await pToken.getAvaiableBalance(),
@@ -33,7 +33,7 @@ const getTokenBalances = async (
   }
 }
 
-export const serializeAccount = async (account: incognitos.AccountInstance): Promise<AccountModelType> => {
+export const serializeAccount = async (account: AccountInstance): Promise<AccountModelType> => {
   const accountModel: AccountModelType = {}
   accountModel.name = account.name
   accountModel.paymentAddress = account.key.keySet.paymentAddressKeySerialized

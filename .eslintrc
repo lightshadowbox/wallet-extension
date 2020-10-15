@@ -80,6 +80,12 @@
     "class-methods-use-this": "off",
     "unicorn/no-null": "off",
     "import/extensions": "off",
-    "import/no-extraneous-dependencies": "off"
-  }
+    "import/no-extraneous-dependencies": "off",
+    "no-unexpected-multiline": "error",
+    "proseWrap": "off"
+  },
+  "prettierOptions": {
+    "bracketSpacing": true,
+    "printWidth": 120,
+  },
 }
