@@ -39,9 +39,9 @@ export const isCreatedWallet = async () => {
   await sdk.initSDK()
   // console.log('unlockWallet ',  walletRuntime)
 
-  // if (walletRuntime?.name) {
-  //   return true
-  // }
+  if (walletRuntime?.name) {
+    return true
+  }
   // const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
 
   // if (backup) {
@@ -70,15 +70,21 @@ export const backupWallet = async (password: string) => {
 
 export const downloadBackupWallet = async () => {
   const text = [
-    'NAME:', walletRuntime.name,
-    'WALLET: ', walletRuntime.seed,
-    'MNEMONIC: ', walletRuntime.mnemonic,
-    'PASS_PARAPHRASE: ', walletRuntime.passPhrase,
-    'ENTROPY: ', walletRuntime.entropy.toString(),
-    'SEED: ', walletRuntime.seed.toString(),
+    'NAME:',
+    walletRuntime.name,
+    'WALLET: ',
+    walletRuntime.seed,
+    'MNEMONIC: ',
+    walletRuntime.mnemonic,
+    'PASS_PARAPHRASE: ',
+    walletRuntime.passPhrase,
+    'ENTROPY: ',
+    walletRuntime.entropy.toString(),
+    'SEED: ',
+    walletRuntime.seed.toString(),
   ].join('\n')
   const element = document.createElement('a')
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+  element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`)
   element.setAttribute('download', `backup-${walletRuntime.name}-${new Date().toISOString()}.txt`)
   element.style.display = 'none'
   element.click()
@@ -87,14 +93,19 @@ export const downloadBackupWallet = async () => {
 export const downloadAccountBackup = async (accountName: string) => {
   const account = walletRuntime.masterAccount.getAccountByName(accountName)
   const text = [
-    'ADDRESS: ', account.key.keySet.paymentAddressKeySerialized,
-    'PRIVATE_KEY: ', account.key.keySet.privateKeySerialized,
-    'PUBLIC_KEY: ', account.key.keySet.publicKeySerialized,
-    'VIEW_ONLY_KEY: ', account.key.keySet.viewingKeySerialized,
-    'MINING_SEED_KEY: ', account.key.keySet.miningSeedKey.join(' '),
+    'ADDRESS: ',
+    account.key.keySet.paymentAddressKeySerialized,
+    'PRIVATE_KEY: ',
+    account.key.keySet.privateKeySerialized,
+    'PUBLIC_KEY: ',
+    account.key.keySet.publicKeySerialized,
+    'VIEW_ONLY_KEY: ',
+    account.key.keySet.viewingKeySerialized,
+    'MINING_SEED_KEY: ',
+    account.key.keySet.miningSeedKey.join(' '),
   ].join('\n')
   const element = document.createElement('a')
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+  element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`)
   element.setAttribute('download', `backup-account-${accountName}-${new Date().toISOString()}.txt`)
   element.style.display = 'none'
   element.click()
