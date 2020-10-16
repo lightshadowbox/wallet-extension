@@ -1,25 +1,27 @@
+import './token-list.css'
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 import React from 'react'
+
+import classNames from 'classnames'
+import { useQuery } from 'react-query'
+
 import {
-  FontIcon,
   FocusZone,
   FocusZoneDirection,
-  List,
+  FontIcon,
+  getFocusStyle,
+  getTheme,
   Image,
   ImageFit,
   ITheme,
+  List,
   mergeStyleSets,
-  getTheme,
-  getFocusStyle,
 } from '@fluentui/react'
-import { createListItems, IExampleItem } from '@uifabric/example-data'
-import { useConst } from '@uifabric/react-hooks'
-import classNames from 'classnames'
-import { useQuery } from 'react-query'
-import styles from './token-list.module.css'
+
 import GetTokens, { TokenItemInterface } from './token'
-import './token-list.css'
+import styles from './token-list.module.css'
 
 const theme: ITheme = getTheme()
 const { palette, semanticColors, fonts } = theme
@@ -76,13 +78,7 @@ const onRenderCell = (item: TokenItemInterface, index: number, isScrolling: bool
   return (
     <div className={classNamesList.itemCell} data-is-focusable>
       <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
-        <Image
-          className={classNamesList.itemImage}
-          src="https://picsum.photos/200"
-          width={36}
-          height={36}
-          imageFit={ImageFit.cover}
-        />
+        <Image className={classNamesList.itemImage} src="https://picsum.photos/200" width={36} height={36} imageFit={ImageFit.cover} />
         <div className={styles.containerIcon}>
           <FontIcon iconName="SkypeCircleCheck" />
         </div>
@@ -94,7 +90,6 @@ const onRenderCell = (item: TokenItemInterface, index: number, isScrolling: bool
   )
 }
 export const ListGhostingExample: React.FunctionComponent = () => {
-  const items = useConst(() => createListItems(5000))
   const { data, status } = useQuery('token', GetTokens)
   if (status === 'success') {
     return (
