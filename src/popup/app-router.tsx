@@ -6,12 +6,12 @@ import {
   Switch,
 } from 'react-router-dom'
 
-import { isCreatedWallet } from '../services/wallet'
+import { useIsAlreadyHaveWallet } from '../queries/use-is-already-have-wallet'
 import { HomePage } from './pages/home/home-page'
 import { WelcomePage } from './pages/Welcome/welcome-page'
 
 export const AppRouter = () => {
-  const createdWallet = isCreatedWallet()
+  const createdWallet = useIsAlreadyHaveWallet()
 
   if (!createdWallet) {
     return (
