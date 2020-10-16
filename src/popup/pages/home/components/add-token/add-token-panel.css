@@ -1,0 +1,29 @@
+.add-token .ms-Panel-main {
+    width:100% !important;
+}
+.add-token .ms-Panel-commands {
+    display: none;
+}
+
+.add-token .ms-Panel-content {
+    padding:0 !important;
+}
+
+.add-token .ms-Panel {
+    animation: moveInBottom .3s;
+    animation-fill-mode: forwards;
+}
+.ms-Panel-contentInner{
+    transform: translate(4px);
+}
+@keyframes moveInBottom {
+    from {
+        transform:translateY(360px)
+    }
+    to {
+        transform: translateY(0rem);
+    }
+}
+.add-token .ms-LayerHost  {
+    overflow: hidden;
+}
