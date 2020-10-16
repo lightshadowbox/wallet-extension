@@ -1,15 +1,15 @@
-import * as incognitos from 'incognito-sdk'
+import * as i from 'incognito-sdk'
 
 let sdkLoaded = false
-let walletInstance: any
+let walletInstance: i.WalletInstance
 
 export const initSDK = async () => {
   if (sdkLoaded) {
     return
   }
-  incognitos.setConfig({ wasmPath: '/privacy.wasm', chainURL: 'https://fullnode.incognito.best', mainnet: true })
+  i.setConfig({ wasmPath: '/privacy.wasm', chainURL: 'https://fullnode.incognito.best', mainnet: true })
 
-  incognitos.storageService.implement({
+  i.storageService.implement({
     setMethod: (key: string, data: any) => {
       return window.sessionStorage.setItem(key, data)
     },
@@ -20,9 +20,9 @@ export const initSDK = async () => {
     namespace: 'WALLET',
   } as any)
 
-  await incognitos.goServices.implementGoMethodUseWasm()
-  walletInstance = new incognitos.WalletInstance()
+  await i.goServices.implementGoMethodUseWasm()
+  walletInstance = new i.WalletInstance()
   sdkLoaded = true
 }
 
-export const getWalletInstance = () => walletInstance as incognitos.WalletInstance
+export const getWalletInstance = () => walletInstance

@@ -9,6 +9,6 @@ export const queryCache = new QueryCache({
       suspense: false,
       refetchOnMount: false,
       refetchIntervalInBackground: true,
-    },
+    }
   },
 })

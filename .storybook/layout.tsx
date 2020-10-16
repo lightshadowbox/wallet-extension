@@ -11,9 +11,11 @@ import {
 
 import { useTheme } from '../src/popup/services'
 import { globalTheme } from '../src/popup/theme'
+import { initSDK } from '../src/services/incognito/sdk'
 
 loadTheme(globalTheme)
 initializeIcons()
+initSDK()
 
 const Layout = ({ children }) => {
   const theme = useTheme()

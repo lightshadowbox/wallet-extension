@@ -20,10 +20,6 @@ export const getWalletSerialized = async () => {
     throw new Error(ERROR_CODE.WALLET_NOT_CREATED)
   }
 
-  if (!walletRuntime) {
-    await unlockWallet()
-  }
-
   const walletSerialized = await serializeWallet(walletRuntime)
   return walletSerialized
 }
@@ -35,17 +31,25 @@ export const createWalletWithPassword = async (name: string, password: string) =
   console.log(CONSTANTS.PARA_KEY, code.toString())
   storageService.set(CONSTANTS.PASS_KEY, runtimePassword)
   storageService.set(CONSTANTS.PARA_KEY, code.toString())
+  await backupWallet(password)
   return walletRuntime
 }
 
 export const isCreatedWallet = async () => {
-  if (walletRuntime) {
-    return true
-  }
-  const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
-  if (backup) {
-    return true
-  }
+  await sdk.initSDK()
+  // console.log('unlockWallet ',  walletRuntime)
+
+  // if (walletRuntime?.name) {
+  //   return true
+  // }
+  // const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
+
+  // if (backup) {
+  //   await unlockWallet()
+  //   console.log('unlockWallet', walletRuntime.name, backup)
+  //   return true
+  // }
+
   return false
 }
 
@@ -60,7 +64,38 @@ export const unlockWallet = async () => {
   return walletRuntime
 }
 
-export const backupWallet = async () => {
-  const password = await storageService.get(CONSTANTS.PASS_KEY)
+export const backupWallet = async (password: string) => {
   storageService.set(CONSTANTS.WALLET_BACKUP_KEY, walletRuntime.backup(password))
+}
+
+export const downloadBackupWallet = async () => {
+  const text = [
+    'NAME:', walletRuntime.name,
+    'WALLET: ', walletRuntime.seed,
+    'MNEMONIC: ', walletRuntime.mnemonic,
+    'PASS_PARAPHRASE: ', walletRuntime.passPhrase,
+    'ENTROPY: ', walletRuntime.entropy.toString(),
+    'SEED: ', walletRuntime.seed.toString(),
+  ].join('\n')
+  const element = document.createElement('a')
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+  element.setAttribute('download', `backup-${walletRuntime.name}-${new Date().toISOString()}.txt`)
+  element.style.display = 'none'
+  element.click()
+}
+
+export const downloadAccountBackup = async (accountName: string) => {
+  const account = walletRuntime.masterAccount.getAccountByName(accountName)
+  const text = [
+    'ADDRESS: ', account.key.keySet.paymentAddressKeySerialized,
+    'PRIVATE_KEY: ', account.key.keySet.privateKeySerialized,
+    'PUBLIC_KEY: ', account.key.keySet.publicKeySerialized,
+    'VIEW_ONLY_KEY: ', account.key.keySet.viewingKeySerialized,
+    'MINING_SEED_KEY: ', account.key.keySet.miningSeedKey.join(' '),
+  ].join('\n')
+  const element = document.createElement('a')
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+  element.setAttribute('download', `backup-account-${accountName}-${new Date().toISOString()}.txt`)
+  element.style.display = 'none'
+  element.click()
 }

@@ -3,7 +3,7 @@ import React from 'react'
 import { Button } from '@fluentui/react'
 import {
   Meta,
-  Story
+  Story,
 } from '@storybook/react'
 
 import { useCreateWallet } from './use-create-account'
@@ -12,10 +12,13 @@ import { useIsAlreadyHaveWallet } from './use-is-already-have-wallet'
 
 const HookCreateWallet = () => {
   const [createWallet, status] = useCreateWallet()
+  if (status.isError) {
+    return <div>{JSON.stringify(status.error)}</div>
+  }
   return (
     <div>
       <Button onClick={() => createWallet({ name: 'FAKEKEKE', password: 'PASSSWW' })}>
-        CREATE RANDOM | {status.data}
+        CREATE RANDOM
       </Button>
     </div>
   )

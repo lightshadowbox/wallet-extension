@@ -2,7 +2,6 @@ import './styles/global.css'
 
 import React from 'react'
 
-import classNames from 'classnames'
 import { ReactQueryCacheProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { queryCache } from 'services/query-cache'
@@ -17,7 +16,7 @@ import { useTheme } from './services/use-theme'
 export const AppContainer = () => {
   const theme = useTheme()
   return (
-    <div className={classNames('container max-w-xs mx-auto shadow-sm', styles.appContainer)}>
+    <div className={`container max-w-xs mx-auto shadow-sm ${styles.appContainer}`}>
       <Provider store={store}>
         <ReactQueryCacheProvider queryCache={queryCache}>
           <ThemeProvider theme={theme}>
