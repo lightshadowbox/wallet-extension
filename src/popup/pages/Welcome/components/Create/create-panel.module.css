@@ -1,0 +1,11 @@
+.createContainer {
+  max-width: 360px;
+  height: 600px;
+  overflow: hidden;
+}
+.item {
+  padding: 0 16px;
+}
+.itemBtn {
+  padding: 16px;
+}

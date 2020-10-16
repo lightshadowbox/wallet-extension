@@ -7,10 +7,11 @@ export default {
   component: RecCreate,
 } as Meta
 
-const Template: Story = () => <RecCreate />
+const Template: Story = (args) => <RecCreate showPanel={() => console.log('clicked')} {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
   primary: true,
   label: 'Button',
+  showPanel: () => alert('clicked'),
 }

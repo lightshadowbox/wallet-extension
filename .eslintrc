@@ -84,8 +84,4 @@
     "no-unexpected-multiline": "error",
     "proseWrap": "off"
   },
-  "prettierOptions": {
-    "bracketSpacing": true,
-    "printWidth": 120,
-  },
 }

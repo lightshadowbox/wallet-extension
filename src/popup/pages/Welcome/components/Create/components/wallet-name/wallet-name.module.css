@@ -1,0 +1,17 @@
+.container {
+  margin: 16px 0;
+}
+.label {
+  font-size: 16px;
+  font-weight: 600;
+}
+.input {
+  outline: none;
+  border-bottom: 1px solid #e2e2e2;
+  font-size: 16px;
+  padding: 10px;
+  font-weight: 500;
+}
+.input:focus {
+  border-bottom: 1px solid #276ef1;
+}

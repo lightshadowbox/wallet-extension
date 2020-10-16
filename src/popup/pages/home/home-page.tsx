@@ -27,16 +27,8 @@ export const HomePage = () => {
     <HomeContainer
       cover={<WalletCover />}
       menu={<WalletMenu showPanel={showPanelNetwork} />}
-      token={
-        <AddTokenPanel isPanelOpen={isPanelOpenToken} showPanel={showPanelToken} dismissPanel={dismissPanelToken} />
-      }
-      network={
-        <NetworkPanel
-          isPanelOpen={isPanelOpenNetwork}
-          showPanel={showPanelNetwork}
-          dismissPanel={dismissPanelNetwork}
-        />
-      }
+      token={<AddTokenPanel isPanelOpen={isPanelOpenToken} showPanel={showPanelToken} dismissPanel={dismissPanelToken} />}
+      network={<NetworkPanel isPanelOpen={isPanelOpenNetwork} showPanel={showPanelNetwork} dismissPanel={dismissPanelNetwork} />}
     >
       <WalletBalance showPanel={showPanelToken} />
     </HomeContainer>

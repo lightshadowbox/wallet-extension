@@ -5,6 +5,9 @@ import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react'
 import styles from './rec-create.module.css'
 import { Button } from '../../../../components/button/button'
 
+interface Props {
+  showPanel: () => void
+}
 const iconClass = mergeStyles({
   fontSize: 26,
   height: 26,
@@ -14,14 +17,16 @@ const iconClass = mergeStyles({
 const classNamesIcon = mergeStyleSets({
   deepBlue: [{ color: '#276EF1' }, iconClass],
 })
-export const RecCreate = () => (
+export const RecCreate: React.FC<Props> = ({ showPanel }) => (
   <div className={`border border-dashed ${styles.borderContainer}`}>
     <div className={classNames('flex flex-row items-center')}>
       <FontIcon iconName="Add" className={classNamesIcon.deepBlue} />
       <p className={styles.paragraph}>A crypto wallet & gateway to blockchain apps.</p>
     </div>
     <div className={`flex w-full ${styles.btn}`}>
-      <Button full>Create</Button>
+      <Button onClick={showPanel} full>
+        Create
+      </Button>
     </div>
   </div>
 )
