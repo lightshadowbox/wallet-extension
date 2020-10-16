@@ -1,10 +1,6 @@
 import React from 'react'
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import { useIsAlreadyHaveWallet } from '../queries/use-is-already-have-wallet'
 import { HomePage } from './pages/home/home-page'
