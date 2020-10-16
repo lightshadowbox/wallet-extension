@@ -1,5 +1,6 @@
 .welcomeContainer {
   max-width: 360px;
   max-height: 600px;
-  padding:16px;
+  padding: 16px;
+  overflow: hidden;
 }

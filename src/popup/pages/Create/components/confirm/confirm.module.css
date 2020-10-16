@@ -1,9 +1,0 @@
-.iconDelete {
-  bottom: 5px;
-  right: 35px;
-  cursor: pointer;
-}
-.containerConfirm {
-  @apply relative;
-  margin-top: 20px;
-}

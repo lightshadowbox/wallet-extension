@@ -12,7 +12,7 @@ export class Storage {
   }
 
   public set(key: string, value: any) {
-    return window.localStorage.setItem.call(window.localStorage, this.encryptedKeyValue(key, value))
+    return window.localStorage.setItem.call(window.localStorage, this.encryptedKeyValue(key, value)[0], this.encryptedKeyValue(key, value)[1])
   }
 
   public async get(key: string) {

@@ -32,6 +32,7 @@ export const createWalletWithPassword = async (name: string, password: string) =
   runtimePassword = crypto.SHA256(password, passwordSecret).toString()
   const code = new Mnemonic(Mnemonic.Words.ENGLISH)
   walletRuntime = await sdk.getWalletInstance().init(code.toString() + password, name)
+  console.log(CONSTANTS.PARA_KEY, code.toString())
   storageService.set(CONSTANTS.PASS_KEY, runtimePassword)
   storageService.set(CONSTANTS.PARA_KEY, code.toString())
   return walletRuntime

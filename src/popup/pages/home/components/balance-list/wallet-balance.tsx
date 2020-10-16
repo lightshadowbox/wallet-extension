@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { Icon, Label, List, Persona, PersonaPresence, PersonaSize } from '@fluentui/react'
 import classNames from 'classnames'
 import React from 'react'
@@ -12,7 +14,9 @@ interface IExample {
   unitPrice: number
   available?: boolean
 }
-
+interface Props {
+  showPanel: () => void
+}
 const ITEMS: IExample[] = [
   {
     icon: PrvIcon,
@@ -71,11 +75,11 @@ const BalanceItem = (item: IExample): JSX.Element => {
   )
 }
 
-export const WalletBalance = () => {
+export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
   return (
     <div className="lsb-WalletBalance--container">
       <SecondaryButton full backgroundColor="transparent">
-        <div className={classNames('w-full flex items-center')}>
+        <div onClick={showPanel} className={classNames('w-full flex items-center')}>
           <div className={classNames('flex items-center w-12 pl-2')}>
             <Icon iconName="Add" />
           </div>

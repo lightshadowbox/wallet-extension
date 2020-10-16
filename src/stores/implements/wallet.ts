@@ -1,21 +1,18 @@
 import { createSelectorForSlice } from 'stores/utils'
 
-import {
-  createSlice,
-  PayloadAction
-} from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface WalletState {
-	selectAccountName?: string
+  selectAccountName?: string
 }
 
 const walletInitialState: WalletState = {}
 
 export const walletSlices = createSlice({
-	name: 'wallets',
-	initialState: walletInitialState,
+  name: 'wallets',
+  initialState: walletInitialState,
   reducers: {
-    selectAccount: (state, action: PayloadAction<{accountName: string}>) => {
+    selectAccount: (state, action: PayloadAction<{ accountName: string }>) => {
       state.selectAccountName = action.payload.accountName
     },
   },
