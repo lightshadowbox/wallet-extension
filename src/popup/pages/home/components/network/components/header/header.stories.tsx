@@ -15,7 +15,9 @@ export default {
   },
 } as Meta
 
-const Template: Story = (args) => <Header title="Choose Network" icon="CircleFill" {...args} />
+const Template: Story = (args) => (
+  <Header title="Choose Network" dismissPanel={() => alert('Clicked')} icon="CircleFill" {...args} />
+)
 
 export const Primary = Template.bind({})
 Primary.args = {

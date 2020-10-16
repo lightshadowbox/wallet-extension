@@ -1,13 +1,13 @@
 import { Story, Meta } from '@storybook/react/types-6-0'
 import React from 'react'
-import { TokenList } from './token-list'
+import { ListGhostingExample } from './token-list'
 
 export default {
   title: 'Example/TokenList',
-  component: TokenList,
+  component: ListGhostingExample,
 } as Meta
 
-const Template: Story = () => <TokenList />
+const Template: Story = () => <ListGhostingExample />
 
 export const Primary = Template.bind({})
 Primary.args = {

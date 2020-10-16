@@ -4,7 +4,10 @@ import { useTheme } from 'popup/services'
 import { fade } from 'popup/services/utils'
 import React from 'react'
 
-export const WalletMenu = () => {
+interface Props {
+  showPanel: () => void
+}
+export const WalletMenu: React.FC<Props> = ({ showPanel }) => {
   const theme = useTheme()
   return (
     <>
@@ -14,6 +17,7 @@ export const WalletMenu = () => {
         menuIconProps={{ iconName: 'ChevronDown' }}
         coverSize="small"
         rounded
+        onClick={showPanel}
       >
         DAppChain
       </SecondaryButton>

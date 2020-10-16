@@ -1,0 +1,26 @@
+.network .ms-Panel-main {
+    width:100% !important;
+}
+.network .ms-Panel-commands {
+    display: none;
+}
+
+.network .ms-Panel-content {
+    padding:0 !important;
+}
+
+.network .ms-Panel {
+    animation: moveInBottom .3s;
+    animation-fill-mode: forwards;
+}
+@keyframes moveInBottom {
+    from {
+        transform:translateY(360px)
+    }
+    to {
+        transform: translateY(0rem);
+    }
+}
+.network .ms-LayerHost  {
+    overflow: hidden;
+}
