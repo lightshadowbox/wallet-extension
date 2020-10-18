@@ -1,0 +1,21 @@
+.container {
+  @apply flex;
+  @apply flex-row;
+  padding: 11px;
+}
+.container:hover {
+  background-color: #eff3fe;
+}
+.image {
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+.name {
+  font-size: 16px;
+  font-weight: 400;
+}
+.balance {
+  font-size: 12px;
+  color: #757575;
+}

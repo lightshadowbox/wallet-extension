@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { Icon, Label, List, Persona, PersonaPresence, PersonaSize } from '@fluentui/react'
@@ -5,77 +6,47 @@ import classNames from 'classnames'
 import React from 'react'
 import PrvIcon from 'popup/assets/prv@2x.png'
 import './wallet-balance.css'
+import { useQuery } from 'react-query'
 import { SecondaryButton } from 'popup/components/button'
+import { useGetTokenList } from 'queries/use-get-token-list'
+import GetTokens from '../add-token/components/token-list/token'
 
 interface IExample {
+  name: string
   icon: string
-  tokenName: string
-  balance: number
-  unitPrice: number
-  available?: boolean
 }
 interface Props {
   showPanel: () => void
 }
-const ITEMS: IExample[] = [
-  {
-    icon: PrvIcon,
-    tokenName: 'Privacy',
-    balance: 1.001,
-    unitPrice: 1.25,
-    available: true,
-  },
-  {
-    icon: PrvIcon,
-    tokenName: 'Essential',
-    balance: 7.011,
-    unitPrice: 1.25,
-  },
-  {
-    icon: PrvIcon,
-    tokenName: 'Bitcoin',
-    balance: 2.342,
-    unitPrice: 1.25,
-  },
-  {
-    icon: PrvIcon,
-    tokenName: 'Ethereum',
-    balance: 1.12312,
-    unitPrice: 1.25,
-  },
-  {
-    icon: PrvIcon,
-    tokenName: 'Ethereum',
-    balance: 1.12312,
-    unitPrice: 1.25,
-  },
-]
-
 const BalanceItem = (item: IExample): JSX.Element => {
-  const { icon, tokenName, balance, unitPrice, available } = item
   return (
     <div className={classNames('flex p-4 hover:bg-gray-6')}>
       <div className={classNames('flex items-center w-12')}>
-        <Persona
-          presence={available && PersonaPresence.online}
-          imageUrl={icon}
-          size={PersonaSize.size32}
-          hidePersonaDetails
-        />
+        <Persona imageUrl={item.icon} size={PersonaSize.size32} hidePersonaDetails />
       </div>
       <div className={classNames('flex items-center flex-grow')}>
-        <Label>{`${balance.toFixed(2)} ${tokenName}`}</Label>
+        <Label>{item.name}</Label>
       </div>
       <div className={classNames('flex items-center justify-end')}>
-        <Label className={classNames('text-gray-2 text-xs font-normal')}>{`${(balance * unitPrice).toFixed(
-          2
-        )} USD`}</Label>
+        <Label className={classNames('text-gray-2 text-xs font-normal')}>1.25 USD</Label>
       </div>
     </div>
   )
 }
 
 export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
+  const tokens = useGetTokenList('Account 0')
+  const [tokenList, setTokenList] = React.useState([])
+  const { data, status } = useQuery('tokens', GetTokens)
+  React.useEffect(() => {
+    if (status === 'success') {
+      const temp = data.filter((a) => {
+        return tokens.includes(a.tokenId)
+      })
+      setTokenList(temp)
+    }
+    console.log('hi')
+  }, [tokens])
   return (
     <div className="lsb-WalletBalance--container">
       <SecondaryButton full backgroundColor="transparent">
@@ -87,7 +58,7 @@ export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
         </div>
       </SecondaryButton>
       <div className="lsb-WalletBalance--list">
-        <List items={ITEMS} onRenderCell={BalanceItem} />
+        <List items={tokenList} onRenderCell={BalanceItem} />
       </div>
     </div>
   )

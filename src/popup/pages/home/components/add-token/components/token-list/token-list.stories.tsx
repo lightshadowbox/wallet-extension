@@ -7,7 +7,7 @@ export default {
   component: ListGhostingExample,
 } as Meta
 
-const Template: Story = () => <ListGhostingExample />
+const Template: Story = () => <ListGhostingExample accountName="Tran Hoang" />
 
 export const Primary = Template.bind({})
 Primary.args = {

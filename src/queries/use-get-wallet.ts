@@ -4,6 +4,6 @@ import { getWalletSerialized } from 'services/wallet'
 export const GET_WALLET_KEY = 'getWalletSerialized'
 
 export const useGetWallet = () => {
-  const hook = useQuery([GET_WALLET_KEY], getWalletSerialized)
+  const hook = useQuery('getWallet', getWalletSerialized)
   return hook
 }

@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { useIsAlreadyHaveWallet } from '../queries/use-is-already-have-wallet'
 import { HomePage } from './pages/home/home-page'
 import { WelcomePage } from './pages/Welcome/welcome-page'
+// import { AddAccountPanel } from './pages/home/components/add-account/add-account-panel'
 
 export const AppRouter = () => {
   const createdWallet = useIsAlreadyHaveWallet()

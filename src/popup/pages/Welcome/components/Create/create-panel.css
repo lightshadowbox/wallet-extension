@@ -13,7 +13,7 @@
 .ms-LayerHost {
 }
 .create {
-  animation: moveInRight 0.7s;
+  animation: moveInRight 0.3s;
   animation-fill-mode: forwards;
   animation-delay: 0.1s;
   opacity: 0;

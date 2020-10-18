@@ -61,6 +61,8 @@ export interface TokenItemInterface {
   pSymbol: string
   isDefault: boolean
   verified: boolean
+  icon: string
+  isFollowing: boolean
   tokenType: 'TOKEN' | 'SHIELD' | 'CUSTOM'
 }
 
@@ -70,12 +72,16 @@ export default async function () {
 
   const tokensMapped = tokens.data.map<TokenItemInterface>((i) => ({
     tokenType: 'TOKEN',
+    isFollowing: false,
+    icon: `https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/${i.symbol.toLowerCase()}@2x.png`,
     ...i,
   }))
 
   const customTokenMapped = customTokens.data.map<TokenItemInterface>((i) => ({
     tokenType: 'CUSTOM',
     ...i,
+    isFollowing: false,
+    icon: i.image,
     originalSymbol: i.symbol,
     isDefault: false,
     decimals: 0,
@@ -86,5 +92,5 @@ export default async function () {
     pSymbol: i.symbol,
   }))
 
-  return tokensMapped
+  return concat(tokensMapped, customTokenMapped)
 }

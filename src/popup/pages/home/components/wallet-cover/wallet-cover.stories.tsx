@@ -12,7 +12,7 @@ export default {
   },
 } as Meta
 
-const Template: Story = () => <WalletCover />
+const Template: Story = () => <WalletCover showPanel={() => alert('clicked')} />
 
 export const Primary = Template.bind({})
 Primary.args = {

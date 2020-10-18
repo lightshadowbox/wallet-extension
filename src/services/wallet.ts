@@ -9,17 +9,15 @@ import { ERROR_CODE } from './errors'
 import * as sdk from './incognito/sdk'
 import { storageService } from './storage'
 
-let walletRuntime: WalletInstance
+export let walletRuntime: WalletInstance
 let runtimePassword: string
 
 export const getWalletSerialized = async () => {
   await sdk.initSDK()
   const isHaveWallet = await isCreatedWallet()
-
   if (!walletRuntime && !isHaveWallet) {
     throw new Error(ERROR_CODE.WALLET_NOT_CREATED)
   }
-
   const walletSerialized = await serializeWallet(walletRuntime)
   return walletSerialized
 }

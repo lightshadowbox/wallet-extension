@@ -1,15 +1,15 @@
-.add-token .ms-Panel-main {
+.account .ms-Panel-main {
   width: 100% !important;
 }
-.add-token .ms-Panel-commands {
+.account .ms-Panel-commands {
   display: none;
 }
 
-.add-token .ms-Panel-content {
+.account .ms-Panel-content {
   padding: 0 !important;
 }
 
-.add-token .ms-Panel {
+.account .ms-Panel {
   animation: moveInBottom 0.3s;
   animation-fill-mode: forwards;
   transition: all 1s !important;
@@ -33,6 +33,6 @@
     transform: translateY(0rem);
   }
 }
-.add-token .ms-LayerHost {
+.account .ms-LayerHost {
   overflow: hidden;
 }
