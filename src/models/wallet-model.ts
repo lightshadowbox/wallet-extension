@@ -1,13 +1,7 @@
 import { WalletInstance } from 'incognito-sdk'
-import {
-  Dictionary,
-  keyBy,
-} from 'lodash'
+import { Dictionary, keyBy } from 'lodash'
 
-import {
-  AccountModelType,
-  serializeAccount,
-} from './account-model'
+import { AccountModelType, serializeAccount } from './account-model'
 
 export type WalletModelType = {
   name?: string

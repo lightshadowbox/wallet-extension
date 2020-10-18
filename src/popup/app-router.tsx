@@ -1,19 +1,15 @@
 import React from 'react'
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { useSettingStore } from 'popup/stores/features/settings'
 
-import { useIsAlreadyHaveWallet } from '../queries/use-is-already-have-wallet'
 import { HomePage } from './pages/home/home-page'
 import { WelcomePage } from './pages/Welcome/welcome-page'
 
 export const AppRouter = () => {
-  const createdWallet = useIsAlreadyHaveWallet()
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
 
-  if (!createdWallet) {
+  if (!selectedAccount) {
     return (
       <Router>
         <>

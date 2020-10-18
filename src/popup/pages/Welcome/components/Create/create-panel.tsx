@@ -1,14 +1,29 @@
+import './create-panel.css'
+
+import React, { useState } from 'react'
+
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import classNames from 'classnames'
-import React, { useState } from 'react'
-import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
+
+import {
+  Customizer,
+  IFocusTrapZoneProps,
+  ILayerProps,
+  LayerHost,
+  mergeStyles,
+  Panel,
+} from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
+
 import { Button } from '../../../../components/button/index'
-import { Header, Password, ConfirmPassword, WalletName } from './components/index'
+import {
+  ConfirmPassword,
+  Header,
+  Password,
+  WalletName,
+} from './components/index'
 import styles from './create-panel.module.css'
-import './create-panel.css'
-import { useCreateWallet } from '../../../../../queries/use-create-account'
 
 interface Props {
   isPanelOpen: boolean
@@ -25,7 +40,7 @@ const CreateContainer: React.FC<{
   passwordWallet: string
   confirmPassword: string
 }> = ({ header, password, confirm, btn, name, nameWallet, passwordWallet, confirmPassword }) => {
-  const [createWallet, status] = useCreateWallet()
+  // const [createWallet, status] = useCreateWallet()
   return (
     <div className={classNames(`flex flex-col w-full justify-between relative ${styles.createContainer}`)}>
       <div className={classNames('flex flex-col')}>
@@ -37,7 +52,7 @@ const CreateContainer: React.FC<{
       <div
         onClick={() => {
           if (passwordWallet === confirmPassword) {
-            createWallet({ name: nameWallet, password: passwordWallet })
+            // createWallet({ name: nameWallet, password: passwordWallet })
           } else {
             alert('You enter wrong confirm password')
           }

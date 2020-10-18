@@ -1,17 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { initSDK } from 'services/incognito/sdk'
+import { sdk } from 'services/incognito/sdk'
 
-import {
-  initializeIcons,
-  loadTheme,
-} from '@fluentui/react'
+import { initializeIcons, loadTheme } from '@fluentui/react'
 
 import { AppContainer } from './app-container'
 import { globalTheme } from './theme'
 
 loadTheme(globalTheme)
 initializeIcons()
-setTimeout(()=> initSDK(), 10)
+
+sdk.initSDK().then(console.log)
 ReactDOM.render(<AppContainer />, document.querySelector('#root'))

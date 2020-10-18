@@ -1,12 +1,9 @@
 import React from 'react'
 
 import { Button } from '@fluentui/react'
-import {
-  Meta,
-  Story,
-} from '@storybook/react'
+import { Meta, Story } from '@storybook/react'
 
-import { useCreateWallet } from './use-create-account'
+import { useCreateWallet } from './create-account.mutation'
 import { useGetWallet } from './use-get-wallet'
 import { useIsAlreadyHaveWallet } from './use-is-already-have-wallet'
 
@@ -17,9 +14,7 @@ const HookCreateWallet = () => {
   }
   return (
     <div>
-      <Button onClick={() => createWallet({ name: 'FAKEKEKE', password: 'PASSSWW' })}>
-        CREATE RANDOM
-      </Button>
+      <Button onClick={() => createWallet({ name: 'FAKEKEKE', password: 'PASSSWW' })}>CREATE RANDOM</Button>
     </div>
   )
 }

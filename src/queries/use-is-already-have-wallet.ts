@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query'
 import { isCreatedWallet } from 'services/wallet'
-
-export const GET_WALLET_KEY = 'getWalletSerialized'
+import { GET_WALLET_KEY } from './use-get-wallet'
 
 export const useIsAlreadyHaveWallet = () => {
   const hookRes = useQuery([GET_WALLET_KEY], isCreatedWallet, {
