@@ -10,11 +10,8 @@ import { ERROR_CODE } from './errors'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
 
-<<<<<<< HEAD
 export let walletRuntime: WalletInstance
-=======
-let walletRuntime: i.WalletInstance
->>>>>>> 82563d3b1573101e03212d789e948d7fee8e98ec
+
 let runtimePassword: string
 
 export const getWalletSerialized = async () => {
