@@ -2,6 +2,8 @@ import React from 'react'
 import { SecondaryButton } from 'popup/components/button/button'
 import classNames from 'classnames'
 import { walletRuntime } from 'services/wallet'
+import { useBoolean } from '@uifabric/react-hooks'
+import { ModalAddAccount } from './modal/modal'
 
 const AddAccount = async (wallet) => {
   const account1 = await wallet.masterAccount.addAccount(`Account ${Math.random()} `, 3)
@@ -10,11 +12,14 @@ const AddAccount = async (wallet) => {
 }
 
 export const BtnAdd = () => {
+  const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false)
   const addAccountHandle = () => {
-    AddAccount(walletRuntime)
+    showModal()
+    // AddAccount(walletRuntime)
   }
   return (
-    <div className={classNames('flex flex-row justify-around mt-4')}>
+    <div className={classNames('flex flex-row justify-around mt-4 relative')}>
+      <ModalAddAccount isModalOpen={isModalOpen} showModal={showModal} hideModal={hideModal} />
       <SecondaryButton onClick={addAccountHandle} iconProps={{ iconName: 'Add' }}>
         Add
       </SecondaryButton>

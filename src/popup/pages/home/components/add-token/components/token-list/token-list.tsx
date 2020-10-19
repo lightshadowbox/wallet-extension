@@ -149,8 +149,10 @@ export const ListGhostingExample: React.FunctionComponent<Props> = (accountName)
     )
   }
   return (
-    <Stack {...rowProps} tokens={token.spinnerStack}>
-      <Spinner size={SpinnerSize.large} />
-    </Stack>
+    <div className={classNames('w-full h-full flex flex-col align-middle justify-center')}>
+      <Stack {...rowProps} tokens={token.spinnerStack}>
+        <Spinner size={SpinnerSize.large} />
+      </Stack>
+    </div>
   )
 }
