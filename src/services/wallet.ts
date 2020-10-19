@@ -2,6 +2,7 @@ import * as Mnemonic from 'bitcore-mnemonic'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk'
+import { WalletInstance } from 'incognito-sdk'
 import token from 'popup/pages/home/components/add-token/components/token-list/token'
 
 import * as CONSTANTS from '../constants/app'
