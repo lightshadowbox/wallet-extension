@@ -1,9 +1,8 @@
 import { combineReducers } from '@reduxjs/toolkit'
-
-import { walletSlices } from './implements/wallet'
+import { settingSlices } from './features/settings'
 
 export const rootReducer = combineReducers({
-	[walletSlices.name]: walletSlices.reducer
+  [settingSlices.name]: settingSlices.reducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -1,15 +1,20 @@
 import * as Mnemonic from 'bitcore-mnemonic'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
-import { WalletInstance } from 'incognito-sdk'
+import * as i from 'incognito-sdk'
+import token from 'popup/pages/home/components/add-token/components/token-list/token'
 
 import * as CONSTANTS from '../constants/app'
 import { serializeWallet } from '../models/wallet-model'
 import { ERROR_CODE } from './errors'
-import * as sdk from './incognito/sdk'
+import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
 
+<<<<<<< HEAD
 export let walletRuntime: WalletInstance
+=======
+let walletRuntime: i.WalletInstance
+>>>>>>> 82563d3b1573101e03212d789e948d7fee8e98ec
 let runtimePassword: string
 
 export const getWalletSerialized = async () => {
@@ -25,8 +30,8 @@ export const getWalletSerialized = async () => {
 export const createWalletWithPassword = async (name: string, password: string) => {
   runtimePassword = crypto.SHA256(password, passwordSecret).toString()
   const code = new Mnemonic(Mnemonic.Words.ENGLISH)
-  walletRuntime = await sdk.getWalletInstance().init(code.toString() + password, name)
-  console.log(CONSTANTS.PARA_KEY, code.toString())
+  const instance = new i.WalletInstance()
+  walletRuntime = await instance.init(code.toString() + password, name)
   storageService.set(CONSTANTS.PASS_KEY, runtimePassword)
   storageService.set(CONSTANTS.PARA_KEY, code.toString())
   await backupWallet(password)
@@ -34,7 +39,6 @@ export const createWalletWithPassword = async (name: string, password: string) =
 }
 
 export const isCreatedWallet = async () => {
-  await sdk.initSDK()
   // console.log('unlockWallet ',  walletRuntime)
 
   if (walletRuntime?.name) {
@@ -58,7 +62,7 @@ export const unlockWallet = async () => {
   if (!backup) {
     throw new Error('Create wallet before!')
   }
-  walletRuntime = await WalletInstance.restore(backup, password)
+  walletRuntime = await i.WalletInstance.restore(backup, password)
   return walletRuntime
 }
 
@@ -108,3 +112,38 @@ export const downloadAccountBackup = async (accountName: string) => {
   element.style.display = 'none'
   element.click()
 }
+
+export type SendInNetWorkPayload = {
+  fromAccountName: string
+  targetAccountAddress: string
+  token: string
+  nanoOfAmount: i.BN
+  estimatedFee: i.BN
+  message?: string
+}
+
+export const sendInNetwork = async (payload: SendInNetWorkPayload) => {
+  const account = walletRuntime.masterAccount.getAccountByName(payload.fromAccountName)
+  if (account) {
+    throw new Error(`Account ${payload.fromAccountName} not existed!`)
+  }
+
+  if (isNative(payload.token)) {
+    const balance = await account.nativeToken.getAvaiableBalance()
+    if (balance <= payload.nanoOfAmount) {
+      throw new Error(`Currently balance is not enough: ${balance}`)
+    }
+
+    const payment = new i.PaymentInfoModel({
+      paymentAddress: payload.targetAccountAddress,
+      amount: payload.nanoOfAmount.toString(),
+      message: payload.message,
+    })
+
+    return account.nativeToken.transfer([payment], i.CONSTANT.DEFAULT_NATIVE_FEE)
+  }
+
+  throw new Error('Not supported yet!')
+}
+
+export const isNative = (token: string) => i.CONSTANT.WALLET_CONSTANT.PRVIDSTR === token

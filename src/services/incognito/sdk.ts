@@ -1,28 +1,28 @@
-import * as i from 'incognito-sdk'
+import * as incognitos from 'incognito-sdk'
 
-let sdkLoaded = false
-let walletInstance: i.WalletInstance
+export class SDK {
+  isWASMRunned = false
 
-export const initSDK = async () => {
-  if (sdkLoaded) {
-    return
+  async initSDK() {
+    if (this.isWASMRunned) {
+      return
+    }
+
+    incognitos.storageService.implement({
+      setMethod: (key: string, data: any) => {
+        return window.sessionStorage.setItem(key, data)
+      },
+      getMethod: (key: string) => {
+        return window.sessionStorage.getItem(key)
+      },
+      removeMethod: (key: string) => window.sessionStorage.removeItem(key),
+      namespace: 'WALLET',
+    } as any)
+
+    const output = await incognitos.goServices.implementGoMethodUseWasm()
+    this.isWASMRunned = true
+    return output
   }
-  i.setConfig({ wasmPath: '/privacy.wasm', chainURL: 'https://fullnode.incognito.best', mainnet: true })
-
-  i.storageService.implement({
-    setMethod: (key: string, data: any) => {
-      return window.sessionStorage.setItem(key, data)
-    },
-    getMethod: (key: string) => {
-      return window.sessionStorage.getItem(key)
-    },
-    removeMethod: (key: string) => window.sessionStorage.removeItem(key),
-    namespace: 'WALLET',
-  } as any)
-
-  await i.goServices.implementGoMethodUseWasm()
-  walletInstance = new i.WalletInstance()
-  sdkLoaded = true
 }
 
-export const getWalletInstance = () => walletInstance
+export const sdk = new SDK()
