@@ -6,6 +6,7 @@ import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
 import { createWalletWithPassword, followToken, unfollowToken } from '../services/wallet'
 import { GET_WALLET_KEY } from './wallet.queries'
 import { useGetTokenForAccount } from './token.queries'
+import { useGetAccount } from './account.queries'
 
 export const useCreateWallet = () => {
   return useMutation((params: { password: string; name: string }) => createWalletWithPassword(params.name, params.password), {
@@ -28,7 +29,8 @@ export const useAddToken = () => {
 
   return useMutation((tokenId: string) => followToken(selectedAccount, tokenId), {
     onSuccess: async () => {
-      queryCache.invalidateQueries([useGetTokenForAccount.name, selectedAccount])
+      await queryCache.invalidateQueries([useGetAccount.name])
+      await queryCache.invalidateQueries([useGetTokenForAccount.name])
     },
     onError: (err) => {
       console.error(err)
@@ -42,7 +44,8 @@ export const useRemoveToken = () => {
   return useMutation((tokenId: string) => unfollowToken(selectedAccount, tokenId), {
     onSuccess: async () => {
       // Reload cache of useGetTokenForAccount hook
-      queryCache.invalidateQueries([useGetTokenForAccount.name, selectedAccount])
+      await queryCache.invalidateQueries([useGetAccount.name])
+      await queryCache.invalidateQueries([useGetTokenForAccount.name])
     },
     onError: (err) => {
       console.error(err)

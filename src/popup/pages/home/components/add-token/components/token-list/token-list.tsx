@@ -89,21 +89,31 @@ const classNamesList = mergeStyleSets({
 })
 
 export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
-  const [addToken] = useAddToken()
-  const [removeToken] = useRemoveToken()
+  const [addToken, addTokenStatus] = useAddToken()
+  const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
   const clickAddToken = React.useCallback(() => {
-    if (account?.followingTokens?.indexOf(item.tokenId) !== -1) {
+    if (account?.followingTokens?.indexOf(item.tokenId) === -1) {
+      console.log('add token', item.tokenId)
       addToken(item.tokenId)
     } else {
+      console.log('remove token', item.tokenId)
+
       removeToken(item.tokenId)
     }
   }, [item, account?.followingTokens])
+
+  React.useEffect(() => {
+    if (addTokenStatus.isSuccess) {
+      console.log(account?.followingTokens)
+    }
+  }, [addTokenStatus, removeTokenStatus])
+
   return (
     <div onClick={clickAddToken} className={classNamesList.itemCell} data-is-focusable>
       <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
         <Image className={classNamesList.itemImage} src={item.icon} width={36} height={36} imageFit={ImageFit.cover} />
-        {item.isFollowing ? (
+        {account?.followingTokens?.indexOf(item.tokenId) !== -1 ? (
           <div className={styles.containerIcon}>
             <FontIcon iconName="SkypeCircleCheck" />
           </div>

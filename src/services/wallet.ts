@@ -158,9 +158,13 @@ export const isNative = (token: string) => i.CONSTANT.WALLET_CONSTANT.PRVIDSTR =
 export const followToken = async (selectedAccount: string, tokenId: string) => {
   const account = await getAccountRuntime(selectedAccount)
   account.followTokenById(tokenId)
+  const password = await storageService.get(CONSTANTS.PASS_KEY)
+  await backupWallet(password)
 }
 
 export const unfollowToken = async (selectedAccount: string, tokenId: string) => {
   const account = await getAccountRuntime(selectedAccount)
   account.unfollowTokenById(tokenId)
+  const password = await storageService.get(CONSTANTS.PASS_KEY)
+  await backupWallet(password)
 }
