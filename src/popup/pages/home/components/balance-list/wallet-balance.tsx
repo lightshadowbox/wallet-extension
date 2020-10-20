@@ -1,52 +1,43 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import { Icon, Label, List, Persona, PersonaPresence, PersonaSize } from '@fluentui/react'
+import { Icon, Label, List, Persona, PersonaSize, Stack, Spinner, SpinnerSize } from '@fluentui/react'
 import classNames from 'classnames'
 import React from 'react'
-import PrvIcon from 'popup/assets/prv@2x.png'
 import './wallet-balance.css'
-import { useQuery } from 'react-query'
 import { SecondaryButton } from 'popup/components/button'
-import { useGetTokenList } from 'queries/use-get-token-list'
-import GetTokens from '../add-token/components/token-list/token'
 
-interface IExample {
-  name: string
-  icon: string
-}
+import { useSettingStore } from 'popup/stores/features/settings'
+import { useGetTokenForAccount } from 'queries/token.queries'
+
 interface Props {
   showPanel: () => void
 }
-const BalanceItem = (item: IExample): JSX.Element => {
-  return (
-    <div className={classNames('flex p-4 hover:bg-gray-6')}>
-      <div className={classNames('flex items-center w-12')}>
-        <Persona imageUrl={item.icon} size={PersonaSize.size32} hidePersonaDetails />
-      </div>
-      <div className={classNames('flex items-center flex-grow')}>
-        <Label>{item.name}</Label>
-      </div>
-      <div className={classNames('flex items-center justify-end')}>
-        <Label className={classNames('text-gray-2 text-xs font-normal')}>1.25 USD</Label>
-      </div>
-    </div>
-  )
-}
 
 export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
-  const tokens = useGetTokenList('Account 0')
-  const [tokenList, setTokenList] = React.useState([])
-  const { data, status } = useQuery('tokens', GetTokens)
-  React.useEffect(() => {
-    if (status === 'success') {
-      const temp = data.filter((a) => {
-        return tokens.includes(a.tokenId)
-      })
-      setTokenList(temp)
-    }
-    console.log('hi')
-  }, [tokens])
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  const { data: tokenListData } = useGetTokenForAccount(selectedAccount)
+
+  const cellRender = React.useCallback(
+    (_, index: number): JSX.Element => {
+      const i = tokenListData[index]
+      console.log(i)
+      return (
+        <div className={classNames('flex p-4 hover:bg-gray-6')}>
+          <div className={classNames('flex items-center w-12')}>
+            <Persona showUnknownPersonaCoin={!i?.tokenId} imageUrl={i?.icon} size={PersonaSize.size32} hidePersonaDetails />
+          </div>
+          <div className={classNames('flex items-center flex-grow')}>
+            <Label>{i.name}</Label>
+          </div>
+          <div className={classNames('flex items-center justify-end')}>
+            <Label className={classNames('text-gray-2 text-xs font-normal')}>1.25 USD</Label>
+          </div>
+        </div>
+      )
+    },
+    [tokenListData?.length],
+  )
   return (
     <div className="lsb-WalletBalance--container">
       <SecondaryButton full backgroundColor="transparent">
@@ -58,7 +49,15 @@ export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
         </div>
       </SecondaryButton>
       <div className="lsb-WalletBalance--list">
-        <List items={tokenList} onRenderCell={BalanceItem} />
+        {tokenListData ? (
+          <List items={tokenListData || []} onRenderCell={cellRender} />
+        ) : (
+          <div className={classNames('w-full h-full flex flex-col align-middle justify-center')}>
+            <Stack>
+              <Spinner size={SpinnerSize.large} />
+            </Stack>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -11,18 +11,29 @@ import { ERROR_CODE } from './errors'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
 
+// eslint-disable-next-line import/no-mutable-exports
 export let walletRuntime: WalletInstance
 
 let runtimePassword: string
 
-export const getWalletSerialized = async () => {
+export const getWalletInstance = async () => {
   await sdk.initSDK()
-  const isHaveWallet = await isCreatedWallet()
-  if (!walletRuntime && !isHaveWallet) {
-    throw new Error(ERROR_CODE.WALLET_NOT_CREATED)
+  const isHaveBackup = await isHaveBackupWallet()
+
+  if (walletRuntime?.name) {
+    return walletRuntime
   }
-  const walletSerialized = await serializeWallet(walletRuntime)
-  return walletSerialized
+
+  if (isHaveBackup) {
+    const wallet = await unlockWallet()
+    return wallet
+  }
+}
+
+export const getAccountRuntime = async (accountName: string) => {
+  const wa = await getWalletInstance()
+  const account = wa.masterAccount.getAccountByName(accountName)
+  return account
 }
 
 export const createWalletWithPassword = async (name: string, password: string) => {
@@ -32,23 +43,18 @@ export const createWalletWithPassword = async (name: string, password: string) =
   walletRuntime = await instance.init(code.toString() + password, name)
   storageService.set(CONSTANTS.PASS_KEY, runtimePassword)
   storageService.set(CONSTANTS.PARA_KEY, code.toString())
-  await backupWallet(password)
+  await backupWallet(runtimePassword)
   return walletRuntime
 }
 
-export const isCreatedWallet = async () => {
-  // console.log('unlockWallet ',  walletRuntime)
-
+export const isHaveBackupWallet = async () => {
   if (walletRuntime?.name) {
     return true
   }
-  // const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
-
-  // if (backup) {
-  //   await unlockWallet()
-  //   console.log('unlockWallet', walletRuntime.name, backup)
-  //   return true
-  // }
+  const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
+  if (backup) {
+    return true
+  }
 
   return false
 }
@@ -57,6 +63,7 @@ export const unlockWallet = async () => {
   const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
   const password = await storageService.get(CONSTANTS.PASS_KEY)
 
+  console.log(backup, password)
   if (!backup) {
     throw new Error('Create wallet before!')
   }
@@ -65,7 +72,9 @@ export const unlockWallet = async () => {
 }
 
 export const backupWallet = async (password: string) => {
-  storageService.set(CONSTANTS.WALLET_BACKUP_KEY, walletRuntime.backup(password))
+  const backupStr = walletRuntime.backup(password)
+  console.log('set', backupStr, password)
+  storageService.set(CONSTANTS.WALLET_BACKUP_KEY, backupStr)
 }
 
 export const downloadBackupWallet = async () => {
@@ -145,3 +154,13 @@ export const sendInNetwork = async (payload: SendInNetWorkPayload) => {
 }
 
 export const isNative = (token: string) => i.CONSTANT.WALLET_CONSTANT.PRVIDSTR === token
+
+export const followToken = async (selectedAccount: string, tokenId: string) => {
+  const account = await getAccountRuntime(selectedAccount)
+  account.followTokenById(tokenId)
+}
+
+export const unfollowToken = async (selectedAccount: string, tokenId: string) => {
+  const account = await getAccountRuntime(selectedAccount)
+  account.unfollowTokenById(tokenId)
+}

@@ -1,8 +1,4 @@
-import {
-  AccountInstance,
-  PrivacyTokenInstance,
-} from 'incognito-sdk'
-import { keyBy } from 'lodash'
+import { AccountInstance, PrivacyTokenInstance } from 'incognito-sdk'
 
 export type AccountModelType = {
   name?: string
@@ -12,12 +8,10 @@ export type AccountModelType = {
   paymentAddress?: string
   viewingKey?: string
 
-  balances?: { [key: string]: { availableBallance: any; totalBalance: any } }
-
   followingTokens?: string[]
 }
 
-const getTokenBalances = async (account: AccountInstance, tokenId: string): Promise<{ tokenId: string; availableBallance: any; totalBalance: any }> => {
+export const getTokenBalances = async (account: AccountInstance, tokenId: string): Promise<{ tokenId: string; availableBallance: any; totalBalance: any }> => {
   if (tokenId === account.nativeToken.tokenId) {
     return {
       tokenId,
@@ -42,7 +36,5 @@ export const serializeAccount = async (account: AccountInstance): Promise<Accoun
   accountModel.viewingKey = account.key.keySet.viewingKeySerialized
   accountModel.publicKey = await account.getBLSPublicKeyB58CheckEncode()
   accountModel.followingTokens = [...account.privacyTokenIds, account.nativeToken.tokenId]
-  const balances = await Promise.all(accountModel.followingTokens.map((tokenId) => getTokenBalances(account, tokenId)))
-  accountModel.balances = keyBy(balances, 'tokenId')
   return accountModel
 }

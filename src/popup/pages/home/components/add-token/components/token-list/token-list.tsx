@@ -10,7 +10,6 @@ import { walletRuntime } from 'services/wallet'
 
 import classNames from 'classnames'
 import { useQuery } from 'react-query'
-import { useGetTokenList } from 'queries/use-get-token-list'
 import {
   FocusZone,
   FocusZoneDirection,
@@ -28,6 +27,9 @@ import {
   Stack,
 } from '@fluentui/react'
 
+import { useGetAccount } from 'queries/account.queries'
+import { useFetchToken } from 'queries/token.queries'
+import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
 import GetTokens, { TokenItemInterface } from './token'
 import styles from './token-list.module.css'
 
@@ -85,17 +87,18 @@ const classNamesList = mergeStyleSets({
     flexShrink: 0,
   },
 })
-const followToken = async (tokenId) => {
-  const account = await walletRuntime.masterAccount.getAccounts()[0]
-  if (account) {
-    account.followTokenById(tokenId)
-    console.log('list tokens ', account.privacyTokenIds)
-  }
-}
-const onRenderCell = (item: TokenItemInterface, index: number, isScrolling: boolean): JSX.Element => {
-  const clickAddToken = () => {
-    followToken(item.tokenId)
-  }
+
+export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
+  const [addToken] = useAddToken()
+  const [removeToken] = useRemoveToken()
+  const { data: account } = useGetAccount()
+  const clickAddToken = React.useCallback(() => {
+    if (account?.followingTokens?.indexOf(item.tokenId) !== -1) {
+      addToken(item.tokenId)
+    } else {
+      removeToken(item.tokenId)
+    }
+  }, [item, account?.followingTokens])
   return (
     <div onClick={clickAddToken} className={classNamesList.itemCell} data-is-focusable>
       <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
@@ -114,11 +117,10 @@ const onRenderCell = (item: TokenItemInterface, index: number, isScrolling: bool
 }
 
 export const ListGhostingExample: React.FunctionComponent<Props> = (accountName) => {
-  const { data, status } = useQuery('token', GetTokens)
-  const [listTokens, setListTokens] = React.useState([])
-  const tokens = useGetTokenList('Account 0')
   const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
 
+  const { data } = useFetchToken()
+  const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [data])
   const token = {
     sectionStack: {
       childrenGap: 10,
@@ -127,23 +129,12 @@ export const ListGhostingExample: React.FunctionComponent<Props> = (accountName)
       childrenGap: 20,
     },
   }
-  React.useEffect(() => {
-    if (data) {
-      data.forEach((a) => {
-        for (let i = 0; i < tokens.length; i++) {
-          if (a.tokenId === tokens[i]) {
-            a.isFollowing = true
-          }
-        }
-      })
-      setListTokens(data)
-    }
-  }, [data])
-  if (status === 'success') {
+
+  if (data) {
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNamesList.container} data-is-scrollable>
-          <List items={listTokens} onRenderCell={onRenderCell} />
+          <List items={Object.values(data)} onRenderCell={onRenderCell} />
         </div>
       </FocusZone>
     )

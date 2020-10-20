@@ -5,7 +5,7 @@ import Avatar from 'popup/assets/avatar.png'
 import styled from 'styled-components'
 import { useTheme } from 'popup/services'
 import { Button, SecondaryButton } from 'popup/components/button'
-import { useGetWallet } from 'queries/use-get-wallet'
+import { useGetWallet } from 'queries/wallet.queries'
 
 interface Props {
   showPanel: () => void

@@ -2,27 +2,15 @@ import './create-panel.css'
 
 import React, { useState } from 'react'
 
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import classNames from 'classnames'
 
-import {
-  Customizer,
-  IFocusTrapZoneProps,
-  ILayerProps,
-  LayerHost,
-  mergeStyles,
-  Panel,
-} from '@fluentui/react'
+import { Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
 
-import { Button } from '../../../../components/button/index'
-import {
-  ConfirmPassword,
-  Header,
-  Password,
-  WalletName,
-} from './components/index'
+import { Button } from 'popup/components/button'
+import { useCreateWallet } from 'queries/create-account.mutation'
+import { useHistory } from 'react-router-dom'
+import { ConfirmPassword, Header, Password, WalletName } from './components'
 import styles from './create-panel.module.css'
 
 interface Props {
@@ -30,6 +18,7 @@ interface Props {
   showPanel: () => void
   dismissPanel: () => void
 }
+
 const CreateContainer: React.FC<{
   header: React.ReactNode
   password: React.ReactNode
@@ -40,7 +29,23 @@ const CreateContainer: React.FC<{
   passwordWallet: string
   confirmPassword: string
 }> = ({ header, password, confirm, btn, name, nameWallet, passwordWallet, confirmPassword }) => {
-  // const [createWallet, status] = useCreateWallet()
+  const [createWallet, status] = useCreateWallet()
+  const [isError, setIsError] = React.useState(false)
+  const history = useHistory()
+  const onCreateBtnClick = React.useCallback(() => {
+    if (passwordWallet === confirmPassword) {
+      createWallet({ name: nameWallet, password: passwordWallet })
+    } else {
+      setIsError(true)
+    }
+  }, [passwordWallet, confirmPassword])
+
+  React.useEffect(() => {
+    if (status.isSuccess) {
+      history.push('/')
+    }
+  }, [status.isSuccess])
+
   return (
     <div className={classNames(`flex flex-col w-full justify-between relative ${styles.createContainer}`)}>
       <div className={classNames('flex flex-col')}>
@@ -49,18 +54,9 @@ const CreateContainer: React.FC<{
         <div className={classNames(`w-full ${styles.item}`)}>{password}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{confirm}</div>
       </div>
-      <div
-        onClick={() => {
-          if (passwordWallet === confirmPassword) {
-            // createWallet({ name: nameWallet, password: passwordWallet })
-          } else {
-            alert('You enter wrong confirm password')
-          }
-        }}
-        className={classNames(`w-full flex ${styles.itemBtn}`)}
-      >
+      <Button onClick={onCreateBtnClick} className={`w-full flex ${styles.itemBtn}`}>
         {btn}
-      </div>
+      </Button>
     </div>
   )
 }

@@ -1,8 +1,11 @@
 import classNames from 'classnames'
 import React from 'react'
 import { useBoolean } from '@uifabric/react-hooks'
-import { Logo, RecCreate, RecImport, CreatePanel } from './components/index'
 import styles from './welcome-page.module.css'
+import { Logo } from '../logo/logo'
+import { RecCreate } from '../rec-create/rec-create'
+import { RecImport } from '../rec-import/rec-import'
+import { CreatePanel } from '../create/create-panel'
 
 const WelcomeContainer: React.FC<{ logo: React.ReactNode; recCreate: React.ReactNode; recImport: React.ReactNode; create: React.ReactNode }> = ({
   logo,

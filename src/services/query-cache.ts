@@ -12,3 +12,11 @@ export const queryCache = new QueryCache({
     },
   },
 })
+
+export const getFromCache = <T>(key: string) => {
+  const data = queryCache.getQueryData<T>(key)
+  if (!data) {
+    return null
+  }
+  return data
+}

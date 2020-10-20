@@ -2,28 +2,31 @@
 import classNames from 'classnames'
 import React from 'react'
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react'
-import { SecondaryButton } from '../../../../components/button/index'
-import styles from './rec-import.module.css'
+import { Button } from 'popup/components/button'
+import styles from './rec-create.module.css'
 
+interface Props {
+  showPanel: () => void
+}
 const iconClass = mergeStyles({
   fontSize: 26,
   height: 26,
   width: 26,
-  fontWeight: 500,
-  transform: 'rotate(90deg)',
+  fontWeight: 700,
 })
 const classNamesIcon = mergeStyleSets({
   deepBlue: [{ color: '#276EF1' }, iconClass],
 })
-
-export const RecImport = () => (
-  <div className={`border border-dashed w-full ${styles.borderContainer}`}>
+export const RecCreate: React.FC<Props> = ({ showPanel }) => (
+  <div className={`border border-dashed ${styles.borderContainer}`}>
     <div className={classNames('flex flex-row items-center')}>
-      <FontIcon iconName="Import" className={classNamesIcon.deepBlue} />
+      <FontIcon iconName="Add" className={classNamesIcon.deepBlue} />
       <p className={styles.paragraph}>A crypto wallet & gateway to blockchain apps.</p>
     </div>
     <div className={`flex w-full ${styles.btn}`}>
-      <SecondaryButton full>Import</SecondaryButton>
+      <Button onClick={showPanel} full>
+        Create
+      </Button>
     </div>
   </div>
 )

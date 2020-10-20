@@ -1,10 +1,11 @@
 import { useMutation } from 'react-query'
 import { queryCache } from 'services/query-cache'
 import { store } from 'popup/stores'
-import { settingSlices } from 'popup/stores/features/settings'
+import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
 
-import { createWalletWithPassword } from '../services/wallet'
-import { GET_WALLET_KEY } from './use-get-wallet'
+import { createWalletWithPassword, followToken, unfollowToken } from '../services/wallet'
+import { GET_WALLET_KEY } from './wallet.queries'
+import { useGetTokenForAccount } from './token.queries'
 
 export const useCreateWallet = () => {
   return useMutation((params: { password: string; name: string }) => createWalletWithPassword(params.name, params.password), {
@@ -15,6 +16,33 @@ export const useCreateWallet = () => {
       console.log('Set default first account: ', name)
       store.dispatch(settingSlices.actions.setWalletName({ walletName: data.name }))
       store.dispatch(settingSlices.actions.selectAccount({ accountName: firstAccount.name }))
+    },
+    onError: (err) => {
+      console.error(err)
+    },
+  })
+}
+
+export const useAddToken = () => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+
+  return useMutation((tokenId: string) => followToken(selectedAccount, tokenId), {
+    onSuccess: async () => {
+      queryCache.invalidateQueries([useGetTokenForAccount.name, selectedAccount])
+    },
+    onError: (err) => {
+      console.error(err)
+    },
+  })
+}
+
+export const useRemoveToken = () => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+
+  return useMutation((tokenId: string) => unfollowToken(selectedAccount, tokenId), {
+    onSuccess: async () => {
+      // Reload cache of useGetTokenForAccount hook
+      queryCache.invalidateQueries([useGetTokenForAccount.name, selectedAccount])
     },
     onError: (err) => {
       console.error(err)
