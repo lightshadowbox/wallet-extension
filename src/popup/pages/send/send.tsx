@@ -78,7 +78,8 @@ const DropdownCoins = React.memo(() => {
       <button
         onClick={() => setIsComponentVisible(!isComponentVisible)}
         type="button"
-        className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center">
+        className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
+      >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             opacity="0.2"
@@ -99,13 +100,15 @@ const DropdownCoins = React.memo(() => {
       </button>
       <ul
         className={`${isComponentVisible ? 'block' : 'hidden'}
-        dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}>
+        dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}
+      >
         {coins.map((item) => (
           <li key={item.id} className="border-b border-gray-9 bg-white">
             <button
               className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
               type="button"
-              onClick={() => onChangeCoin(item.id)}>
+              onClick={() => onChangeCoin(item.id)}
+            >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   opacity="0.2"
@@ -169,17 +172,12 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
                   Transfer account
                 </div>
                 <div className="field__wrapper relative">
-                  <select
-                    id="transfer-account"
-                    className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5">
+                  <select id="transfer-account" className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5">
                     <option>ANB279HZ88QQOIQW9201MNZ</option>
                     <option>8QQOIQW9201MNZANB279HZ8</option>
                     <option>NB279HZ8A8QQOIQW9201MNZ</option>
                   </select>
-                  <Icon
-                    className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2"
-                    iconName="ChevronDown"
-                  />
+                  <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
                 </div>
                 <div className="mb-6 mt-2 text-gray-7">Balance: 12.50 NEO</div>
 
@@ -208,10 +206,7 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
                 <div className="mt-6 mb-6 text-center">
                   <DropdownCoins />
                   <h2 className="price text-6xl font-medium mb-4 mt-2">12.5</h2>
-                  <input
-                    className="bg-white text-center outline-none w-full placeholder-gray-8:placeholder"
-                    placeholder="Write note here..."
-                  />
+                  <input className="bg-white text-center outline-none w-full placeholder-gray-8:placeholder" placeholder="Write note here..." />
                 </div>
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
@@ -223,16 +218,11 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
                         <option>ABC</option>
                         <option>XYZ</option>
                       </select>
-                      <Icon
-                        className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2"
-                        iconName="ChevronDown"
-                      />
+                      <Icon className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2" iconName="ChevronDown" />
                     </div>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center">
+                <button type="button" className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center">
                   <Icon className="mr-2 text-white" iconName="Send" />
                   <span className="text-white">Send</span>
                 </button>

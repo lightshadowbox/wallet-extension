@@ -25,7 +25,6 @@ export const useCreateWallet = () => {
 
 export const useAddToken = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-
   return useMutation((tokenId: string) => followToken(selectedAccount, tokenId), {
     onSuccess: async () => {
       queryCache.invalidateQueries([useGetTokenForAccount.name, selectedAccount])

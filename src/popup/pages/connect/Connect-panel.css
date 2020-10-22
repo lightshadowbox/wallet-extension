@@ -1,0 +1,57 @@
+.connect .ms-Panel-main {
+  width: 100% !important;
+}
+.connect .ms-Panel-commands {
+  display: none;
+}
+
+.connect .ms-Panel-content {
+  padding: 0 !important;
+}
+
+.connect .ms-Panel {
+  animation: moveInBottomImport 0.3s;
+}
+.connect {
+  top: 0;
+  left: 0;
+}
+.add-account .connect .ms-Panel {
+  animation: moveInImport 0.3s;
+}
+.ms-Panel-contentInner {
+  transform: translateX(-2px);
+}
+.connect .ms-Panel-scrollableContent {
+  @apply h-full;
+}
+.connect .ms-Panel-content {
+  @apply h-full;
+}
+@keyframes moveInImport {
+  from {
+    transform: translateY(200px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+@keyframes moveOutBottomImport {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(250px);
+  }
+}
+@keyframes moveInBottomImport {
+  from {
+    transform: translateY(250px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+.connect .ms-LayerHost {
+  overflow: hidden;
+}

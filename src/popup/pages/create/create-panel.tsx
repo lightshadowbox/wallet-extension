@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import './create-panel.css'
 
 import React, { useState } from 'react'
@@ -54,9 +56,9 @@ const CreateContainer: React.FC<{
         <div className={classNames(`w-full ${styles.item}`)}>{password}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{confirm}</div>
       </div>
-      <Button onClick={onCreateBtnClick} className={`w-full flex ${styles.itemBtn}`}>
+      <div onClick={onCreateBtnClick} className={classNames(`w-full flex ${styles.itemBtn}`)}>
         {btn}
-      </Button>
+      </div>
     </div>
   )
 }
