@@ -18,7 +18,7 @@
   transform: translateY(-48%);
 }
 .headerIcon:hover {
-  background-color: #e6e6e6;
+  background-color: #2e2efe;
 }
 .headerIcon i {
   @apply font-normal;
