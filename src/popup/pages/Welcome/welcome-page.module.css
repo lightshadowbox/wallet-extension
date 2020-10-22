@@ -3,4 +3,5 @@
   max-height: 600px;
   padding: 16px;
   overflow: hidden;
+  position: relative;
 }

@@ -1,0 +1,74 @@
+.tabs .tab {
+  padding: 8px;
+  @apply text-gray-7;
+  border-bottom: 1px solid lightgray;
+}
+
+.tabs .tab.active {
+  border-bottom: 1px solid;
+  @apply text-black;
+}
+
+.tabs .tab.active button {
+  font-weight: 500;
+}
+
+.mini-cube {
+  width: 5px;
+  height: 5px;
+}
+
+.text-with-mini-cube {
+  position: relative;
+  padding-left: 10px;
+}
+
+.text-with-mini-cube .mini-cube {
+  position: absolute;
+  left: 0;
+  top: 6px;
+}
+
+.button-select {
+  border-radius: 20px;
+}
+
+.send .ms-Panel-main {
+  width: 100% !important;
+}
+.send .ms-Panel-commands {
+  display: none;
+}
+.send .ms-Panel-content {
+  padding: 0 !important;
+}
+.send .ms-Panel-main {
+  animation: none;
+}
+.send {
+  animation: moveInRight 0.1s;
+  animation-fill-mode: forwards;
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+@keyframes moveInRight {
+  from {
+    opacity: 1;
+    transform: translate(300px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0px);
+  }
+}
+@keyframes moveOutRight {
+  from {
+    transform: translate(0px);
+  }
+  to {
+    transform: translate(300px);
+  }
+}
+.send .ms-LayerHost {
+  overflow: hidden;
+}

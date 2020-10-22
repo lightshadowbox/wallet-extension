@@ -8,14 +8,21 @@
 .account .ms-Panel-content {
   padding: 0 !important;
 }
-
+.ms-Panel-scrollableContent {
+  width: 100%;
+  height: 100%;
+}
+.ms-Panel-content {
+  width: 100%;
+  height: 100%;
+}
 .account .ms-Panel {
   animation: moveInBottom 0.3s;
   animation-fill-mode: forwards;
   transition: all 1s !important;
 }
 .ms-Panel-contentInner {
-  transform: translate(4px);
+  transform: translate(-2px);
 }
 @keyframes moveOutBottom {
   from {

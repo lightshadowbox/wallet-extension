@@ -2,17 +2,17 @@ import React from 'react'
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from '@storybook/react/types-6-0'
 
-import { Receive, ReceiveProps } from './receive'
+import { ReceiveContainer, ReceiveProps } from './receive'
 
 export default {
   title: 'Example/Receive',
-  component: Receive,
+  component: ReceiveContainer,
   argTypes: {
     backgroundColor: { control: 'color' },
   },
 } as Meta
 
-const Template: Story<ReceiveProps> = (args) => <Receive {...args} />
+const Template: Story<ReceiveProps> = (args) => <ReceiveContainer {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

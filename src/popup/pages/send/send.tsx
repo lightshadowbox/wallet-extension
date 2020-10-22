@@ -1,5 +1,10 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useRef, useEffect } from 'react'
-import { Icon } from '@fluentui/react'
+import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
+import { useId } from '@uifabric/react-hooks'
+import classNames from 'classnames'
+import styles from './send.module.css'
 
 import './send.css'
 
@@ -24,6 +29,12 @@ export interface SendProps {
    * Optional click handler
    */
   onClick?: () => void
+  dismissPanel: () => void
+}
+interface Props {
+  isPanelOpen: boolean
+  showPanel: () => void
+  dismissPanel: () => void
 }
 
 const useComponentVisible = (initialIsVisible) => {
@@ -78,7 +89,8 @@ const DropdownCoins = React.memo(() => {
       <button
         onClick={() => setIsComponentVisible(!isComponentVisible)}
         type="button"
-        className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center">
+        className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
+      >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             opacity="0.2"
@@ -99,13 +111,15 @@ const DropdownCoins = React.memo(() => {
       </button>
       <ul
         className={`${isComponentVisible ? 'block' : 'hidden'}
-        dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}>
+        dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}
+      >
         {coins.map((item) => (
           <li key={item.id} className="border-b border-gray-9 bg-white">
             <button
               className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
               type="button"
-              onClick={() => onChangeCoin(item.id)}>
+              onClick={() => onChangeCoin(item.id)}
+            >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   opacity="0.2"
@@ -133,18 +147,18 @@ const DropdownCoins = React.memo(() => {
 /**
  * Primary UI component for user interaction
  */
-export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, label, ...props }) => {
+export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, ...props }) => {
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   return (
     <div className={['storybook-send', mode].join(' ')} style={{ backgroundColor }} {...props}>
       <header>
-        <div className="flex">
-          <div>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="black" />
-            </svg>
+        <div className="flex p-4">
+          <div className={classNames('flex flex-row relative w-full')}>
+            <div onClick={dismissPanel} className={styles.headerIcon}>
+              <Icon iconName="ChromeBack" />
+            </div>
+            <div className="flex-1 text-center font-medium text-base">Receive</div>
           </div>
-          <div className="flex-1 text-center font-medium">Send</div>
         </div>
       </header>
       <div className="content mt-2">
@@ -169,17 +183,12 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
                   Transfer account
                 </div>
                 <div className="field__wrapper relative">
-                  <select
-                    id="transfer-account"
-                    className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5">
+                  <select id="transfer-account" className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5">
                     <option>ANB279HZ88QQOIQW9201MNZ</option>
                     <option>8QQOIQW9201MNZANB279HZ8</option>
                     <option>NB279HZ8A8QQOIQW9201MNZ</option>
                   </select>
-                  <Icon
-                    className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2"
-                    iconName="ChevronDown"
-                  />
+                  <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
                 </div>
                 <div className="mb-6 mt-2 text-gray-7">Balance: 12.50 NEO</div>
 
@@ -208,10 +217,7 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
                 <div className="mt-6 mb-6 text-center">
                   <DropdownCoins />
                   <h2 className="price text-6xl font-medium mb-4 mt-2">12.5</h2>
-                  <input
-                    className="bg-white text-center outline-none w-full placeholder-gray-8:placeholder"
-                    placeholder="Write note here..."
-                  />
+                  <input className="bg-white text-center outline-none w-full placeholder-gray-8:placeholder" placeholder="Write note here..." />
                 </div>
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
@@ -223,16 +229,11 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
                         <option>ABC</option>
                         <option>XYZ</option>
                       </select>
-                      <Icon
-                        className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2"
-                        iconName="ChevronDown"
-                      />
+                      <Icon className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2" iconName="ChevronDown" />
                     </div>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center">
+                <button type="button" className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center">
                   <Icon className="mr-2 text-white" iconName="Send" />
                   <span className="text-white">Send</span>
                 </button>
@@ -244,4 +245,42 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
       </div>
     </div>
   )
+}
+
+export const SendPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
+  const layerHostId = useId('layerHost')
+  const scopedSettings = useLayerSettings(true, layerHostId)
+  return (
+    isPanelOpen && (
+      <div className={`absolute inset-0 send ${styles.container}`}>
+        <Customizer scopedSettings={scopedSettings}>
+          <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
+            <SendContainer label="Send" dismissPanel={dismissPanel} />
+          </Panel>
+        </Customizer>
+        <LayerHost id={layerHostId} className={layerHostClass} />
+      </div>
+    )
+  )
+}
+const layerHostClass = mergeStyles({
+  position: 'relative',
+  height: 600,
+  width: 360,
+  overflow: 'scroll',
+})
+
+const focusTrapZoneProps: IFocusTrapZoneProps = {
+  isClickableOutsideFocusTrap: true,
+  forceFocusInsideTrap: false,
+}
+
+function useLayerSettings(trapPanel: boolean, layerHostId: string): { Layer?: ILayerProps } {
+  return React.useMemo(() => {
+    if (trapPanel) {
+      const layerProps: ILayerProps = { hostId: layerHostId }
+      return { Layer: layerProps }
+    }
+    return {}
+  }, [trapPanel, layerHostId])
 }

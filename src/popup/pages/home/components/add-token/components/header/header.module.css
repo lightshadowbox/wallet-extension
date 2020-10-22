@@ -9,10 +9,16 @@
   padding: 16px 20px;
 }
 .headerIcon {
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0.5rem;
   position: absolute;
   top: 50%;
   left: 20px;
   transform: translateY(-48%);
+}
+.headerIcon:hover {
+  background-color: #e6e6e6;
 }
 .headerIcon i {
   @apply font-normal;

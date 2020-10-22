@@ -8,7 +8,7 @@ export default {
   component: RecImport,
 } as Meta
 
-const Template: Story = () => <RecImport />
+const Template: Story = () => <RecImport showPanel={() => console.log('clicked')} />
 
 export const Primary = Template.bind({})
 Primary.args = {
