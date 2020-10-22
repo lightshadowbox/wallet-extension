@@ -2,10 +2,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
-import { WalletBalance, WalletCover, WalletMenu } from './components'
-import { NetworkPanel } from './components/network/network-panel'
-import { AddTokenPanel } from './components/add-token/add-token-panel'
-import { AddAccountPanel } from './components/add-account/add-account-panel'
+import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, AddAccountPanel } from './components'
 import { ReceivePanel } from '../receive/receive'
 import { SendPanel } from '../send/send'
 
