@@ -9,8 +9,10 @@ import { useGetWallet } from 'queries/wallet.queries'
 
 interface Props {
   showPanel: () => void
+  showPanelReceive: () => void
+  showPanelSend: () => void
 }
-export const WalletCover: React.FC<Props> = ({ showPanel }) => {
+export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, showPanelSend }) => {
   const theme = useTheme()
   const wallet = useGetWallet()
   const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
@@ -42,8 +44,8 @@ export const WalletCover: React.FC<Props> = ({ showPanel }) => {
           <span className={classNames('ml-1 text-2xl text-gray-2')}>USD</span>
         </Label>
         <Stack className={classNames('w-full mt-5 justify-between')} horizontal horizontalAlign="center">
-          <Button iconProps={{ iconName: 'QRCode' }} text="Receive" />
-          <SecondaryButton iconProps={{ iconName: 'Send' }} text="Send" />
+          <Button onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} text="Receive" />
+          <SecondaryButton onClick={showPanelSend} iconProps={{ iconName: 'Send' }} text="Send" />
         </Stack>
       </div>
     )

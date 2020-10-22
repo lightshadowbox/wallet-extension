@@ -6,6 +6,8 @@ import { WalletBalance, WalletCover, WalletMenu } from './components'
 import { NetworkPanel } from './components/network/network-panel'
 import { AddTokenPanel } from './components/add-token/add-token-panel'
 import { AddAccountPanel } from './components/add-account/add-account-panel'
+import { ReceivePanel } from '../receive/receive'
+import { SendPanel } from '../send/send'
 
 const HomeContainer: React.FC<{
   cover: React.ReactNode
@@ -13,14 +15,18 @@ const HomeContainer: React.FC<{
   network: React.ReactNode
   token: React.ReactNode
   account: React.ReactNode
-}> = ({ children, cover, menu, network, token, account }) => (
-  <div className={classNames('flex flex-col relative w-full h-full')}>
+  receive: React.ReactNode
+  send: React.ReactNode
+}> = ({ children, cover, menu, network, token, account, receive, send }) => (
+  <div className={classNames('flex flex-col relative w-full h-full overflow-hidden')}>
     <div className={classNames('absolute self-center mt-20 shadow-md w-11/12 h-56 z-10 bg-white')}>{cover}</div>
     <div className={classNames('flex flex-row align-top justify-between w-full h-48 bg-blue-1 p-4')}>{menu}</div>
     <div className={classNames('w-full h-full mt-32')}>{children}</div>
     <div className={classNames('w-full h-full')}>{network}</div>
     <div className={classNames('w-full h-full')}>{token}</div>
     <div className={classNames('w-full h-full')}>{account}</div>
+    <div className={classNames('w-full h-full')}>{receive}</div>
+    <div className={classNames('w-full h-full')}>{send}</div>
   </div>
 )
 
@@ -28,40 +34,45 @@ export const HomePage = () => {
   const [isPanelOpenNetwork, { setTrue: showPanelNetwork, setFalse: dismissPanelNetwork }] = useBoolean(false)
   const [isPanelOpenToken, { setTrue: showPanelToken, setFalse: dismissPanelToken }] = useBoolean(false)
   const [isPanelOpenAcc, { setTrue: showPanelAcc, setFalse: dismissPanelAcc }] = useBoolean(false)
-  const dismissPanelTo = () => {
-    const element = document.querySelector('.add-token .ms-Panel') as HTMLElement
+  const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
+  const [isPanelOpenSend, { setTrue: showPanelSend, setFalse: dismissPanelSend }] = useBoolean(false)
+  const onDismissPanelRight = (panel) => {
+    const element = document.querySelector(`.${panel} .ms-Panel`) as HTMLElement
     element.style.animation = 'none'
-    element.style.animation = 'moveOutBottom 0.3s'
+    element.style.animation = 'moveOutRight 0.3s'
     setTimeout(() => {
-      element.style.animation = 'moveInBottom 0.3s'
-      dismissPanelToken()
-    }, 200)
+      element.style.animation = 'moveInRight 0.3s'
+      if (panel === 'send') {
+        dismissPanelSend()
+      } else if (panel === 'receive') {
+        dismissPanelReceive()
+      }
+    }, 160)
   }
-  const dismissPanelAccount = () => {
-    const element = document.querySelector('.account .ms-Panel') as HTMLElement
+  const dismissPanelBottom = (panel) => {
+    const element = document.querySelector(`.${panel} .ms-Panel`) as HTMLElement
     element.style.animation = 'none'
     element.style.animation = 'moveOutBottom 0.3s'
     setTimeout(() => {
       element.style.animation = 'moveInBottom 0.3s'
-      dismissPanelAcc()
-    }, 200)
-  }
-  const dismissPanelNet = () => {
-    const element = document.querySelector('.network .ms-Panel') as HTMLElement
-    element.style.animation = 'none'
-    element.style.animation = 'moveOutBottom 0.3s'
-    setTimeout(() => {
-      element.style.animation = 'moveInBottom 0.3s'
-      dismissPanelNetwork()
+      if (panel === 'add-token') {
+        dismissPanelToken()
+      } else if (panel === 'account') {
+        dismissPanelAcc()
+      } else if (panel === 'network') {
+        dismissPanelNetwork()
+      }
     }, 200)
   }
   return (
     <HomeContainer
-      cover={<WalletCover showPanel={showPanelAcc} />}
+      receive={<ReceivePanel isPanelOpen={isPanelOpenReceive} showPanel={showPanelReceive} dismissPanel={() => onDismissPanelRight('receive')} />}
+      send={<SendPanel isPanelOpen={isPanelOpenSend} showPanel={showPanelSend} dismissPanel={() => onDismissPanelRight('send')} />}
+      cover={<WalletCover showPanel={showPanelAcc} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
       menu={<WalletMenu showPanel={showPanelNetwork} />}
-      token={<AddTokenPanel isPanelOpen={isPanelOpenToken} showPanel={showPanelToken} dismissPanel={dismissPanelTo} />}
-      network={<NetworkPanel isPanelOpen={isPanelOpenNetwork} showPanel={showPanelNetwork} dismissPanel={dismissPanelNet} />}
-      account={<AddAccountPanel isPanelOpen={isPanelOpenAcc} showPanel={showPanelAcc} dismissPanel={dismissPanelAccount} />}
+      token={<AddTokenPanel isPanelOpen={isPanelOpenToken} showPanel={showPanelToken} dismissPanel={() => dismissPanelBottom('add-token')} />}
+      network={<NetworkPanel isPanelOpen={isPanelOpenNetwork} showPanel={showPanelNetwork} dismissPanel={() => dismissPanelBottom('network')} />}
+      account={<AddAccountPanel isPanelOpen={isPanelOpenAcc} showPanel={showPanelAcc} dismissPanel={() => dismissPanelBottom('account')} />}
     >
       <WalletBalance showPanel={showPanelToken} />
     </HomeContainer>

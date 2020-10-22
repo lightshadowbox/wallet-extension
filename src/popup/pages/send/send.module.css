@@ -1,0 +1,25 @@
+.createContainer {
+  max-width: 360px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.container {
+  position: absolute;
+  z-index: 2000;
+}
+.headerIcon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transform: translateY(-48%);
+}
+.headerIcon:hover {
+  background-color: #e6e6e6;
+}
+.headerIcon i {
+  @apply font-normal;
+}

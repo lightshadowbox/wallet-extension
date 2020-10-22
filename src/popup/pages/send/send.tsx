@@ -1,5 +1,10 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useRef, useEffect } from 'react'
-import { Icon } from '@fluentui/react'
+import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
+import { useId } from '@uifabric/react-hooks'
+import classNames from 'classnames'
+import styles from './send.module.css'
 
 import './send.css'
 
@@ -24,6 +29,12 @@ export interface SendProps {
    * Optional click handler
    */
   onClick?: () => void
+  dismissPanel: () => void
+}
+interface Props {
+  isPanelOpen: boolean
+  showPanel: () => void
+  dismissPanel: () => void
 }
 
 const useComponentVisible = (initialIsVisible) => {
@@ -136,18 +147,18 @@ const DropdownCoins = React.memo(() => {
 /**
  * Primary UI component for user interaction
  */
-export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, label, ...props }) => {
+export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, ...props }) => {
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   return (
     <div className={['storybook-send', mode].join(' ')} style={{ backgroundColor }} {...props}>
       <header>
-        <div className="flex">
-          <div>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="black" />
-            </svg>
+        <div className="flex p-4">
+          <div className={classNames('flex flex-row relative w-full')}>
+            <div onClick={dismissPanel} className={styles.headerIcon}>
+              <Icon iconName="ChromeBack" />
+            </div>
+            <div className="flex-1 text-center font-medium text-base">Receive</div>
           </div>
-          <div className="flex-1 text-center font-medium">Send</div>
         </div>
       </header>
       <div className="content mt-2">
@@ -234,4 +245,42 @@ export const Send: React.FC<SendProps> = ({ primary = false, backgroundColor, la
       </div>
     </div>
   )
+}
+
+export const SendPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
+  const layerHostId = useId('layerHost')
+  const scopedSettings = useLayerSettings(true, layerHostId)
+  return (
+    isPanelOpen && (
+      <div className={`absolute inset-0 send ${styles.container}`}>
+        <Customizer scopedSettings={scopedSettings}>
+          <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
+            <SendContainer label="Send" dismissPanel={dismissPanel} />
+          </Panel>
+        </Customizer>
+        <LayerHost id={layerHostId} className={layerHostClass} />
+      </div>
+    )
+  )
+}
+const layerHostClass = mergeStyles({
+  position: 'relative',
+  height: 600,
+  width: 360,
+  overflow: 'scroll',
+})
+
+const focusTrapZoneProps: IFocusTrapZoneProps = {
+  isClickableOutsideFocusTrap: true,
+  forceFocusInsideTrap: false,
+}
+
+function useLayerSettings(trapPanel: boolean, layerHostId: string): { Layer?: ILayerProps } {
+  return React.useMemo(() => {
+    if (trapPanel) {
+      const layerProps: ILayerProps = { hostId: layerHostId }
+      return { Layer: layerProps }
+    }
+    return {}
+  }, [trapPanel, layerHostId])
 }
