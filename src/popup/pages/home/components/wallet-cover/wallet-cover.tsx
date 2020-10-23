@@ -1,19 +1,6 @@
 import classNames from 'classnames'
 import React from 'react'
-import {
-  ActionButton,
-  Icon,
-  Label,
-  Persona,
-  PersonaSize,
-  Stack,
-  Spinner,
-  IStackProps,
-  SpinnerSize,
-  DefaultButton,
-  IButtonStyles,
-  TooltipHost,
-} from '@fluentui/react'
+import { ActionButton, Icon, Label, Persona, PersonaSize, Stack, Spinner, IStackProps, SpinnerSize, TooltipHost } from '@fluentui/react'
 import Avatar from 'popup/assets/avatar.png'
 import styled from 'styled-components'
 import { useTheme } from 'popup/services'
@@ -50,7 +37,8 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
       childrenGap: 20,
     },
   }
-  const onClickCopy = () => {
+  const onClickCopy = React.useCallback((e) => {
+    e.preventDefault()
     const text = account.data.paymentAddress
     const elem = document.createElement('textarea')
     document.body.appendChild(elem)
@@ -62,35 +50,36 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
     setTimeout(() => {
       setContentTooltip('Copy')
     }, 3000)
-  }
-  if (account.status === 'success') {
+  }, [])
+  if (!account.isLoading) {
     return (
-      <div className={classNames('relative flex flex-col items-center justify-between w-full h-full pl-4 pr-4 pb-4')}>
-        <PersonaOutline>
-          <Persona imageUrl={Avatar} size={PersonaSize.size48} imageAlt="A" hidePersonaDetails />
-        </PersonaOutline>
-        <TextButton onClick={showPanel} color={theme.palette.themeDarker} hoverColor={theme.palette.themeDark}>
-          <span className={classNames('mr-2')}>{account.data.name}</span>
-          <Icon iconName="ChevronDown" />
-        </TextButton>
+      <h1>hello</h1>
+      // <div className={classNames('relative flex flex-col items-center justify-between w-full h-full pl-4 pr-4 pb-4')}>
+      //   <PersonaOutline>
+      //     <Persona imageUrl={Avatar} size={PersonaSize.size48} imageAlt="A" hidePersonaDetails />
+      //   </PersonaOutline>
+      //   <TextButton onClick={showPanel} color={theme.palette.themeDarker} hoverColor={theme.palette.themeDark}>
+      //     <span className={classNames('mr-2')}>{account.data.name}</span>
+      //     <Icon iconName="ChevronDown" />
+      //   </TextButton>
 
-        <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps}>
-          <TextButton id={buttonId} aria-describedby={tooltipId} onClick={onClickCopy} hoverColor={theme.palette.themeDark}>
-            <span className={classNames(`text-gray-3 font-medium paymentAddress ${styles.accountName}`)}>{account.data.paymentAddress}</span>
-            <span className={classNames('text-gray-3 font-medium mr-2')}>...</span>
-            <Icon iconName="Copy" />
-          </TextButton>
-        </TooltipHost>
+      //   <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps}>
+      //     <TextButton id={buttonId} aria-describedby={tooltipId} onClick={onClickCopy} hoverColor={theme.palette.themeDark}>
+      //       <span className={classNames(`text-gray-3 font-medium paymentAddress ${styles.accountName}`)}>{account.data.paymentAddress}</span>
+      //       <span className={classNames('text-gray-3 font-medium mr-2')}>...</span>
+      //       <Icon iconName="Copy" />
+      //     </TextButton>
+      //   </TooltipHost>
 
-        <Label className={classNames('text-5xl p-0')}>
-          101.25
-          <span className={classNames('ml-1 text-2xl text-gray-2')}>USD</span>
-        </Label>
-        <Stack className={classNames('w-full mt-5 justify-between')} horizontal horizontalAlign="center">
-          <Button onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} text="Receive" />
-          <SecondaryButton onClick={showPanelSend} iconProps={{ iconName: 'Send' }} text="Send" />
-        </Stack>
-      </div>
+      //   <Label className={classNames('text-5xl p-0')}>
+      //     101.25
+      //     <span className={classNames('ml-1 text-2xl text-gray-2')}>USD</span>
+      //   </Label>
+      //   <Stack className={classNames('w-full mt-5 justify-between')} horizontal horizontalAlign="center">
+      //     <Button onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} text="Receive" />
+      //     <SecondaryButton onClick={showPanelSend} iconProps={{ iconName: 'Send' }} text="Send" />
+      //   </Stack>
+      // </div>
     )
   }
   return (

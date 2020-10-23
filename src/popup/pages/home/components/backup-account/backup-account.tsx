@@ -2,10 +2,12 @@ import classNames from 'classnames'
 import React from 'react'
 import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
+import { Button } from 'popup/components/button'
+import { downloadAccountBackup } from 'services/wallet'
+import { useGetAccount } from 'queries/account.queries'
 import styles from './backup-account.module.css'
 import './backup-account.css'
 import { Header, ListData, SelectAccount } from './components/index'
-import { Button } from 'popup/components/button'
 
 interface Props {
   isPanelOpen: boolean
@@ -27,15 +29,27 @@ const BackupAccountContainer: React.FC<{
 )
 export const BackupAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
   const layerHostId = useId('layerHost')
-
   const scopedSettings = useLayerSettings(true, layerHostId)
+  const { data: account, isSuccess } = useGetAccount()
+  const onDownloadClick = React.useCallback(() => {
+    if (isSuccess) {
+      downloadAccountBackup(account.name)
+      setTimeout(() => {
+        dismissPanel()
+      }, 500)
+    }
+  }, [])
   return (
     isPanelOpen && (
       <div className={`absolute inset-0 backupAccount ${styles.container}`}>
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <BackupAccountContainer
-              btn={<Button iconProps={{ iconName: 'Download' }}>Download as zips</Button>}
+              btn={
+                <Button onClick={onDownloadClick} iconProps={{ iconName: 'Download' }}>
+                  Download as zip
+                </Button>
+              }
               header={<Header title="Backup" icon="ChromeClose" dismissPanel={dismissPanel} />}
               selectAccount={<SelectAccount />}
               list={<ListData />}

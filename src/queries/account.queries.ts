@@ -20,7 +20,6 @@ export const useGetAccount = () => {
     { enabled: wallet && selectedAccount },
   )
 }
-
 export type GetListAccountType = { accountName: string; USD: string; PRV: string }
 export const useGetListAccount = () => {
   const { data: wallet } = useGetWallet()

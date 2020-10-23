@@ -10,9 +10,9 @@
 }
 
 .backupAccount .ms-Panel {
+  animation: none;
   animation: moveInBottom 0.3s;
   animation-fill-mode: forwards;
-  transition: all 1s !important;
 }
 .ms-Panel-contentInner {
   transform: translateX(0px);
@@ -27,10 +27,12 @@
 }
 @keyframes moveInBottom {
   from {
+    opacity: 1;
     transform: translateY(400px);
   }
   to {
-    transform: translateY(0rem);
+    opacity: 1;
+    transform: translateY(0px);
   }
 }
 .backupAccount .ms-LayerHost {

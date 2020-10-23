@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { GetListAccountType, useGetListAccount } from 'queries/account.queries'
+import { useGetListAccount } from 'queries/account.queries'
 import styles from './account-list.module.css'
 
 export const AccountList = () => {
