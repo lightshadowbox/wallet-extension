@@ -1,48 +1,45 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react'
 import { FontIcon } from '@fluentui/react'
 import classNames from 'classnames'
 import styles from './dropdown-menu.module.css'
 import './dropdown-menu.css'
 
-const list = [
-  {
-    title: 'Account',
-    icon: 'Contact',
-  },
-  {
-    title: 'Backup',
-    icon: 'Subscribe',
-  },
-  {
-    title: 'Lock',
-    icon: 'Lock',
-  },
-  {
-    title: 'Full Screen',
-    icon: 'ChromeFullScreen',
-  },
-  {
-    title: 'About us',
-    icon: 'InfoSolid',
-  },
-  {
-    title: 'Log out',
-    icon: 'Leave',
-  },
-]
-
-export const DropdownMenu = () => {
+export const DropdownMenu: React.FC<{ showPanelBackup: () => void; onOpenMenuClick: () => void }> = ({ showPanelBackup, onOpenMenuClick }) => {
   return (
     <div className={classNames(`absolute inset-0 dropdown ${styles.dropdownContainer}`)}>
       <ul>
-        {list.map((item) => {
-          return (
-            <li className={styles.dropdownItem}>
-              <FontIcon iconName={item.icon} />
-              <p>{item.title}</p>
-            </li>
-          )
-        })}
+        <li className={styles.dropdownItem}>
+          <FontIcon iconName="Contact" />
+          <p>Account</p>
+        </li>
+        <li
+          onClick={() => {
+            showPanelBackup()
+            onOpenMenuClick()
+          }}
+          className={styles.dropdownItem}
+        >
+          <FontIcon iconName="Subscribe" />
+          <p>Backup</p>
+        </li>
+        <li className={styles.dropdownItem}>
+          <FontIcon iconName="Lock" />
+          <p>Lock</p>
+        </li>
+        <li className={styles.dropdownItem}>
+          <FontIcon iconName="ChromeFullScreen" />
+          <p>Full Screen</p>
+        </li>
+        <li className={styles.dropdownItem}>
+          <FontIcon iconName="InfoSolid" />
+          <p>About us</p>
+        </li>
+        <li className={styles.dropdownItem}>
+          <FontIcon iconName="Leave" />
+          <p>Log out</p>
+        </li>
       </ul>
     </div>
   )

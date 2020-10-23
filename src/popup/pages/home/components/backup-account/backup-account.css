@@ -1,0 +1,38 @@
+.backupAccount .ms-Panel-main {
+  width: 100% !important;
+}
+.backupAccount .ms-Panel-commands {
+  display: none;
+}
+
+.backupAccount .ms-Panel-content {
+  padding: 0 !important;
+}
+
+.backupAccount .ms-Panel {
+  animation: moveInBottom 0.3s;
+  animation-fill-mode: forwards;
+  transition: all 1s !important;
+}
+.ms-Panel-contentInner {
+  transform: translateX(0px);
+}
+@keyframes moveOutBottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(400px);
+  }
+}
+@keyframes moveInBottom {
+  from {
+    transform: translateY(400px);
+  }
+  to {
+    transform: translateY(0rem);
+  }
+}
+.backupAccount .ms-LayerHost {
+  overflow: hidden;
+}

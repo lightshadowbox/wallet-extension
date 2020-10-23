@@ -6,10 +6,8 @@ import './token-list.css'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 import React from 'react'
-import { walletRuntime } from 'services/wallet'
 
 import classNames from 'classnames'
-import { useQuery } from 'react-query'
 import {
   FocusZone,
   FocusZoneDirection,
@@ -30,7 +28,7 @@ import {
 import { useGetAccount } from 'queries/account.queries'
 import { useFetchToken } from 'queries/token.queries'
 import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
-import GetTokens, { TokenItemInterface } from './token'
+import { TokenItemInterface } from './token'
 import styles from './token-list.module.css'
 
 const theme: ITheme = getTheme()

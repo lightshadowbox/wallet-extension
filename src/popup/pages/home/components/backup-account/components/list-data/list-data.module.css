@@ -1,0 +1,38 @@
+.container {
+  max-width: 100%;
+  overflow: hidden;
+  padding: 16px;
+}
+.listItem {
+  max-width: 100%;
+  overflow: hidden;
+}
+.listItem:not(:first-child) {
+  margin-top: 36px;
+}
+.label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.key {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: #757575;
+  font-size: 16px;
+  @apply mt-2;
+}
+.key p {
+  max-width: 250px;
+  overflow: hidden;
+}
+.icon {
+  width: 15%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: #276ef1;
+}
+.icon i {
+  cursor: pointer;
+}

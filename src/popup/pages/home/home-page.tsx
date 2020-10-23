@@ -2,7 +2,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
-import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, AddAccountPanel } from './components'
+import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, AddAccountPanel, BackupAccountPanel } from './components'
 import { ReceivePanel } from '../receive/receive'
 import { SendPanel } from '../send/send'
 
@@ -14,7 +14,8 @@ const HomeContainer: React.FC<{
   account: React.ReactNode
   receive: React.ReactNode
   send: React.ReactNode
-}> = ({ children, cover, menu, network, token, account, receive, send }) => (
+  backup: React.ReactNode
+}> = ({ children, cover, menu, network, token, account, receive, send, backup }) => (
   <div className={classNames('flex flex-col relative w-full h-full overflow-hidden')}>
     <div className={classNames('absolute self-center mt-20 shadow-md w-11/12 h-56 z-10 bg-white')}>{cover}</div>
     <div className={classNames('flex flex-row align-top justify-between w-full h-48 bg-blue-1 p-4')}>{menu}</div>
@@ -24,6 +25,7 @@ const HomeContainer: React.FC<{
     <div className={classNames('w-full h-full')}>{account}</div>
     <div className={classNames('w-full h-full')}>{receive}</div>
     <div className={classNames('w-full h-full')}>{send}</div>
+    <div className={classNames('w-full h-full')}>{backup}</div>
   </div>
 )
 
@@ -33,6 +35,7 @@ export const HomePage = () => {
   const [isPanelOpenAcc, { setTrue: showPanelAcc, setFalse: dismissPanelAcc }] = useBoolean(false)
   const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
   const [isPanelOpenSend, { setTrue: showPanelSend, setFalse: dismissPanelSend }] = useBoolean(false)
+  const [isPanelOpenBackup, { setTrue: showPanelBackup, setFalse: dismissPanelBackup }] = useBoolean(false)
   const onDismissPanelRight = (panel) => {
     const element = document.querySelector(`.${panel} .ms-Panel`) as HTMLElement
     element.style.animation = 'none'
@@ -58,6 +61,8 @@ export const HomePage = () => {
         dismissPanelAcc()
       } else if (panel === 'network') {
         dismissPanelNetwork()
+      } else if (panel === 'backupAccount') {
+        dismissPanelBackup()
       }
     }, 200)
   }
@@ -66,10 +71,11 @@ export const HomePage = () => {
       receive={<ReceivePanel isPanelOpen={isPanelOpenReceive} showPanel={showPanelReceive} dismissPanel={() => onDismissPanelRight('receive')} />}
       send={<SendPanel isPanelOpen={isPanelOpenSend} showPanel={showPanelSend} dismissPanel={() => onDismissPanelRight('send')} />}
       cover={<WalletCover showPanel={showPanelAcc} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
-      menu={<WalletMenu showPanel={showPanelNetwork} />}
+      menu={<WalletMenu showPanel={showPanelNetwork} showPanelBackup={showPanelBackup} />}
       token={<AddTokenPanel isPanelOpen={isPanelOpenToken} showPanel={showPanelToken} dismissPanel={() => dismissPanelBottom('add-token')} />}
       network={<NetworkPanel isPanelOpen={isPanelOpenNetwork} showPanel={showPanelNetwork} dismissPanel={() => dismissPanelBottom('network')} />}
       account={<AddAccountPanel isPanelOpen={isPanelOpenAcc} showPanel={showPanelAcc} dismissPanel={() => dismissPanelBottom('account')} />}
+      backup={<BackupAccountPanel isPanelOpen={isPanelOpenBackup} showPanel={showPanelBackup} dismissPanel={() => dismissPanelBottom('backupAccount')} />}
     >
       <WalletBalance showPanel={showPanelToken} />
     </HomeContainer>
