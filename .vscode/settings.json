@@ -1,17 +1,10 @@
 {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    },
-    "god.tsconfig": "./tsconfig.json",
-    "cSpell.words": [
-        "tailwindcss"
-    ],
-    "javascript.format.semicolons": "remove",
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "[typescript]": {
-      "editor.formatOnType": false,
-      "editor.insertSpaces": true,
-      "editor.tabSize": 2
-  }
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "god.tsconfig": "./tsconfig.json",
+  "cSpell.words": [
+    "tailwindcss"
+  ],
+  "javascript.format.semicolons": "remove",
 }

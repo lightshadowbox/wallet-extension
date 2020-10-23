@@ -5,6 +5,7 @@ import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Custom
 import { Header, QRCam, Account } from './components/index'
 import './Connect-panel.css'
 import styles from './Connect-panel.module.css'
+import { useImportAccountFromPrivateKey } from 'queries/create-account.mutation'
 
 interface Props {
   isPanelOpen: boolean
@@ -36,7 +37,15 @@ export const ImportAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
             <ConnectContainer
               header={<Header title="Add Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
               qrCam={<QRCam onHaveValue={(value) => setPrivateKey(value)} />}
-              account={<Account privateKey={privateKey} accountName={accountName} setPrivateKey={setPrivateKey} setAccountName={setAccountName} />}
+              account={
+                <Account
+                  privateKey={privateKey}
+                  accountName={accountName}
+                  setPrivateKey={setPrivateKey}
+                  setAccountName={setAccountName}
+                  closePopup={dismissPanel}
+                />
+              }
             />
           </Panel>
         </Customizer>
