@@ -1,23 +1,23 @@
 import React from 'react'
 import classNames from 'classnames'
-import { useGetWalletGeneral } from 'queries/wallet.queries'
+import { GetListAccountType, useGetListAccount } from 'queries/account.queries'
 import styles from './account-list.module.css'
 
 export const AccountList = () => {
-  const wallet = useGetWalletGeneral()
+  const accountList = useGetListAccount()
 
-  if (!wallet.isLoading) {
+  if (!accountList.isLoading && accountList.data) {
     return (
       <ul className={classNames('mt-4 p-4')}>
-        {Object.keys(wallet.data.accounts).map((name) => {
+        {accountList.data.map((a) => {
           return (
-            <li className={styles.container} key={name}>
+            <li className={styles.container} key={a.accountName}>
               <img className={styles.image} src="https://picsum.photos/200" alt="avatar" />
               <div className={classNames('flex flex-col ml-4')}>
-                <h3>{name}</h3>
+                <h3>{a.accountName}</h3>
                 <div className={`flex flex-row mt-2 ${styles.balance}`}>
-                  <p>USD: 0</p>
-                  <p className="ml-2">TRX: 15.60</p>
+                  <p>USD: {a.USD}</p>
+                  <p className="ml-2">PRV: {a.PRV}</p>
                 </div>
               </div>
             </li>

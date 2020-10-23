@@ -39,7 +39,15 @@ export const ImportAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
             <ConnectContainer
               header={<Header title="Add Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
               qrCam={<QRCam onHaveValue={(value) => setPrivateKey(value)} />}
-              account={<Account privateKey={privateKey} accountName={accountName} setPrivateKey={setPrivateKey} setAccountName={setAccountName} />}
+              account={
+                <Account
+                  privateKey={privateKey}
+                  accountName={accountName}
+                  setPrivateKey={setPrivateKey}
+                  setAccountName={setAccountName}
+                  closePopup={dismissPanel}
+                />
+              }
             />
           </Panel>
         </Customizer>

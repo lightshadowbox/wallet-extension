@@ -1,0 +1,23 @@
+.dropdown {
+  animation: dropdownIn 0.3s;
+}
+@keyframes dropdownIn {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: 270px;
+    opacity: 1;
+  }
+}
+@keyframes dropdownOut {
+  from {
+    height: 270px;
+    opacity: 1;
+  }
+  to {
+    height: 0px;
+    opacity: 0;
+  }
+}

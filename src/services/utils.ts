@@ -1,9 +1,11 @@
 import * as i from 'incognito-sdk'
+import BN from 'bn.js'
+
 /**
  *
  * @param {nanoAmountPRV : number} nanoAmountPRV
  */
-export const toPRV = (nanoAmountPRV: i.BN) => nanoAmountPRV.div(new i.BN(i.CONSTANT.WALLET_CONSTANT.NanoUnit)).toNumber()
+export const toPRV = (nanoAmountPRV: BN) => nanoAmountPRV.div(new BN(i.CONSTANT.WALLET_CONSTANT.NanoUnit)).toNumber()
 
 /**
  *

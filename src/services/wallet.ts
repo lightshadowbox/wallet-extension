@@ -168,3 +168,9 @@ export const unfollowToken = async (selectedAccount: string, tokenId: string) =>
   const password = await storageService.get(CONSTANTS.PASS_KEY)
   await backupWallet(password)
 }
+
+export const importAccountFromPrivateKey = async (accountName: string, privateKey: string) => {
+  const wallet = await getWalletInstance()
+  const newAccount = await wallet.masterAccount.importAccount(accountName, privateKey)
+  return newAccount
+}
