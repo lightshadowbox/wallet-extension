@@ -12,6 +12,7 @@
 .backupAccount .ms-Panel {
   animation: none;
   animation: moveInBottom 0.3s;
+  animation-delay: 0.00000000001s;
   animation-fill-mode: forwards;
 }
 .ms-Panel-contentInner {

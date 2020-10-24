@@ -4,6 +4,7 @@
 import { Icon, Label, List, Persona, PersonaSize, Stack, Spinner, SpinnerSize } from '@fluentui/react'
 import classNames from 'classnames'
 import React from 'react'
+import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import './wallet-balance.css'
 import { SecondaryButton } from 'popup/components/button'
 
@@ -48,17 +49,7 @@ export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
           <div className={classNames('flex flex-grow text-sm')}>Add token</div>
         </div>
       </SecondaryButton>
-      <div className="lsb-WalletBalance--list">
-        {tokenListData ? (
-          <List items={tokenListData || []} onRenderCell={cellRender} />
-        ) : (
-          <div className={classNames('w-full h-full flex flex-col align-middle justify-center')}>
-            <Stack>
-              <Spinner size={SpinnerSize.large} />
-            </Stack>
-          </div>
-        )}
-      </div>
+      <div className="lsb-WalletBalance--list">{tokenListData ? <List items={tokenListData || []} onRenderCell={cellRender} /> : <SpinnerWallet />}</div>
     </div>
   )
 }

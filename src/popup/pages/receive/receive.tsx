@@ -1,15 +1,13 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
-import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
-
+import classNames from 'classnames'
+import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, TooltipHost, ITooltipHostStyles, FontIcon } from '@fluentui/react'
+import { QRCodeWallet } from 'popup/components/qr-code/qr-code'
+import { useGetAccount } from 'queries/account.queries'
 import { useId } from '@uifabric/react-hooks'
 import styles from './receive.module.css'
-
-import QrCodeImg from '../../assets/qr-code.png'
-
 import './receive.css'
-import classNames from 'classnames'
 
 export interface ReceiveProps {
   /**
@@ -43,9 +41,28 @@ interface Props {
   showPanel: () => void
   dismissPanel: () => void
 }
+const calloutProps = { gapSpace: 0 }
+const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } }
 
 export const ReceiveContainer: React.FC<ReceiveProps> = ({ primary = false, size = 'medium', backgroundColor, label, dismissPanel, ...props }) => {
   const mode = primary ? 'storybook-receive--primary' : 'storybook-receive--secondary'
+  const { data: account, status } = useGetAccount()
+  const tooltipId = useId('tooltip')
+  const [contentTooltip, setContentTooltip] = React.useState('Copy')
+  const onClickCopy = React.useCallback((value: string) => {
+    const text = value
+    setContentTooltip('Copied')
+    setTimeout(() => {
+      setContentTooltip('Copy')
+      const elem = document.createElement('textarea')
+      document.body.appendChild(elem)
+      elem.value = text
+      elem.select()
+      document.execCommand('copy')
+      document.body.removeChild(elem)
+    }, 1500)
+  }, [])
+
   return (
     <div className={['storybook-receive', `storybook-receive--${size}`, mode].join(' ')} style={{ backgroundColor }} {...props}>
       <header className="bg-blue-5 text-white">
@@ -74,13 +91,19 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({ primary = false, size
           <div className="card-desc w-full">
             <div className="text-center">
               <div className="qr mt-5 mb-12">
-                <img className="m-auto" src={QrCodeImg} alt="qr-code" width="208" height="208" />
+                <QRCodeWallet keyAddress="hehlll" />
               </div>
-              <div className="code text-xl break-all">
-                ANB279HZ88QQOIQWUEZ9201AN728MNZ &nbsp;
-                <Icon className="text-blue-5 inline" iconName="Copy" />
-              </div>
-              <button type="button" className="mt-5 bg-blue-6 text-blue-5 py-4 px-4 rounded flex items-center w-full justify-center">
+              <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
+                <div
+                  onClick={() => onClickCopy(account.paymentAddress)}
+                  className="flex flex-row items-center justify-center code text-xl break-all cursor-pointer"
+                >
+                  <p className={styles.keyText}>{account.paymentAddress}</p>
+                  <Icon className="text-blue-5 inline" iconName="Copy" />
+                </div>
+              </TooltipHost>
+
+              <button type="button" className="mt-5 bg-blue-6 text-blue-5 py-4 px-4 rounded flex flex-row items-center w-full justify-center">
                 <Icon className="text-blue-5 mr-2" iconName="ShareiOS" />
                 <span>Share</span>
               </button>

@@ -1,11 +1,11 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useGetListAccount } from 'queries/account.queries'
+import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import styles from './account-list.module.css'
 
 export const AccountList = () => {
   const accountList = useGetListAccount()
-
   if (!accountList.isLoading && accountList.data) {
     return (
       <ul className={classNames('mt-4 p-4')}>
@@ -26,5 +26,5 @@ export const AccountList = () => {
       </ul>
     )
   }
-  return <h1>Loading...</h1>
+  return <SpinnerWallet />
 }

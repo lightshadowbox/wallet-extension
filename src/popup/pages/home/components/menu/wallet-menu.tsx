@@ -9,8 +9,9 @@ import { DropdownMenu } from '../index'
 interface Props {
   showPanel: () => void
   showPanelBackup: () => void
+  showPanelAcc: () => void
 }
-export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup }) => {
+export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPanelAcc }) => {
   const [isOpen, setIsOpen] = React.useState(false)
   const onOpenMenuClick = React.useCallback(() => {
     if (isOpen) {
@@ -50,7 +51,7 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup }) => {
       </SecondaryButton>
       <div className={classNames('flex-grow')} />
       <div className={classNames('relative menu')}>
-        {isOpen ? <DropdownMenu showPanelBackup={showPanelBackup} onOpenMenuClick={onOpenMenuClick} /> : null}
+        {isOpen ? <DropdownMenu showPanelAcc={showPanelAcc} showPanelBackup={showPanelBackup} onOpenMenuClick={onOpenMenuClick} /> : null}
         <FaButton onClick={onOpenMenuClick} iconProps={{ iconName: 'MoreVertical' }} iconColor={theme.palette.white} />
       </div>
     </>

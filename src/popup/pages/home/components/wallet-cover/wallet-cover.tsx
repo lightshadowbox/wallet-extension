@@ -5,6 +5,7 @@ import Avatar from 'popup/assets/avatar.png'
 import styled from 'styled-components'
 import { useTheme } from 'popup/services'
 import { Button, SecondaryButton } from 'popup/components/button'
+import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import { useGetAccount } from 'queries/account.queries'
 
 import { useId, useConst } from '@uifabric/react-hooks'
@@ -28,67 +29,52 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
     // you must manually specify the callout target.
     target: `#${buttonId}`,
   })
-  const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
-  const token = {
-    sectionStack: {
-      childrenGap: 10,
-    },
-    spinnerStack: {
-      childrenGap: 20,
-    },
-  }
-  const onClickCopy = React.useCallback((e) => {
-    e.preventDefault()
+  const onClickCopy = React.useCallback(() => {
     const text = account.data.paymentAddress
-    const elem = document.createElement('textarea')
-    document.body.appendChild(elem)
-    elem.value = text
-    elem.select()
-    document.execCommand('copy')
-    document.body.removeChild(elem)
+
     setContentTooltip('Copied')
     setTimeout(() => {
+      const elem = document.createElement('textarea')
+      document.body.appendChild(elem)
+      elem.value = text
+      elem.select()
+      document.execCommand('copy')
+      document.body.removeChild(elem)
       setContentTooltip('Copy')
-    }, 3000)
-  }, [])
-  if (!account.isLoading) {
+    }, 1500)
+  }, [account?.data?.paymentAddress])
+
+  if (account.isSuccess) {
     return (
-      <h1>hello</h1>
-      // <div className={classNames('relative flex flex-col items-center justify-between w-full h-full pl-4 pr-4 pb-4')}>
-      //   <PersonaOutline>
-      //     <Persona imageUrl={Avatar} size={PersonaSize.size48} imageAlt="A" hidePersonaDetails />
-      //   </PersonaOutline>
-      //   <TextButton onClick={showPanel} color={theme.palette.themeDarker} hoverColor={theme.palette.themeDark}>
-      //     <span className={classNames('mr-2')}>{account.data.name}</span>
-      //     <Icon iconName="ChevronDown" />
-      //   </TextButton>
+      <div className={classNames('relative flex flex-col items-center justify-between w-full h-full pl-4 pr-4 pb-4')}>
+        <PersonaOutline>
+          <Persona imageUrl={Avatar} size={PersonaSize.size48} imageAlt="A" hidePersonaDetails />
+        </PersonaOutline>
+        <TextButton onClick={showPanel} color={theme.palette.themeDarker} hoverColor={theme.palette.themeDark}>
+          <span className={classNames('mr-2')}>{account.data.name}</span>
+          <Icon iconName="ChevronDown" />
+        </TextButton>
 
-      //   <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps}>
-      //     <TextButton id={buttonId} aria-describedby={tooltipId} onClick={onClickCopy} hoverColor={theme.palette.themeDark}>
-      //       <span className={classNames(`text-gray-3 font-medium paymentAddress ${styles.accountName}`)}>{account.data.paymentAddress}</span>
-      //       <span className={classNames('text-gray-3 font-medium mr-2')}>...</span>
-      //       <Icon iconName="Copy" />
-      //     </TextButton>
-      //   </TooltipHost>
+        <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps}>
+          <TextButton id={buttonId} aria-describedby={tooltipId} onClick={onClickCopy} hoverColor={theme.palette.themeDark}>
+            <span className={classNames(`text-gray-3 font-medium paymentAddress ${styles.accountName}`)}>{account.data.paymentAddress}</span>
+            <span className={classNames('text-gray-3 font-medium mr-2')}>...</span>
+            <Icon iconName="Copy" />
+          </TextButton>
+        </TooltipHost>
 
-      //   <Label className={classNames('text-5xl p-0')}>
-      //     101.25
-      //     <span className={classNames('ml-1 text-2xl text-gray-2')}>USD</span>
-      //   </Label>
-      //   <Stack className={classNames('w-full mt-5 justify-between')} horizontal horizontalAlign="center">
-      //     <Button onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} text="Receive" />
-      //     <SecondaryButton onClick={showPanelSend} iconProps={{ iconName: 'Send' }} text="Send" />
-      //   </Stack>
-      // </div>
+        <Label className={classNames('text-5xl p-0')}>
+          101.25
+          <span className={classNames('ml-1 text-2xl text-gray-2')}>USD</span>
+        </Label>
+        <Stack className={classNames('w-full mt-5 justify-between')} horizontal horizontalAlign="center">
+          <Button onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} text="Receive" />
+          <SecondaryButton onClick={showPanelSend} iconProps={{ iconName: 'Send' }} text="Send" />
+        </Stack>
+      </div>
     )
   }
-  return (
-    <div className={classNames('flex flex-col h-full items-center justify-center')}>
-      <Stack {...rowProps} tokens={token.spinnerStack}>
-        <Spinner size={SpinnerSize.large} />
-      </Stack>
-    </div>
-  )
+  return <SpinnerWallet />
 }
 
 const PersonaOutline = styled.div`

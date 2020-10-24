@@ -9,7 +9,6 @@ import { useGetWallet } from './wallet.queries'
 export const useGetAccount = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const { data: wallet } = useGetWallet()
-
   return useQuery<AccountModelType>(
     [useGetAccount.name, selectedAccount],
     async () => {
@@ -17,10 +16,13 @@ export const useGetAccount = () => {
       const accountSerizialed = await serializeAccount(accountInstance)
       return accountSerizialed
     },
-    { enabled: wallet && selectedAccount },
+    {
+      enabled: selectedAccount,
+    },
   )
 }
 export type GetListAccountType = { accountName: string; USD: string; PRV: string }
+export type GetListPrivateAccount = { accountName: string; privateKey: string }
 export const useGetListAccount = () => {
   const { data: wallet } = useGetWallet()
 
@@ -35,6 +37,26 @@ export const useGetListAccount = () => {
             accountName: account.name,
             USD: '0.00',
             PRV: (nanoPRV.toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2),
+          }
+        }),
+      )
+      return accountLists
+    },
+    { enabled: wallet },
+  )
+}
+export const useGetListPrivateKey = () => {
+  const { data: wallet } = useGetWallet()
+
+  return useQuery<GetListPrivateAccount[]>(
+    [useGetListAccount.name],
+    async () => {
+      const accounts = wallet.masterAccount.getAccounts()
+      const accountLists = await Promise.all(
+        accounts.map<Promise<GetListPrivateAccount>>(async (account) => {
+          return {
+            accountName: account.name,
+            privateKey: account.key.keySet.privateKeySerialized,
           }
         }),
       )

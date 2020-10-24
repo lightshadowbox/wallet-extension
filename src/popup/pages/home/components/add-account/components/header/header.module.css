@@ -26,5 +26,5 @@
 .headerText {
   font-size: 16px;
   line-height: 24px;
-  @apply font-medium;
+  font-weight: 600;
 }

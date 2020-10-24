@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { useSettingStore } from 'popup/stores/features/settings'
 
 import { HomePage } from './pages/home/home-page'
+import { QRCodeWallet } from './components/qr-code/qr-code'
 import { WelcomePage } from './pages/Welcome/welcome-page'
 
 export const AppRouter = () => {

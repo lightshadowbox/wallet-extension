@@ -38,7 +38,7 @@ export const BackupAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
         dismissPanel()
       }, 500)
     }
-  }, [])
+  }, [isSuccess])
   return (
     isPanelOpen && (
       <div className={`absolute inset-0 backupAccount ${styles.container}`}>

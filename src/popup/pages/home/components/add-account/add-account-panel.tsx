@@ -22,7 +22,7 @@ const AddAccountContainer: React.FC<{
   <div className={classNames('flex flex-col w-full h-full relative bg-white')}>
     <div className={classNames('w-full')}>{header}</div>
     <div className={classNames('w-full')}>{button}</div>
-    <div className={classNames('w-full')}>{account}</div>
+    <div className={classNames('w-full h-full')}>{account}</div>
     <div className={classNames('w-full h-full')}>{importAccount}</div>
   </div>
 )
@@ -47,7 +47,7 @@ export const AddAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismi
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <AddAccountContainer
-              header={<Header title="Add Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
+              header={<Header title="Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
               button={<BtnAdd onImportClick={showPanelImport} />}
               account={<AccountList />}
               importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={onDismissImport} />}

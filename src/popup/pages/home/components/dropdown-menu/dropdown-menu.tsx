@@ -6,11 +6,21 @@ import classNames from 'classnames'
 import styles from './dropdown-menu.module.css'
 import './dropdown-menu.css'
 
-export const DropdownMenu: React.FC<{ showPanelBackup: () => void; onOpenMenuClick: () => void }> = ({ showPanelBackup, onOpenMenuClick }) => {
+export const DropdownMenu: React.FC<{ showPanelBackup: () => void; onOpenMenuClick: () => void; showPanelAcc: () => void }> = ({
+  showPanelBackup,
+  onOpenMenuClick,
+  showPanelAcc,
+}) => {
   return (
     <div className={classNames(`absolute inset-0 dropdown ${styles.dropdownContainer}`)}>
       <ul>
-        <li className={styles.dropdownItem}>
+        <li
+          onClick={() => {
+            showPanelAcc()
+            onOpenMenuClick()
+          }}
+          className={styles.dropdownItem}
+        >
           <FontIcon iconName="Contact" />
           <p>Account</p>
         </li>

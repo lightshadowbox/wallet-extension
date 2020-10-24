@@ -52,6 +52,7 @@ export const HomePage = () => {
   const dismissPanelBottom = (panel) => {
     const element = document.querySelector(`.${panel} .ms-Panel`) as HTMLElement
     element.style.animation = 'none'
+    element.style.animationDelay = 'none'
     element.style.animation = 'moveOutBottom 0.3s'
     setTimeout(() => {
       element.style.animation = 'moveInBottom 0.3s'
@@ -71,7 +72,7 @@ export const HomePage = () => {
       receive={<ReceivePanel isPanelOpen={isPanelOpenReceive} showPanel={showPanelReceive} dismissPanel={() => onDismissPanelRight('receive')} />}
       send={<SendPanel isPanelOpen={isPanelOpenSend} showPanel={showPanelSend} dismissPanel={() => onDismissPanelRight('send')} />}
       cover={<WalletCover showPanel={showPanelAcc} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
-      menu={<WalletMenu showPanel={showPanelNetwork} showPanelBackup={showPanelBackup} />}
+      menu={<WalletMenu showPanel={showPanelNetwork} showPanelAcc={showPanelAcc} showPanelBackup={showPanelBackup} />}
       token={<AddTokenPanel isPanelOpen={isPanelOpenToken} showPanel={showPanelToken} dismissPanel={() => dismissPanelBottom('add-token')} />}
       network={<NetworkPanel isPanelOpen={isPanelOpenNetwork} showPanel={showPanelNetwork} dismissPanel={() => dismissPanelBottom('network')} />}
       account={<AddAccountPanel isPanelOpen={isPanelOpenAcc} showPanel={showPanelAcc} dismissPanel={() => dismissPanelBottom('account')} />}

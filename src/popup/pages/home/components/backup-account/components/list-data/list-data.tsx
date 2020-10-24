@@ -1,10 +1,30 @@
 import React from 'react'
+import { TooltipHost, ITooltipHostStyles, FontIcon } from '@fluentui/react'
+import { useId } from '@uifabric/react-hooks'
 import { useGetAccount } from 'queries/account.queries'
-import { FontIcon } from '@fluentui/react'
+
 import styles from './list-data.module.css'
+
+const calloutProps = { gapSpace: 0 }
+const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } }
 
 export const ListData = () => {
   const account = useGetAccount()
+  const tooltipId = useId('tooltip')
+  const [contentTooltip, setContentTooltip] = React.useState('Copy')
+  const onClickCopy = React.useCallback((value: string) => {
+    const text = value
+    setContentTooltip('Copied')
+    setTimeout(() => {
+      setContentTooltip('Copy')
+      const elem = document.createElement('textarea')
+      document.body.appendChild(elem)
+      elem.value = text
+      elem.select()
+      document.execCommand('copy')
+      document.body.removeChild(elem)
+    }, 1500)
+  }, [])
   if (account.status === 'success') {
     return (
       <ul className={styles.container}>
@@ -17,7 +37,9 @@ export const ListData = () => {
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
-              <FontIcon iconName="Copy" />
+              <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
+                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.paymentAddress)} />
+              </TooltipHost>
             </div>
           </div>
         </li>
@@ -30,7 +52,9 @@ export const ListData = () => {
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
-              <FontIcon iconName="Copy" />
+              <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
+                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.privateKey)} />
+              </TooltipHost>
             </div>
           </div>
         </li>
@@ -44,7 +68,9 @@ export const ListData = () => {
 
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
-              <FontIcon iconName="Copy" />
+              <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
+                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.publicKey)} />
+              </TooltipHost>
             </div>
           </div>
         </li>
@@ -57,7 +83,9 @@ export const ListData = () => {
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
-              <FontIcon iconName="Copy" />
+              <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
+                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.viewingKey)} />
+              </TooltipHost>
             </div>
           </div>
         </li>
@@ -70,7 +98,9 @@ export const ListData = () => {
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
-              <FontIcon iconName="Copy" />
+              <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
+                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.privateKey)} />
+              </TooltipHost>
             </div>
           </div>
         </li>

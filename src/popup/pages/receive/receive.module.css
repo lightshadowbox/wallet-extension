@@ -23,3 +23,8 @@
 .headerIcon i {
   @apply font-normal;
 }
+.keyText {
+  width: 250px;
+  height: 50px;
+  overflow: hidden;
+}
