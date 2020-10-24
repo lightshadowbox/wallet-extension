@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
-import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Toggle, DefaultButton, Modal, IDragOptions, IconButton, IIconProps } from '@fluentui/react'
+import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Modal, IDragOptions, IconButton, IIconProps } from '@fluentui/react'
 import { useId, useBoolean } from '@uifabric/react-hooks'
 import { walletRuntime } from 'services/wallet'
 import { SecondaryButton } from 'popup/components/button'

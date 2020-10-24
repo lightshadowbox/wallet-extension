@@ -4,7 +4,6 @@
 import React from 'react'
 import { Button } from 'popup/components/button/button'
 import classNames from 'classnames'
-import { walletRuntime } from 'services/wallet'
 import { useImportAccountFromPrivateKey } from 'queries/create-account.mutation'
 import { MessageBar, MessageBarType } from '@fluentui/react'
 import styles from './account.module.css'

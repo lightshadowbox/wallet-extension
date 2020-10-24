@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { useSettingStore } from 'popup/stores/features/settings'
 
 import { HomePage } from './pages/home/home-page'
-import { WelcomePage } from './pages/welcome/welcome-page'
-import { ReceivePanel } from './pages/receive/receive'
+import { QRCodeWallet } from './components/qr-code/qr-code'
+import { WelcomePage } from './pages/Welcome/welcome-page'
 
 export const AppRouter = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
@@ -25,7 +25,6 @@ export const AppRouter = () => {
     <Router>
       <>
         <Switch>
-          <Route path="/receive" component={ReceivePanel} />
           <Route component={HomePage} />
         </Switch>
       </>

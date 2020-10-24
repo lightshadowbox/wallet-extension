@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import classNames from 'classnames'
 import React from 'react'
 import { useId } from '@uifabric/react-hooks'
@@ -5,7 +6,7 @@ import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Custom
 import { Header, QRCam, Account } from './components/index'
 import './Connect-panel.css'
 import styles from './Connect-panel.module.css'
-import { useImportAccountFromPrivateKey } from 'queries/create-account.mutation'
+import { useSettingStore } from 'popup/stores/features/settings'
 
 interface Props {
   isPanelOpen: boolean
@@ -29,8 +30,10 @@ export const ImportAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
   const [privateKey, setPrivateKey] = React.useState('')
   const [accountName, setAccountName] = React.useState('')
   const scopedSettings = useLayerSettings(true, layerHostId)
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return (
-    isPanelOpen && (
+    isPanelOpen &&
+    selectedAccount && (
       <div className={`connect ${styles.container}`}>
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>

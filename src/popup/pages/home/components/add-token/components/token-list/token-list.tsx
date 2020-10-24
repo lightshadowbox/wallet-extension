@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 /* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -6,31 +7,15 @@ import './token-list.css'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 import React from 'react'
-import { walletRuntime } from 'services/wallet'
 
 import classNames from 'classnames'
-import { useQuery } from 'react-query'
-import {
-  FocusZone,
-  FocusZoneDirection,
-  FontIcon,
-  getFocusStyle,
-  getTheme,
-  Image,
-  ImageFit,
-  ITheme,
-  List,
-  mergeStyleSets,
-  Spinner,
-  SpinnerSize,
-  IStackProps,
-  Stack,
-} from '@fluentui/react'
+import { FocusZone, FocusZoneDirection, FontIcon, getFocusStyle, getTheme, Image, ImageFit, ITheme, List, mergeStyleSets } from '@fluentui/react'
 
 import { useGetAccount } from 'queries/account.queries'
 import { useFetchToken } from 'queries/token.queries'
+import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
-import GetTokens, { TokenItemInterface } from './token'
+import { TokenItemInterface } from './token'
 import styles from './token-list.module.css'
 
 const theme: ITheme = getTheme()
@@ -108,11 +93,13 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
       console.log(account?.followingTokens)
     }
   }, [addTokenStatus, removeTokenStatus])
-
+  const onLoadImageFail = (e) => {
+    e.target.src = 'https://picsum.photos/200'
+  }
   return (
-    <div onClick={clickAddToken} className={classNamesList.itemCell} data-is-focusable>
+    <div className={`${classNamesList.itemCell} token-list-container`} data-is-focusable>
       <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
-        <Image className={classNamesList.itemImage} src={item.icon} width={36} height={36} imageFit={ImageFit.cover} />
+        <img onError={onLoadImageFail} className={classNamesList.itemImage} src={item.icon} />
         {account?.followingTokens?.indexOf(item.tokenId) !== -1 ? (
           <div className={styles.containerIcon}>
             <FontIcon iconName="SkypeCircleCheck" />
@@ -122,38 +109,33 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
       <div className={classNamesList.itemContent} style={{ display: 'flex', alignItems: 'center' }}>
         <div className={classNamesList.itemName}>{item.name}</div>
       </div>
+      <div className={classNames('flex flex-row items-center justify-center btn-token')}>
+        {account?.followingTokens?.indexOf(item.tokenId) !== -1 ? (
+          <button onClick={() => removeToken(item.tokenId)} className={styles.btnRemove}>
+            Remove
+          </button>
+        ) : (
+          <button onClick={() => addToken(item.tokenId)} className={styles.btnAdd}>
+            Add
+          </button>
+        )}
+      </div>
     </div>
   )
 }
 
 export const ListGhostingExample: React.FunctionComponent<Props> = (accountName) => {
-  const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
-
   const { data } = useFetchToken()
   const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [data])
-  const token = {
-    sectionStack: {
-      childrenGap: 10,
-    },
-    spinnerStack: {
-      childrenGap: 20,
-    },
-  }
 
   if (data) {
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
-        <div className={classNamesList.container} data-is-scrollable>
+        <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
           <List items={Object.values(data)} onRenderCell={onRenderCell} />
         </div>
       </FocusZone>
     )
   }
-  return (
-    <div className={classNames('w-full h-full flex flex-col align-middle justify-center')}>
-      <Stack {...rowProps} tokens={token.spinnerStack}>
-        <Spinner size={SpinnerSize.large} />
-      </Stack>
-    </div>
-  )
+  return <SpinnerWallet />
 }

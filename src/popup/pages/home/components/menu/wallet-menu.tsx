@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import classNames from 'classnames'
 import { FaButton, SecondaryButton } from 'popup/components/button'
 import { useTheme } from 'popup/services'
@@ -7,10 +8,12 @@ import { DropdownMenu } from '../index'
 
 interface Props {
   showPanel: () => void
+  showPanelBackup: () => void
+  showPanelAcc: () => void
 }
-export const WalletMenu: React.FC<Props> = ({ showPanel }) => {
+export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPanelAcc }) => {
   const [isOpen, setIsOpen] = React.useState(false)
-  const onOpenClick = () => {
+  const onOpenMenuClick = React.useCallback(() => {
     if (isOpen) {
       const node = document.querySelector('.menu .dropdown') as HTMLElement
       node.style.animation = 'none'
@@ -22,7 +25,7 @@ export const WalletMenu: React.FC<Props> = ({ showPanel }) => {
       }, 200)
     }
     return setIsOpen(!isOpen)
-  }
+  }, [isOpen])
   const theme = useTheme()
   return (
     <>
@@ -48,8 +51,8 @@ export const WalletMenu: React.FC<Props> = ({ showPanel }) => {
       </SecondaryButton>
       <div className={classNames('flex-grow')} />
       <div className={classNames('relative menu')}>
-        {isOpen ? <DropdownMenu /> : null}
-        <FaButton onClick={onOpenClick} iconProps={{ iconName: 'MoreVertical' }} iconColor={theme.palette.white} />
+        {isOpen ? <DropdownMenu showPanelAcc={showPanelAcc} showPanelBackup={showPanelBackup} onOpenMenuClick={onOpenMenuClick} /> : null}
+        <FaButton onClick={onOpenMenuClick} iconProps={{ iconName: 'MoreVertical' }} iconColor={theme.palette.white} />
       </div>
     </>
   )

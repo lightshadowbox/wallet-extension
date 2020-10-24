@@ -1,5 +1,12 @@
-.imgContainer  i{
-    width:100%;
-    height:100%;
-    font-size: 14px;
+.imgContainer i {
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+}
+.btn-token {
+  transition: all 0.3s;
+  opacity: 0;
+}
+.token-list-container:hover .btn-token {
+  opacity: 1;
 }
