@@ -24,7 +24,7 @@ const AddTokenContainer: React.FC<{
 )
 export const AddTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
   const layerHostId = useId('layerHost')
-
+  const [valueInput, setValueInput] = React.useState('')
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (
     isPanelOpen && (
@@ -33,8 +33,8 @@ export const AddTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismiss
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <AddTokenContainer
               header={<Header title="Add Token" icon="ChromeClose" dismissPanel={dismissPanel} />}
-              searchInput={<SearchInput placeholder="Choose token..." />}
-              list={<ListGhostingExample accountName="Tran Hoang" />}
+              searchInput={<SearchInput placeholder="Choose token..." setValueInput={setValueInput} />}
+              list={<ListGhostingExample valueInput={valueInput} />}
             >
               <div>Body will coming soon </div>
             </AddTokenContainer>

@@ -2,7 +2,6 @@
   @apply align-bottom;
   padding: 14px 12px;
   padding-left: 24px;
-  cursor: pointer;
 }
 .list {
   overflow: scroll;
@@ -33,29 +32,34 @@
   height: 36px;
 }
 .btnAdd {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
-  border: 1px solid #007bff;
+  cursor: pointer;
+  color: black;
   transition: all 0.3s;
+  font-size: 12px;
+  padding: 0.2rem;
   border-radius: 4px;
-  outline: none;
+  background-color: #f2f2f2;
+  color: #a4a4a4;
 }
 .btnAdd:hover {
-  background-color: #2e64fe;
 }
 .btnRemove {
-  outline: none;
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
-  color: white;
-  border: 1px solid #dc3545;
+  cursor: pointer;
+  color: black;
   transition: all 0.3s;
+  font-size: 12px;
+  padding: 0.2rem;
   border-radius: 4px;
-  font-weight: 600;
+  background-color: #f2f2f2;
+  color: #a4a4a4;
+}
+.btnRemove:focus {
+  outline: none;
+}
+.btnAdd:focus {
+  outline: none;
 }
 .btnRemove:hover {
-  background-color: #b40431;
 }
 .img {
   width: 100%;
