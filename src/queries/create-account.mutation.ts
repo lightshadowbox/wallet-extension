@@ -24,6 +24,9 @@ export const useCreateWallet = () => {
     },
   })
 }
+export const useSwitchAccount = (accountName: string) => {
+  store.dispatch(settingSlices.actions.selectAccount({ accountName }))
+}
 
 export const useAddToken = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
