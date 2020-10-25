@@ -45,23 +45,3 @@ export const useGetListAccount = () => {
     { enabled: wallet },
   )
 }
-export const useGetListPrivateKey = () => {
-  const { data: wallet } = useGetWallet()
-
-  return useQuery<GetListPrivateAccount[]>(
-    [useGetListAccount.name],
-    async () => {
-      const accounts = wallet.masterAccount.getAccounts()
-      const accountLists = await Promise.all(
-        accounts.map<Promise<GetListPrivateAccount>>(async (account) => {
-          return {
-            accountName: account.name,
-            privateKey: account.key.keySet.privateKeySerialized,
-          }
-        }),
-      )
-      return accountLists
-    },
-    { enabled: wallet },
-  )
-}
