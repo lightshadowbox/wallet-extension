@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
 import classNames from 'classnames'
-import { useGetListPrivateKey } from 'queries/account.queries'
+import { useGetListAccount } from 'queries/account.queries'
 import styles from './send.module.css'
 
 import './send.css'
@@ -149,7 +149,7 @@ const DropdownCoins = React.memo(() => {
  * Primary UI component for user interaction
  */
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, ...props }) => {
-  const { data: accounts, isSuccess } = useGetListPrivateKey()
+  const { data: accounts, isSuccess } = useGetListAccount()
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   return (
     <div className={['storybook-send', mode].join(' ')} style={{ backgroundColor }} {...props}>
@@ -186,7 +186,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 </div>
                 <div className="field__wrapper relative">
                   <select id="transfer-account" className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5">
-                    {isSuccess ? accounts.map((account) => <option>{account.privateKey}</option>) : <option>...</option>}
+                    {isSuccess ? accounts.map((account) => <option>{account.accountName}</option>) : <option>...</option>}
                   </select>
                   <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
                 </div>

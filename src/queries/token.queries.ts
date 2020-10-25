@@ -8,6 +8,7 @@ import { useSettingStore } from 'popup/stores/features/settings'
 import { getAccountRuntime, getWalletInstance } from 'services/wallet'
 import { CONSTANT } from 'incognito-sdk/build/web/module'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
+import { useGetAccount } from 'queries/account.queries'
 
 interface CustomTokenReceivedModel {
   id: number

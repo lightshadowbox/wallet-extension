@@ -13,6 +13,7 @@ import { FocusZone, FocusZoneDirection, FontIcon, getFocusStyle, getTheme, Image
 
 import { useGetAccount } from 'queries/account.queries'
 import { useFetchToken } from 'queries/token.queries'
+
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
 import { TokenItemInterface } from './token'
@@ -21,7 +22,7 @@ import styles from './token-list.module.css'
 const theme: ITheme = getTheme()
 const { palette, semanticColors, fonts } = theme
 interface Props {
-  accountName: string
+  valueInput: string
 }
 const classNamesList = mergeStyleSets({
   container: {
@@ -35,7 +36,6 @@ const classNamesList = mergeStyleSets({
       padding: 16,
       boxSizing: 'border-box',
       display: 'flex',
-      cursor: 'pointer',
       selectors: {
         '&:hover': { background: '#EFF3FE' },
       },
@@ -100,7 +100,7 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     <div className={`${classNamesList.itemCell} token-list-container`} data-is-focusable>
       <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
         <img onError={onLoadImageFail} className={classNamesList.itemImage} src={item.icon} />
-        {account?.followingTokens?.indexOf(item.tokenId) !== -1 ? (
+        {item.verified ? (
           <div className={styles.containerIcon}>
             <FontIcon iconName="SkypeCircleCheck" />
           </div>
@@ -123,16 +123,33 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     </div>
   )
 }
+const useGetTokenSequence = () => {
+  const { data: tokens } = useFetchToken()
+  const { data: account } = useGetAccount()
+  const TokenListTemp = Object.values(tokens).filter((token) => !account?.followingTokens?.includes(token.tokenId))
+  const TokenListFollowing = Object.values(tokens).filter((token) => account?.followingTokens?.includes(token.tokenId))
+  return {
+    data: [...TokenListFollowing, ...TokenListTemp],
+  }
+}
 
-export const ListGhostingExample: React.FunctionComponent<Props> = (accountName) => {
-  const { data } = useFetchToken()
+export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput }) => {
+  const { data } = useGetTokenSequence()
   const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [data])
-
+  const [listToken, setListToken] = React.useState(Object.values(data))
+  React.useEffect(() => {
+    if (valueInput === '') {
+      setListToken(data)
+    } else {
+      const consumeToken = data.filter((token) => token.name.indexOf(valueInput) !== -1)
+      setListToken(consumeToken)
+    }
+  }, [valueInput])
   if (data) {
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
-          <List items={Object.values(data)} onRenderCell={onRenderCell} />
+          <List items={listToken} onRenderCell={onRenderCell} />
         </div>
       </FocusZone>
     )
