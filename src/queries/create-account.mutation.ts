@@ -2,6 +2,7 @@ import { store } from 'popup/stores'
 import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
 import { useMutation } from 'react-query'
 import { queryCache } from 'services/query-cache'
+import { walletRuntime } from 'services/wallet'
 
 import { createWalletWithPassword, followToken, importAccountFromPrivateKey, unfollowToken } from '../services/wallet'
 
@@ -23,9 +24,6 @@ export const useCreateWallet = () => {
       console.error(err)
     },
   })
-}
-export const useSwitchAccount = (accountName: string) => {
-  store.dispatch(settingSlices.actions.selectAccount({ accountName }))
 }
 
 export const useAddToken = () => {
@@ -54,6 +52,21 @@ export const useRemoveToken = () => {
       console.error(err)
     },
   })
+}
+export const useAddAccount = (hidePanel: () => void) => {
+  return useMutation((accountName: string) => addAccount(accountName), {
+    onSuccess: () => {
+      hidePanel()
+    },
+    onError: (err) => {
+      console.error(err)
+    },
+  })
+}
+export const addAccount = async (accountName: string) => {
+  const account = await walletRuntime.masterAccount.addAccount(accountName, 3)
+  console.log('Account with shard ID 3', account)
+  console.log(walletRuntime.masterAccount.getAccounts())
 }
 
 export const useImportAccountFromPrivateKey = (onSuccess?: CallableFunction) => {

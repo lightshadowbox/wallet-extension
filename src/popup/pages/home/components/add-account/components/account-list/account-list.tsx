@@ -4,7 +4,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { useGetListAccount, useGetAccount } from 'queries/account.queries'
 import { FontIcon } from '@fluentui/react'
-import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
+import { Shimmer } from 'popup/components/shimmer/shimmer'
 import { store } from 'popup/stores'
 import { settingSlices } from 'popup/stores/features/settings'
 import styles from './account-list.module.css'
@@ -43,5 +43,9 @@ export const AccountList = () => {
       </ul>
     )
   }
-  return <SpinnerWallet />
+  return (
+    <div className={classNames('mt-4 p-4')}>
+      <Shimmer />
+    </div>
+  )
 }

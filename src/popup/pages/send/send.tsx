@@ -186,7 +186,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 </div>
                 <div className="field__wrapper relative">
                   <select id="transfer-account" className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5">
-                    {isSuccess ? accounts.map((account) => <option>{account.accountName}</option>) : <option>...</option>}
+                    {isSuccess ? accounts.map((account) => <option key={account.accountName}>{account.accountName}</option>) : <option>...</option>}
                   </select>
                   <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
                 </div>

@@ -12,6 +12,7 @@ export const useGetAccount = () => {
     [useGetAccount.name, selectedAccount],
     async () => {
       const accountInstance = await getAccountRuntime(selectedAccount)
+
       const accountSerizialed = await serializeAccount(accountInstance)
       return accountSerizialed
     },
@@ -21,7 +22,6 @@ export const useGetAccount = () => {
   )
 }
 export type GetListAccountType = { accountName: string; USD: string; PRV: string }
-export type GetListPrivateAccount = { accountName: string; privateKey: string }
 export const useGetListAccount = () => {
   const { data: wallet } = useGetWallet()
 
