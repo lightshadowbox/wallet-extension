@@ -5,7 +5,7 @@ import { useSettingStore } from 'popup/stores/features/settings'
 
 import { HomePage } from './pages/home/home-page'
 import { QRCodeWallet } from './components/qr-code/qr-code'
-import { WelcomePage } from './pages/Welcome/welcome-page'
+import { WelcomePage } from './pages/welcome/welcome-page'
 
 export const AppRouter = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
