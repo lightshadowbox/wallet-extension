@@ -3,7 +3,7 @@ import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk'
 import { WalletInstance } from 'incognito-sdk'
-import token from 'popup/pages/home/components/add-token/components/token-list/token'
+import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
 import * as CONSTANTS from '../constants/app'
 import { serializeWallet } from '../models/wallet-model'
@@ -173,4 +173,17 @@ export const importAccountFromPrivateKey = async (accountName: string, privateKe
   const wallet = await getWalletInstance()
   const newAccount = await wallet.masterAccount.importAccount(accountName, privateKey)
   return newAccount
+}
+
+export const getTokenBalanceForAccount = async (accountName: string, tokenId: string) => {
+  const wallet = await getWalletInstance()
+  const account = wallet.masterAccount.getAccountByName(accountName)
+
+  if (tokenId === i.CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
+    return ((await account.nativeToken.getAvaiableBalance()).toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2)
+  }
+
+  const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+  const result = await tokenInstance.getAvaiableBalance()
+  return result.toNumber()
 }

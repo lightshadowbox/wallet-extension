@@ -8,7 +8,6 @@ import { useGetWallet } from './wallet.queries'
 
 export const useGetAccount = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  const { data: wallet } = useGetWallet()
   return useQuery<AccountModelType>(
     [useGetAccount.name, selectedAccount],
     async () => {

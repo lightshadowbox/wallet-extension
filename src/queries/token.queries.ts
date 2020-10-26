@@ -4,11 +4,11 @@ import { getFromCache } from 'services/query-cache'
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
-import { useSettingStore } from 'popup/stores/features/settings'
-import { getAccountRuntime, getWalletInstance } from 'services/wallet'
+
+import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 import { CONSTANT } from 'incognito-sdk/build/web/module'
-import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 import { useGetAccount } from 'queries/account.queries'
+import { useSettingStore } from 'popup/stores/features/settings'
 
 interface CustomTokenReceivedModel {
   id: number
@@ -101,7 +101,17 @@ export const getTokenList = async () => {
     tokenId: i.tokenId || `${i.id}`,
   }))
 
-  return keyBy(concat(tokensMapped, customTokenMapped), 'tokenId')
+  const PRV = {
+    tokenId: CONSTANT.WALLET_CONSTANT.PRVIDSTR,
+    name: 'PRV',
+    icon: 'https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/prv@2x.png',
+    pSymbol: 'PRV',
+    tokenType: 'TOKEN',
+    type: 0,
+    isFollowing: true,
+  }
+
+  return keyBy(concat([PRV], tokensMapped, customTokenMapped), 'tokenId')
 }
 
 export const useFetchToken = () => {
@@ -129,8 +139,8 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
         const d = get(tokenRemoteData, tokenId)
         return {
           tokenId,
-          name: d?.name || tokenId,
-          icon: d?.icon || '',
+          name: d?.name || 'UNKNOWN',
+          icon: d?.icon || '/logo.png',
           type: d?.type,
           isFollowing: d?.isFollowing,
         }
@@ -139,4 +149,9 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
     },
     { enabled: selectedAccount && tokenRemoteData },
   )
+}
+
+export const useGetTokenBalance = (token: string) => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useQuery([useGetTokenBalance.name, selectedAccount, token], () => getTokenBalanceForAccount(selectedAccount, token))
 }

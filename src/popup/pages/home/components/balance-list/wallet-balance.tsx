@@ -9,10 +9,35 @@ import './wallet-balance.css'
 import { SecondaryButton } from 'popup/components/button'
 
 import { useSettingStore } from 'popup/stores/features/settings'
-import { useGetTokenForAccount } from 'queries/token.queries'
+import { useGetTokenBalance, useGetTokenForAccount } from 'queries/token.queries'
 
 interface Props {
   showPanel: () => void
+}
+
+export const BalanceListCell: React.FC<{
+  item: {
+    tokenId: string
+    name: string
+    icon: string
+    type: number
+    isFollowing: boolean
+  }
+}> = ({ item }) => {
+  const balance = useGetTokenBalance(item.tokenId)
+  return (
+    <div className={classNames('flex p-4 hover:bg-gray-6')}>
+      <div className={classNames('flex items-center w-12')}>
+        <Persona showUnknownPersonaCoin={!item?.tokenId} imageUrl={item?.icon} size={PersonaSize.size32} hidePersonaDetails />
+      </div>
+      <div className={classNames('flex items-center flex-grow')}>
+        <Label>{item.name}</Label>
+      </div>
+      <div className={classNames('flex items-center justify-end')}>
+        <Label className={classNames('text-gray-2 text-xs font-normal')}>{balance?.data !== null ? balance.data : <Spinner size={SpinnerSize.xSmall} />}</Label>
+      </div>
+    </div>
+  )
 }
 
 export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
@@ -22,23 +47,11 @@ export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
   const cellRender = React.useCallback(
     (_, index: number): JSX.Element => {
       const i = tokenListData[index]
-      console.log(i)
-      return (
-        <div className={classNames('flex p-4 hover:bg-gray-6')}>
-          <div className={classNames('flex items-center w-12')}>
-            <Persona showUnknownPersonaCoin={!i?.tokenId} imageUrl={i?.icon} size={PersonaSize.size32} hidePersonaDetails />
-          </div>
-          <div className={classNames('flex items-center flex-grow')}>
-            <Label>{i.name}</Label>
-          </div>
-          <div className={classNames('flex items-center justify-end')}>
-            <Label className={classNames('text-gray-2 text-xs font-normal')}>1.25 USD</Label>
-          </div>
-        </div>
-      )
+      return <BalanceListCell item={i} />
     },
     [tokenListData?.length],
   )
+
   return (
     <div className="lsb-WalletBalance--container">
       <SecondaryButton full backgroundColor="transparent">
