@@ -18,7 +18,6 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
       const node = document.querySelector('.menu .dropdown') as HTMLElement
       node.style.animation = 'none'
       node.style.animation = 'dropdownOut 0.3s'
-      console.log(node)
       return setTimeout(() => {
         node.style.animation = 'dropdownIn 0.3s'
         setIsOpen(!isOpen)

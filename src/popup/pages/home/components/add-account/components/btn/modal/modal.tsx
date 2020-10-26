@@ -2,8 +2,8 @@
 import React from 'react'
 import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Modal, IDragOptions, IconButton, IIconProps } from '@fluentui/react'
 import { useId, useBoolean } from '@uifabric/react-hooks'
-import { walletRuntime } from 'services/wallet'
 import { SecondaryButton } from 'popup/components/button'
+import { useAddAccount } from 'queries/create-account.mutation'
 import './modal.css'
 import classNames from 'classnames'
 
@@ -17,23 +17,17 @@ const dragOptions: IDragOptions = {
   closeMenuItemText: 'Close',
   menu: ContextualMenu,
 }
-const AddAccount = async (wallet, name) => {
-  const account1 = await wallet.masterAccount.addAccount(name, 3)
-  console.log('Account with shard ID 3', account1)
-  console.log(wallet.masterAccount.getAccounts())
-}
 const cancelIcon: IIconProps = { iconName: 'Cancel' }
 
 export const ModalAddAccount: React.FunctionComponent<Props> = ({ showModal, hideModal, isModalOpen }) => {
   const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true)
-
+  const [addAccount, addAccountStatus] = useAddAccount(hideModal)
   // Use useId() to ensure that the IDs are unique on the page.
   // (It's also okay to use plain strings and manually ensure uniqueness.)
   const titleId = useId('title')
   const [name, setName] = React.useState('')
   const clickAddAccount = () => {
-    AddAccount(walletRuntime, name)
-    hideModal()
+    addAccount(name)
     setName('')
   }
 

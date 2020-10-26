@@ -77,22 +77,6 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
-  const clickAddToken = React.useCallback(() => {
-    if (account?.followingTokens?.indexOf(item.tokenId) === -1) {
-      console.log('add token', item.tokenId)
-      addToken(item.tokenId)
-    } else {
-      console.log('remove token', item.tokenId)
-
-      removeToken(item.tokenId)
-    }
-  }, [item, account?.followingTokens])
-
-  React.useEffect(() => {
-    if (addTokenStatus.isSuccess) {
-      console.log(account?.followingTokens)
-    }
-  }, [addTokenStatus, removeTokenStatus])
   const onLoadImageFail = (e) => {
     e.target.src = 'https://picsum.photos/200'
   }
@@ -126,10 +110,13 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
 const useGetTokenSequence = () => {
   const { data: tokens } = useFetchToken()
   const { data: account } = useGetAccount()
-  const TokenListTemp = Object.values(tokens).filter((token) => !account?.followingTokens?.includes(token.tokenId))
+  const pToken = Object.values(tokens).filter((token) => token.tokenType === 'TOKEN' && !account?.followingTokens?.includes(token.tokenId))
+  const pCustom = Object.values(tokens).filter((token) => token.tokenType === 'CUSTOM' && !account?.followingTokens?.includes(token.tokenId))
   const TokenListFollowing = Object.values(tokens).filter((token) => account?.followingTokens?.includes(token.tokenId))
+  const ConsumeToken = [...TokenListFollowing, ...pToken, ...pCustom]
+  console.log(ConsumeToken)
   return {
-    data: [...TokenListFollowing, ...TokenListTemp],
+    data: [...TokenListFollowing, ...pToken, ...pCustom],
   }
 }
 
