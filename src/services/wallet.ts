@@ -184,6 +184,11 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
   }
 
   const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+
+  if (!tokenInstance) {
+    return 0
+  }
+
   const result = await tokenInstance.getAvaiableBalance()
   return result.toNumber()
 }

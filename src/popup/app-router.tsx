@@ -1,11 +1,11 @@
-import React from 'react'
+import * as React from 'react'
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { useSettingStore } from 'popup/stores/features/settings'
 
 import { Shimmer } from 'popup/components/shimmer/shimmer'
 import { HomePage } from './pages/home/home-page'
-import { WelcomePage } from './pages/Welcome/welcome-page'
+import { WelcomePage } from './pages/welcome/welcome-page'
 
 export const AppRouter = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
