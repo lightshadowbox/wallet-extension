@@ -3,3 +3,7 @@
   height: 100%;
   font-size: 14px;
 }
+.token-list-container {
+  z-index: 0;
+  position: relative;
+}

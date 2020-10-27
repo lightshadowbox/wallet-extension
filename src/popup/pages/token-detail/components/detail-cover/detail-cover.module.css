@@ -1,0 +1,67 @@
+.price {
+  font-size: 40px;
+  font-weight: 600;
+}
+.usd {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  margin-left: 4px;
+}
+.prv {
+  font-size: 16px;
+  color: #757575;
+}
+.btnSend {
+  cursor: pointer;
+  margin: 0 3px;
+  border-radius: 4px;
+  width: 104px;
+  height: 58px;
+  color: #276ef1;
+  @apply flex;
+  @apply items-center;
+  @apply justify-center;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #eff3fe;
+  width: 200px;
+}
+.btnReceive i {
+  margin-right: 10px;
+}
+.btnSend i {
+  margin-right: 10px;
+}
+.btnSwap i {
+  margin-right: 10px;
+}
+.btnReceive {
+  cursor: pointer;
+  margin: 0 3px;
+  border-radius: 4px;
+  width: 104px;
+  height: 58px;
+  color: white;
+  @apply flex;
+  @apply items-center;
+  @apply justify-center;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #276ef1;
+  width: 200px;
+}
+.btnSwap {
+  cursor: pointer;
+  margin: 0 3px;
+  border-radius: 4px;
+  width: 104px;
+  height: 58px;
+  @apply flex;
+  @apply items-center;
+  @apply justify-center;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #eeeeee;
+  width: 200px;
+}

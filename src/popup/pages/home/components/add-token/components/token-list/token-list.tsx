@@ -23,6 +23,8 @@ const theme: ITheme = getTheme()
 const { palette, semanticColors, fonts } = theme
 interface Props {
   valueInput: string
+  showPanelTokenDetail: (value) => void
+  dismissPanel: () => void
 }
 const classNamesList = mergeStyleSets({
   container: {
@@ -73,7 +75,7 @@ const classNamesList = mergeStyleSets({
   },
 })
 
-export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
+export const TokenCell: React.FC<{ item: TokenItemInterface; showPanel: (value) => void; dismissPanel: () => void }> = ({ item, showPanel, dismissPanel }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
@@ -81,25 +83,43 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     e.target.src = 'https://picsum.photos/200'
   }
   return (
-    <div className={`${classNamesList.itemCell} token-list-container`} data-is-focusable>
-      <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
-        <img onError={onLoadImageFail} className={classNamesList.itemImage} src={item.icon} />
-        {item.verified ? (
-          <div className={styles.containerIcon}>
-            <FontIcon iconName="SkypeCircleCheck" />
-          </div>
-        ) : null}
-      </div>
-      <div className={classNamesList.itemContent} style={{ display: 'flex', alignItems: 'center' }}>
-        <div className={classNamesList.itemName}>{item.name}</div>
+    <div className={`${classNamesList.itemCell} token-list-container justify-between`} data-is-focusable>
+      <div onClick={() => showPanel(item.tokenId)} className={classNames('flex flex-row cursor-pointer')}>
+        <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
+          <img onError={onLoadImageFail} className={classNamesList.itemImage} src={item.icon} />
+          {item.verified ? (
+            <div className={styles.containerIcon}>
+              <FontIcon iconName="SkypeCircleCheck" />
+            </div>
+          ) : null}
+        </div>
+        <div className={classNamesList.itemContent} style={{ display: 'flex', alignItems: 'center' }}>
+          <div className={classNamesList.itemName}>{item.name}</div>
+        </div>
       </div>
       <div className={classNames('flex flex-row items-center justify-center btn-token')}>
         {account?.followingTokens?.indexOf(item.tokenId) !== -1 ? (
-          <button onClick={() => removeToken(item.tokenId)} className={styles.btnRemove}>
+          <button
+            onClick={() => {
+              setTimeout(() => {
+                dismissPanel()
+              }, 0.00000001)
+              removeToken(item.tokenId)
+            }}
+            className={styles.btnRemove}
+          >
             Remove
           </button>
         ) : (
-          <button onClick={() => addToken(item.tokenId)} className={styles.btnAdd}>
+          <button
+            onClick={() => {
+              setTimeout(() => {
+                dismissPanel()
+              }, 0.000001)
+              addToken(item.tokenId)
+            }}
+            className={styles.btnAdd}
+          >
             Add
           </button>
         )}
@@ -113,16 +133,17 @@ const useGetTokenSequence = () => {
   const pToken = Object.values(tokens).filter((token) => token.tokenType === 'TOKEN' && !account?.followingTokens?.includes(token.tokenId))
   const pCustom = Object.values(tokens).filter((token) => token.tokenType === 'CUSTOM' && !account?.followingTokens?.includes(token.tokenId))
   const TokenListFollowing = Object.values(tokens).filter((token) => account?.followingTokens?.includes(token.tokenId))
-  const ConsumeToken = [...TokenListFollowing, ...pToken, ...pCustom]
-  console.log(ConsumeToken)
   return {
     data: [...TokenListFollowing, ...pToken, ...pCustom],
   }
 }
 
-export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput }) => {
+export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput, showPanelTokenDetail, dismissPanel }) => {
   const { data } = useGetTokenSequence()
-  const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [data])
+  const onRenderCell = React.useCallback(
+    (item: TokenItemInterface, showPanel: (value) => void): JSX.Element => <TokenCell showPanel={showPanel} item={item} dismissPanel={dismissPanel} />,
+    [data],
+  )
   const [listToken, setListToken] = React.useState(Object.values(data))
   React.useEffect(() => {
     if (valueInput === '') {
@@ -136,7 +157,7 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
-          <List items={listToken} onRenderCell={onRenderCell} />
+          <List items={listToken} onRenderCell={(item: TokenItemInterface) => onRenderCell(item, showPanelTokenDetail)} />
         </div>
       </FocusZone>
     )
