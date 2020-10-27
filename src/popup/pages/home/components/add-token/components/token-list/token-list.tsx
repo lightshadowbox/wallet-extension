@@ -23,8 +23,6 @@ const theme: ITheme = getTheme()
 const { palette, semanticColors, fonts } = theme
 interface Props {
   valueInput: string
-  showPanelTokenDetail: (value) => void
-  dismissPanel: () => void
 }
 const classNamesList = mergeStyleSets({
   container: {
@@ -75,7 +73,7 @@ const classNamesList = mergeStyleSets({
   },
 })
 
-export const TokenCell: React.FC<{ item: TokenItemInterface; showPanel: (value) => void; dismissPanel: () => void }> = ({ item, showPanel, dismissPanel }) => {
+export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
@@ -84,7 +82,7 @@ export const TokenCell: React.FC<{ item: TokenItemInterface; showPanel: (value) 
   }
   return (
     <div className={`${classNamesList.itemCell} token-list-container justify-between`} data-is-focusable>
-      <div onClick={() => showPanel(item.tokenId)} className={classNames('flex flex-row cursor-pointer')}>
+      <div className={classNames('flex flex-row cursor-pointer')}>
         <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
           <img onError={onLoadImageFail} className={classNamesList.itemImage} src={item.icon} />
           {item.verified ? (
@@ -101,9 +99,6 @@ export const TokenCell: React.FC<{ item: TokenItemInterface; showPanel: (value) 
         {account?.followingTokens?.indexOf(item.tokenId) !== -1 ? (
           <button
             onClick={() => {
-              setTimeout(() => {
-                dismissPanel()
-              }, 0.00000001)
               removeToken(item.tokenId)
             }}
             className={styles.btnRemove}
@@ -113,9 +108,6 @@ export const TokenCell: React.FC<{ item: TokenItemInterface; showPanel: (value) 
         ) : (
           <button
             onClick={() => {
-              setTimeout(() => {
-                dismissPanel()
-              }, 0.000001)
               addToken(item.tokenId)
             }}
             className={styles.btnAdd}
@@ -138,12 +130,9 @@ const useGetTokenSequence = () => {
   }
 }
 
-export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput, showPanelTokenDetail, dismissPanel }) => {
+export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput }) => {
   const { data } = useGetTokenSequence()
-  const onRenderCell = React.useCallback(
-    (item: TokenItemInterface, showPanel: (value) => void): JSX.Element => <TokenCell showPanel={showPanel} item={item} dismissPanel={dismissPanel} />,
-    [data],
-  )
+  const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [data])
   const [listToken, setListToken] = React.useState(Object.values(data))
   React.useEffect(() => {
     if (valueInput === '') {
@@ -157,7 +146,7 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
-          <List items={listToken} onRenderCell={(item: TokenItemInterface) => onRenderCell(item, showPanelTokenDetail)} />
+          <List items={listToken} onRenderCell={onRenderCell} />
         </div>
       </FocusZone>
     )

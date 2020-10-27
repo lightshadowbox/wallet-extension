@@ -7,9 +7,7 @@ export default {
   component: ListGhostingExample,
 } as Meta
 
-const Template: Story = () => (
-  <ListGhostingExample dismissPanel={() => console.log('alert')} valueInput="Tran Hoang" showPanelTokenDetail={(value) => console.log('hello')} />
-)
+const Template: Story = () => <ListGhostingExample valueInput="Tran Hoang" />
 
 export const Primary = Template.bind({})
 Primary.args = {
