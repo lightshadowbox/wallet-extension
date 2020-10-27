@@ -1,0 +1,11 @@
+.tokenContainer {
+  max-width: 360px;
+  max-height: 600px;
+  overflow: hidden;
+}
+.item {
+  padding: 0 16px;
+}
+.itemBtn {
+  padding: 16px;
+}
