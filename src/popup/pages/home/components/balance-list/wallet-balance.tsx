@@ -13,6 +13,7 @@ import { useGetTokenBalance, useGetTokenForAccount } from 'queries/token.queries
 
 interface Props {
   showPanel: () => void
+  showPanelTokenDetail: (value) => void
 }
 
 export const BalanceListCell: React.FC<{
@@ -23,10 +24,11 @@ export const BalanceListCell: React.FC<{
     type: number
     isFollowing: boolean
   }
-}> = ({ item }) => {
+  showPanelTokenDetail: (value) => void
+}> = ({ item, showPanelTokenDetail }) => {
   const balance = useGetTokenBalance(item.tokenId)
   return (
-    <div className={classNames('flex p-4 hover:bg-gray-6')}>
+    <div onClick={() => showPanelTokenDetail(item.tokenId)} className={classNames('flex p-4 hover:bg-gray-6')}>
       <div className={classNames('flex items-center w-12')}>
         <Persona showUnknownPersonaCoin={!item?.tokenId} imageUrl={item?.icon} size={PersonaSize.size32} hidePersonaDetails />
       </div>
@@ -34,20 +36,22 @@ export const BalanceListCell: React.FC<{
         <Label>{item.name}</Label>
       </div>
       <div className={classNames('flex items-center justify-end')}>
-        <Label className={classNames('text-gray-2 text-xs font-normal')}>{balance?.data !== null ? balance.data : <Spinner size={SpinnerSize.xSmall} />}</Label>
+        <Label className={classNames('text-gray-2 text-xs font-normal text-base')}>
+          {balance?.data !== null ? balance.data : <Spinner size={SpinnerSize.xSmall} />}
+        </Label>
       </div>
     </div>
   )
 }
 
-export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
+export const WalletBalance: React.FC<Props> = ({ showPanel, showPanelTokenDetail }) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const { data: tokenListData } = useGetTokenForAccount(selectedAccount)
 
   const cellRender = React.useCallback(
-    (_, index: number): JSX.Element => {
+    (_, index: number, showPanelTokenDetail: (value) => void): JSX.Element => {
       const i = tokenListData[index]
-      return <BalanceListCell item={i} />
+      return <BalanceListCell item={i} showPanelTokenDetail={showPanelTokenDetail} />
     },
     [tokenListData?.length],
   )
@@ -62,7 +66,13 @@ export const WalletBalance: React.FC<Props> = ({ showPanel }) => {
           <div className={classNames('flex flex-grow text-sm')}>Add token</div>
         </div>
       </SecondaryButton>
-      <div className="lsb-WalletBalance--list">{tokenListData ? <List items={tokenListData || []} onRenderCell={cellRender} /> : <SpinnerWallet />}</div>
+      <div className="lsb-WalletBalance--list">
+        {tokenListData ? (
+          <List items={tokenListData || []} onRenderCell={(_, index: number) => cellRender(_, index, showPanelTokenDetail)} />
+        ) : (
+          <SpinnerWallet />
+        )}
+      </div>
     </div>
   )
 }
