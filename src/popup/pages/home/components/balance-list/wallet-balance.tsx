@@ -28,7 +28,7 @@ export const BalanceListCell: React.FC<{
 }> = ({ item, showPanelTokenDetail }) => {
   const balance = useGetTokenBalance(item.tokenId)
   return (
-    <div onClick={() => showPanelTokenDetail(item.tokenId)} className={classNames('flex p-4 hover:bg-gray-6')}>
+    <div onClick={() => showPanelTokenDetail(item.tokenId)} className={classNames('flex p-4 hover:bg-gray-6 cursor-pointer')}>
       <div className={classNames('flex items-center w-12')}>
         <Persona showUnknownPersonaCoin={!item?.tokenId} imageUrl={item?.icon} size={PersonaSize.size32} hidePersonaDetails />
       </div>
