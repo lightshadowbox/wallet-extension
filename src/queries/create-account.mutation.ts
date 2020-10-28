@@ -6,7 +6,7 @@ import { walletRuntime } from 'services/wallet'
 
 import { createWalletWithPassword, followToken, importAccountFromPrivateKey, unfollowToken } from '../services/wallet'
 
-import { useGetAccount } from './account.queries'
+import { useGetAccount, useGetListAccount } from './account.queries'
 import { useGetTokenForAccount } from './token.queries'
 import { GET_WALLET_KEY } from './wallet.queries'
 
@@ -55,7 +55,8 @@ export const useRemoveToken = () => {
 }
 export const useAddAccount = (hidePanel: () => void) => {
   return useMutation((accountName: string) => addAccount(accountName), {
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryCache.invalidateQueries([useGetListAccount.name])
       hidePanel()
     },
     onError: (err) => {
@@ -75,6 +76,7 @@ export const useImportAccountFromPrivateKey = (onSuccess?: CallableFunction) => 
       // Select account to new
       store.dispatch(settingSlices.actions.selectAccount({ accountName: data.name }))
       // Reload cache of useGetTokenForAccount hook
+      await queryCache.invalidateQueries([useGetListAccount.name])
       await queryCache.invalidateQueries([useGetAccount.name])
       await queryCache.invalidateQueries([useGetTokenForAccount.name])
       onSuccess && onSuccess()

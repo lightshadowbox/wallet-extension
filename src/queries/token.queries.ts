@@ -151,7 +151,7 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
   )
 }
 
-export const useGetTokenBalance = (token: string) => {
+export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVIDSTR) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useQuery([useGetTokenBalance.name, selectedAccount, token], () => getTokenBalanceForAccount(selectedAccount, token))
 }
