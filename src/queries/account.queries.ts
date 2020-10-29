@@ -21,14 +21,6 @@ export const useGetAccount = () => {
     },
   )
 }
-// export const useGetBackup = (accountName) => {
-//   return useQuery([useGetBackup.name], () => {
-//     const account = walletRuntime.masterAccount.getAccountByName(accountName)
-//     return {
-
-//     }
-//   })
-// }
 export type GetListAccountType = { accountName: string; USD: string; PRV: string }
 export const useGetListAccount = () => {
   const { data: wallet } = useGetWallet()

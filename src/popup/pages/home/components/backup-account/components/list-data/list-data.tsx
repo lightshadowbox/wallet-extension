@@ -1,16 +1,21 @@
 import React from 'react'
 import { TooltipHost, ITooltipHostStyles, FontIcon } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
-import { useGetAccount } from 'queries/account.queries'
+import { AccountModelType } from 'models/account-model'
 
 import styles from './list-data.module.css'
+
+interface Props {
+  account: any
+  selectedAccount: AccountModelType
+}
 
 const calloutProps = { gapSpace: 0 }
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } }
 
-export const ListData = () => {
-  const account = useGetAccount()
+export const ListData: React.FC<Props> = ({ account, selectedAccount }) => {
   const tooltipId = useId('tooltip')
+  console.log(selectedAccount)
   const [contentTooltip, setContentTooltip] = React.useState('Copy')
   const onClickCopy = React.useCallback((value: string) => {
     const text = value
@@ -32,13 +37,16 @@ export const ListData = () => {
           <span className={styles.label}>Incognito address</span>
           <div className={styles.key}>
             <div className="flex flex-row">
-              <p>{account.data.paymentAddress}</p>
+              <p>{!selectedAccount ? account.data.paymentAddress : selectedAccount.paymentAddress}</p>
               <span>...</span>
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
               <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
-                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.paymentAddress)} />
+                <FontIcon
+                  iconName="Copy"
+                  onClick={() => (!selectedAccount ? onClickCopy(account.data.paymentAddress) : onClickCopy(selectedAccount.paymentAddress))}
+                />
               </TooltipHost>
             </div>
           </div>
@@ -47,13 +55,13 @@ export const ListData = () => {
           <span className={styles.label}>Private key</span>
           <div className={styles.key}>
             <div className="flex flex-row">
-              <p>{account.data.privateKey}</p>
+              <p>{!selectedAccount ? account.data.privateKey : selectedAccount.privateKey}</p>
               <span>...</span>
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
               <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
-                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.privateKey)} />
+                <FontIcon iconName="Copy" onClick={() => (!selectedAccount ? onClickCopy(account.data.privateKey) : onClickCopy(selectedAccount.privateKey))} />
               </TooltipHost>
             </div>
           </div>
@@ -62,14 +70,14 @@ export const ListData = () => {
           <span className={styles.label}>Public key</span>
           <div className={styles.key}>
             <div className="flex flex-row">
-              <p>{account.data.publicKey}</p>
+              <p>{!selectedAccount ? account.data.publicKey : selectedAccount.publicKey}</p>
               <span>...</span>
             </div>
 
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
               <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
-                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.publicKey)} />
+                <FontIcon iconName="Copy" onClick={() => (!selectedAccount ? onClickCopy(account.data.publicKey) : onClickCopy(selectedAccount.publicKey))} />
               </TooltipHost>
             </div>
           </div>
@@ -78,13 +86,13 @@ export const ListData = () => {
           <span className={styles.label}>Readonly key</span>
           <div className={styles.key}>
             <div className="flex flex-row">
-              <p>{account.data.viewingKey}</p>
+              <p>{!selectedAccount ? account.data.viewingKey : selectedAccount.viewingKey}</p>
               <span>...</span>
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
               <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
-                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.viewingKey)} />
+                <FontIcon iconName="Copy" onClick={() => (!selectedAccount ? onClickCopy(account.data.viewingKey) : onClickCopy(selectedAccount.viewingKey))} />
               </TooltipHost>
             </div>
           </div>
@@ -93,13 +101,13 @@ export const ListData = () => {
           <span className={styles.label}>Validator key</span>
           <div className={styles.key}>
             <div className="flex flex-row">
-              <p>{account.data.privateKey}</p>
+              <p>{!selectedAccount ? account.data.privateKey : selectedAccount.privateKey}</p>
               <span>...</span>
             </div>
             <div className={styles.icon}>
               <FontIcon iconName="QRcode" />
               <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
-                <FontIcon iconName="Copy" onClick={() => onClickCopy(account.data.privateKey)} />
+                <FontIcon iconName="Copy" onClick={() => (!selectedAccount ? onClickCopy(account.data.privateKey) : onClickCopy(selectedAccount.privateKey))} />
               </TooltipHost>
             </div>
           </div>

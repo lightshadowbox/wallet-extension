@@ -3,6 +3,7 @@ import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk'
 import { WalletInstance } from 'incognito-sdk'
+import { AccountModelType, serializeAccount } from 'models/account-model'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
 import * as CONSTANTS from '../constants/app'
@@ -28,6 +29,11 @@ export const getWalletInstance = async () => {
     const wallet = await unlockWallet()
     return wallet
   }
+}
+export const getBackupAccount = async (accountName: string) => {
+  const accountInstance = await getAccountRuntime(accountName)
+  const accountSerizialed = await serializeAccount(accountInstance)
+  return accountSerizialed
 }
 
 export const getAccountRuntime = async (accountName: string) => {
