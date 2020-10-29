@@ -4,10 +4,10 @@ import { useMutation } from 'react-query'
 import { queryCache } from 'services/query-cache'
 import { getAccountRuntime, runtime } from 'services/wallet'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
+import { useGetAccount, useGetListAccount } from './account.queries'
 
 import { createWalletWithPassword, followToken, importAccountFromPrivateKey, unfollowToken } from '../services/wallet'
 
-import { useGetAccount, useGetListAccount } from './account.queries'
 import { useGetTokenForAccount } from './token.queries'
 import { GET_WALLET_KEY } from './wallet.queries'
 

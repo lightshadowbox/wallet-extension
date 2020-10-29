@@ -7,7 +7,6 @@ import { AxiosError } from 'axios'
 
 import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 import { CONSTANT } from 'incognito-sdk/build/web/module'
-import { useGetAccount } from 'queries/account.queries'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { createTokenSearchIndex } from 'services/fulltext'
 import { useGetWallet } from './wallet.queries'

@@ -30,15 +30,17 @@ const BackupAccountContainer: React.FC<{
 export const BackupAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
-  const { data: account, isSuccess } = useGetAccount()
+  const account = useGetAccount()
+  const [selectedAccount, setSelectedAccount] = React.useState(null)
   const onDownloadClick = React.useCallback(() => {
-    if (isSuccess) {
-      downloadAccountBackup(account.name)
+    if (account.isSuccess) {
+      !selectedAccount ? downloadAccountBackup(account.data.name) : downloadAccountBackup(selectedAccount.name)
       setTimeout(() => {
         dismissPanel()
       }, 500)
     }
-  }, [isSuccess])
+  }, [account.isSuccess])
+  console.log(selectedAccount)
   return (
     isPanelOpen && (
       <div className={`absolute inset-0 backupAccount ${styles.container}`}>
@@ -51,8 +53,8 @@ export const BackupAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
                 </Button>
               }
               header={<Header title="Backup" icon="ChromeClose" dismissPanel={dismissPanel} />}
-              selectAccount={<SelectAccount />}
-              list={<ListData />}
+              selectAccount={<SelectAccount changeAccount={setSelectedAccount} />}
+              list={<ListData account={account} selectedAccount={selectedAccount} />}
             >
               <div>Body will coming soon </div>
             </BackupAccountContainer>
