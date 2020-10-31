@@ -5,52 +5,62 @@ import * as i from 'incognito-sdk'
 import { WalletInstance } from 'incognito-sdk'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
+import { createDraft, finishDraft } from 'immer'
+import { WritableDraft } from 'immer/dist/internal'
 import * as CONSTANTS from '../constants/app'
-import { serializeWallet } from '../models/wallet-model'
-import { ERROR_CODE } from './errors'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
 
-// eslint-disable-next-line import/no-mutable-exports
-export let walletRuntime: WalletInstance
+let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boolean; runtimePassword?: string }> = createDraft({
+  walletRuntime: null,
+  loaded: false,
+})
 
-let runtimePassword: string
+export const loadingWallet = async () => {
+  if (runtime.loaded) {
+    return
+  }
+  await sdk.initSDK()
+
+  if (runtime.loaded) {
+    return runtime.walletRuntime
+  }
+
+  const isHaveBackup = await isHaveBackupWallet()
+  if (isHaveBackup) {
+    await unlockWallet()
+    return runtime.walletRuntime
+  }
+}
 
 export const getWalletInstance = async () => {
-  await sdk.initSDK()
-  const isHaveBackup = await isHaveBackupWallet()
-
-  if (walletRuntime?.name) {
-    return walletRuntime
-  }
-
-  if (isHaveBackup) {
-    const wallet = await unlockWallet()
-    return wallet
-  }
+  await loadingWallet()
+  return runtime.walletRuntime
 }
 
 export const getAccountRuntime = async (accountName: string) => {
   const wa = await getWalletInstance()
   const account = wa.masterAccount.getAccountByName(accountName)
+  if (!account) {
+    return wa.masterAccount.getAccounts()[0]
+  }
   return account
 }
 
 export const createWalletWithPassword = async (name: string, password: string) => {
-  runtimePassword = crypto.SHA256(password, passwordSecret).toString()
+  const runtimeDraft = createDraft(runtime)
+  runtimeDraft.runtimePassword = crypto.SHA256(password, passwordSecret).toString()
   const code = new Mnemonic(Mnemonic.Words.ENGLISH)
   const instance = new i.WalletInstance()
-  walletRuntime = await instance.init(code.toString() + password, name)
-  storageService.set(CONSTANTS.PASS_KEY, runtimePassword)
+  runtimeDraft.walletRuntime = await instance.init(code.toString() + password, name)
+  storageService.set(CONSTANTS.PASS_KEY, runtimeDraft.runtimePassword)
   storageService.set(CONSTANTS.PARA_KEY, code.toString())
-  await backupWallet(runtimePassword)
-  return walletRuntime
+  runtimeDraft.loaded = true
+  runtime = finishDraft(runtimeDraft)
+  await backupWallet()
 }
 
 export const isHaveBackupWallet = async () => {
-  if (walletRuntime?.name) {
-    return true
-  }
   const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
   if (backup) {
     return true
@@ -63,44 +73,50 @@ export const unlockWallet = async () => {
   const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
   const password = await storageService.get(CONSTANTS.PASS_KEY)
 
-  console.log(backup, password)
   if (!backup) {
     throw new Error('Create wallet before!')
   }
-  walletRuntime = await i.WalletInstance.restore(backup, password)
-  return walletRuntime
+  const runtimeDraft = createDraft(runtime)
+  runtimeDraft.walletRuntime = await i.WalletInstance.restore(backup, password)
+  runtimeDraft.loaded = true
+
+  runtime = finishDraft(runtimeDraft)
 }
 
-export const backupWallet = async (password: string) => {
-  const backupStr = walletRuntime.backup(password)
-  console.log('set', backupStr, password)
+export const backupWallet = async () => {
+  const wallet = await getWalletInstance()
+  const password = await storageService.get(CONSTANTS.PASS_KEY)
+  const backupStr = wallet.backup(password)
   storageService.set(CONSTANTS.WALLET_BACKUP_KEY, backupStr)
 }
 
 export const downloadBackupWallet = async () => {
+  const wallet = await getWalletInstance()
+
   const text = [
     'NAME:',
-    walletRuntime.name,
+    wallet.name,
     'WALLET: ',
-    walletRuntime.seed,
+    wallet.seed,
     'MNEMONIC: ',
-    walletRuntime.mnemonic,
+    wallet.mnemonic,
     'PASS_PARAPHRASE: ',
-    walletRuntime.passPhrase,
+    wallet.passPhrase,
     'ENTROPY: ',
-    walletRuntime.entropy.toString(),
+    wallet.entropy.toString(),
     'SEED: ',
-    walletRuntime.seed.toString(),
+    wallet.seed.toString(),
   ].join('\n')
   const element = document.createElement('a')
   element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`)
-  element.setAttribute('download', `backup-${walletRuntime.name}-${new Date().toISOString()}.txt`)
+  element.setAttribute('download', `backup-${wallet.name}-${new Date().toISOString()}.txt`)
   element.style.display = 'none'
   element.click()
 }
 
 export const downloadAccountBackup = async (accountName: string) => {
-  const account = walletRuntime.masterAccount.getAccountByName(accountName)
+  const wallet = await getWalletInstance()
+  const account = wallet.masterAccount.getAccountByName(accountName)
   const text = [
     'ADDRESS: ',
     account.key.keySet.paymentAddressKeySerialized,
@@ -130,7 +146,7 @@ export type SendInNetWorkPayload = {
 }
 
 export const sendInNetwork = async (payload: SendInNetWorkPayload) => {
-  const account = walletRuntime.masterAccount.getAccountByName(payload.fromAccountName)
+  const account = await getAccountRuntime(payload.fromAccountName)
   if (account) {
     throw new Error(`Account ${payload.fromAccountName} not existed!`)
   }
@@ -158,26 +174,37 @@ export const isNative = (token: string) => i.CONSTANT.WALLET_CONSTANT.PRVIDSTR =
 export const followToken = async (selectedAccount: string, tokenId: string) => {
   const account = await getAccountRuntime(selectedAccount)
   account.followTokenById(tokenId)
-  const password = await storageService.get(CONSTANTS.PASS_KEY)
-  await backupWallet(password)
+  await backupWallet()
 }
 
 export const unfollowToken = async (selectedAccount: string, tokenId: string) => {
   const account = await getAccountRuntime(selectedAccount)
   account.unfollowTokenById(tokenId)
-  const password = await storageService.get(CONSTANTS.PASS_KEY)
-  await backupWallet(password)
+
+  await backupWallet()
 }
 
 export const importAccountFromPrivateKey = async (accountName: string, privateKey: string) => {
   const wallet = await getWalletInstance()
   const newAccount = await wallet.masterAccount.importAccount(accountName, privateKey)
+  await backupWallet()
+  return newAccount
+}
+
+export const addNewAccount = async (accountName: string) => {
+  const wallet = await getWalletInstance()
+  const newAccount = await wallet.masterAccount.addAccount(accountName)
+  await backupWallet()
   return newAccount
 }
 
 export const getTokenBalanceForAccount = async (accountName: string, tokenId: string) => {
   const wallet = await getWalletInstance()
   const account = wallet.masterAccount.getAccountByName(accountName)
+
+  if (!account) {
+    return 0
+  }
 
   if (tokenId === i.CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
     return ((await account.nativeToken.getAvaiableBalance()).toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2)
@@ -191,4 +218,9 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
 
   const result = await tokenInstance.getAvaiableBalance()
   return result.toNumber()
+}
+
+export const getBackupAccount = async (accountName: string) => {
+  const account = await getAccountRuntime(accountName)
+  return account.key.keySet
 }

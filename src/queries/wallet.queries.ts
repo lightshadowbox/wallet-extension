@@ -1,7 +1,7 @@
 import { WalletModelType } from 'models/wallet-model'
 import { useQuery } from 'react-query'
 import { getFromCache } from 'services/query-cache'
-import { getWalletInstance, walletRuntime } from 'services/wallet'
+import { getWalletInstance } from 'services/wallet'
 
 export const GET_WALLET_KEY = 'getWalletSerialized'
 
@@ -13,10 +13,12 @@ export const useGetWallet = () => {
 export const getWalletSerializedFromCache = () => getFromCache<WalletModelType>(GET_WALLET_KEY)
 
 export const useGetWalletGeneral = () => {
-  const walletHook = useQuery(useGetWalletGeneral.name, () => {
+  const walletHook = useQuery(useGetWalletGeneral.name, async () => {
+    const wallet = await getWalletInstance()
+
     return {
-      walletName: walletRuntime.name,
-      accounts: walletRuntime.masterAccount.getAccounts().map((i) => i.name),
+      walletName: wallet.name,
+      accounts: wallet.masterAccount.getAccounts().map((i) => i.name),
     }
   })
   return walletHook

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
-import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Modal, IDragOptions, IconButton, IIconProps } from '@fluentui/react'
+import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Modal, IDragOptions, IconButton, IIconProps, Spinner } from '@fluentui/react'
 import { useId, useBoolean } from '@uifabric/react-hooks'
 import { SecondaryButton } from 'popup/components/button'
 import { useAddAccount } from 'queries/create-account.mutation'
@@ -21,15 +21,22 @@ const cancelIcon: IIconProps = { iconName: 'Cancel' }
 
 export const ModalAddAccount: React.FunctionComponent<Props> = ({ showModal, hideModal, isModalOpen }) => {
   const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true)
-  const [addAccount, addAccountStatus] = useAddAccount(hideModal)
+
   // Use useId() to ensure that the IDs are unique on the page.
   // (It's also okay to use plain strings and manually ensure uniqueness.)
   const titleId = useId('title')
   const [name, setName] = React.useState('')
-  const clickAddAccount = () => {
-    addAccount(name)
+  const [loading, setLoading] = React.useState(false)
+
+  const [addAccount] = useAddAccount(() => {
+    hideModal()
+    setLoading(false)
     setName('')
-  }
+  })
+
+  const clickAddAccount = React.useCallback(() => {
+    addAccount(name)
+  }, [name])
 
   return (
     <div>
@@ -52,7 +59,7 @@ export const ModalAddAccount: React.FunctionComponent<Props> = ({ showModal, hid
           </form>
           <div className={classNames('flex align-middle justify-center w-full mt-6')}>
             <SecondaryButton iconProps={{ iconName: 'Add' }} onClick={clickAddAccount}>
-              Add
+              {loading ? <Spinner /> : 'Add'}
             </SecondaryButton>
           </div>
         </div>

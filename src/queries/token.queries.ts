@@ -9,6 +9,7 @@ import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 import { CONSTANT } from 'incognito-sdk/build/web/module'
 import { useGetAccount } from 'queries/account.queries'
 import { useSettingStore } from 'popup/stores/features/settings'
+import { useGetWallet } from './wallet.queries'
 
 interface CustomTokenReceivedModel {
   id: number
@@ -129,6 +130,7 @@ export const getTokenFromTokenIds = (tokenIds: string[]) => {
 
 export const useGetTokenForAccount = (selectedAccount: string) => {
   const { data: tokenRemoteData } = useFetchToken()
+  const { data: wallet } = useGetWallet()
   return useQuery(
     [useGetTokenForAccount.name, selectedAccount],
     async () => {
@@ -147,7 +149,7 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
       })
       return remoteData
     },
-    { enabled: selectedAccount && tokenRemoteData },
+    { enabled: wallet && selectedAccount && tokenRemoteData },
   )
 }
 
