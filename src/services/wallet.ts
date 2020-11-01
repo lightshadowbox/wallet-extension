@@ -1,3 +1,4 @@
+/* eslint-disable import/no-mutable-exports */
 import * as Mnemonic from 'bitcore-mnemonic'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
@@ -11,7 +12,7 @@ import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
 
-let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boolean; runtimePassword?: string }> = createDraft({
+export let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boolean; runtimePassword?: string }> = createDraft({
   walletRuntime: null,
   loaded: false,
 })

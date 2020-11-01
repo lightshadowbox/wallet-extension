@@ -125,6 +125,9 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     </div>
   )
 }
+interface Item {
+  item: TokenItemInterface
+}
 
 export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput }) => {
   const { data: allTokens } = useFetchToken()
@@ -136,7 +139,9 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     }
 
     if (`${valueInput}`.trim() !== '') {
-      return orderBy(searchIndex.search(valueInput), ['score', 'name'], 'asc').map((i) => i.item)
+      return orderBy(searchIndex.search(valueInput), ['score', 'name'], 'asc').map((i: Item) => {
+        return i.item
+      })
     }
 
     return orderBy(allTokens, ['tokenType', 'verified'], 'desc')
