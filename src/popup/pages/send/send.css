@@ -17,6 +17,15 @@
   width: 5px;
   height: 5px;
 }
+.send-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+.dropdown-menu {
+  max-height: 80px;
+  overflow: scroll;
+}
 
 .text-with-mini-cube {
   position: relative;

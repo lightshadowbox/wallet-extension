@@ -11,8 +11,20 @@ export const DropdownMenu: React.FC<{ showPanelBackup: () => void; onOpenMenuCli
   onOpenMenuClick,
   showPanelAcc,
 }) => {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const handleClickOutside = (event: Event) => {
+    if (ref.current && !ref.current.contains(event.target as Node)) {
+      onOpenMenuClick()
+    }
+  }
+  React.useEffect(() => {
+    document.addEventListener('click', handleClickOutside, true)
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true)
+    }
+  })
   return (
-    <div className={classNames(`absolute inset-0 dropdown ${styles.dropdownContainer}`)}>
+    <div ref={ref} className={classNames(`absolute inset-0 dropdown ${styles.dropdownContainer}`)}>
       <ul>
         <li
           onClick={() => {

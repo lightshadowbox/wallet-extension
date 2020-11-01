@@ -91,7 +91,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({ primary = false, size
           <div className="card-desc w-full">
             <div className="text-center">
               <div className="qr mt-5 mb-12">
-                <QRCodeWallet keyAddress="hehlll" />
+                <QRCodeWallet keyAddress={account.paymentAddress} />
               </div>
               <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
                 <div

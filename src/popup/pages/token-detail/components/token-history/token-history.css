@@ -1,0 +1,5 @@
+.isActive {
+  border-bottom: 1px solid black;
+  transition: all 0.3s;
+  color: black;
+}

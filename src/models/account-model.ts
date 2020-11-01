@@ -10,6 +10,11 @@ export type AccountModelType = {
 
   followingTokens?: string[]
 }
+export type PaymentInfoModel = {
+  paymentAddressStr: string
+  amount: number
+  message: string
+}
 
 export const getTokenBalances = async (account: AccountInstance, tokenId: string): Promise<{ tokenId: string; availableBallance: any; totalBalance: any }> => {
   if (tokenId === account.nativeToken.tokenId) {
