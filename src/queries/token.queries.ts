@@ -9,6 +9,7 @@ import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 import { CONSTANT } from 'incognito-sdk/build/web/module'
 import { useGetAccount } from 'queries/account.queries'
 import { useSettingStore } from 'popup/stores/features/settings'
+import { createTokenSearchIndex } from 'services/fulltext'
 import { useGetWallet } from './wallet.queries'
 
 interface CustomTokenReceivedModel {
@@ -117,6 +118,11 @@ export const getTokenList = async () => {
 
 export const useFetchToken = () => {
   return useQuery(useFetchToken.name, getTokenList, { refetchOnWindowFocus: false, refetchInterval: 60 * 60 * 60 })
+}
+
+export const useSearchableTokenList = (...searchFields: string[]) => {
+  const { data: tokenList } = useFetchToken()
+  return useQuery(useSearchableTokenList.name, () => createTokenSearchIndex(Object.values(tokenList), ...searchFields), { enabled: tokenList })
 }
 
 export const getTokenFromTokenIds = (tokenIds: string[]) => {

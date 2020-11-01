@@ -12,10 +12,11 @@ import classNames from 'classnames'
 import { FocusZone, FocusZoneDirection, FontIcon, getFocusStyle, getTheme, Image, ImageFit, ITheme, List, mergeStyleSets } from '@fluentui/react'
 
 import { useGetAccount } from 'queries/account.queries'
-import { useFetchToken } from 'queries/token.queries'
+import { useFetchToken, useSearchableTokenList } from 'queries/token.queries'
 
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
+import { orderBy } from 'lodash'
 import { TokenItemInterface } from './token'
 import styles from './token-list.module.css'
 
@@ -77,6 +78,11 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
+
+  const isFollowingToken = React.useMemo(() => {
+    return account?.followingTokens?.indexOf(item.tokenId) !== -1
+  }, [account?.followingTokens])
+
   const onLoadImageFail = (e) => {
     e.target.src = 'https://picsum.photos/200'
   }
@@ -96,7 +102,7 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
         </div>
       </div>
       <div className={classNames('flex flex-row items-center justify-center btn-token')}>
-        {account?.followingTokens?.indexOf(item.tokenId) !== -1 ? (
+        {isFollowingToken ? (
           <button
             onClick={() => {
               removeToken(item.tokenId)
@@ -119,34 +125,30 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     </div>
   )
 }
-const useGetTokenSequence = () => {
-  const { data: tokens } = useFetchToken()
-  const { data: account } = useGetAccount()
-  const pToken = Object.values(tokens).filter((token) => token.tokenType === 'TOKEN' && !account?.followingTokens?.includes(token.tokenId))
-  const pCustom = Object.values(tokens).filter((token) => token.tokenType === 'CUSTOM' && !account?.followingTokens?.includes(token.tokenId))
-  const TokenListFollowing = Object.values(tokens).filter((token) => account?.followingTokens?.includes(token.tokenId))
-  return {
-    data: [...TokenListFollowing, ...pToken, ...pCustom],
-  }
-}
 
 export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput }) => {
-  const { data } = useGetTokenSequence()
-  const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [data])
-  const [listToken, setListToken] = React.useState(Object.values(data))
-  React.useEffect(() => {
-    if (valueInput === '') {
-      setListToken(data)
-    } else {
-      const consumeToken = data.filter((token) => token.name.indexOf(valueInput) !== -1)
-      setListToken(consumeToken)
+  const { data: allTokens } = useFetchToken()
+  const { data: searchIndex } = useSearchableTokenList('name', 'symbol', 'pSymbol')
+
+  const tokenList = React.useMemo(() => {
+    if (!allTokens) {
+      return []
     }
-  }, [valueInput])
-  if (data) {
+
+    if (`${valueInput}`.trim() !== '') {
+      return orderBy(searchIndex.search(valueInput), ['score', 'name'], 'asc').map((i) => i.item)
+    }
+
+    return orderBy(allTokens, ['tokenType', 'verified'], 'desc')
+  }, [allTokens, valueInput, searchIndex])
+  const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [allTokens])
+
+  console.log(tokenList)
+  if (tokenList) {
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
-          <List items={listToken} onRenderCell={onRenderCell} />
+          <List items={tokenList} onRenderCell={onRenderCell} />
         </div>
       </FocusZone>
     )
