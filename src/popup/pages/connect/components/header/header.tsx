@@ -9,8 +9,8 @@ type Props = {
 }
 export const Header: React.FC<Props> = ({ title, icon, dismissPanel }) => (
   <div className={styles.header}>
-    <div className={`absolute ${styles.headerIcon} `}>
-      <FontIcon iconName={icon} onClick={dismissPanel} />
+    <div onClick={dismissPanel} className={`absolute ${styles.headerIcon} `}>
+      <FontIcon iconName={icon} />
     </div>
     <h3 className={styles.headerText}>{title}</h3>
   </div>

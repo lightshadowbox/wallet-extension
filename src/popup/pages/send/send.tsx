@@ -5,7 +5,7 @@ import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeSty
 import { useId } from '@uifabric/react-hooks'
 import { useGetListAccount } from 'queries/account.queries'
 import classNames from 'classnames'
-import { useSendNativeToken } from 'queries/create-account.mutation'
+import { useSendToken } from 'queries/create-account.mutation'
 import { useGetTokenForAccount } from 'queries/token.queries'
 import { Message } from './message/message'
 import styles from './send.module.css'
@@ -40,6 +40,7 @@ interface Props {
   showPanel: () => void
   dismissPanel: () => void
 }
+const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 
 const useComponentVisible = (initialIsVisible) => {
   const [isComponentVisible, setIsComponentVisible] = useState(initialIsVisible)
@@ -72,12 +73,10 @@ const useComponentVisible = (initialIsVisible) => {
 const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (value) => void }> = React.memo(({ accountName, active, setActive }) => {
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
   const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
-  console.log(tokenAccounts)
   const onChangeCoin = (id) => {
     setActive(id)
     setIsComponentVisible(!isComponentVisible)
   }
-  console.log(tokenAccounts)
   const onLoadImageFail = React.useCallback((e) => {
     e.target.src = 'https://picsum.photos/200'
   }, [])
@@ -132,7 +131,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
     message: '',
     name: '',
   })
-  const [sendNativeToken, sendNativeTokenStatus] = useSendNativeToken(dismissPanel, setMessage)
+  const [sendToken, sendTokenStatus] = useSendToken(dismissPanel, setMessage)
   const [paymentInfo, setPaymentInfo] = React.useState({
     paymentAddressStr: '',
     amount: '10',
@@ -141,13 +140,12 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const [selectedAccount, setSelectedAccount] = React.useState('Account 0')
 
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
-  const [active, setActive] = useState('0000000000000000000000000000000000000000000000000000000000000004')
+  const [active, setActive] = useState(PRV_TOKEN_ID)
   const onChangeAccount = React.useCallback(() => {
     const element = document.querySelector('#transfer-account') as HTMLInputElement
     setSelectedAccount(element.value)
-    setActive(null)
+    setActive(PRV_TOKEN_ID)
   }, [selectedAccount])
-  console.log(paymentInfo)
   React.useEffect(() => {
     setTimeout(() => {
       setMessage({
@@ -251,7 +249,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                   onClick={() => {
                     const paymentInfoList = []
                     paymentInfoList.push(paymentInfo)
-                    return sendNativeToken({
+                    return sendToken({
                       accountName: selectedAccount,
                       paymentInfoList,
                       tokenId: active,

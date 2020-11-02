@@ -3,7 +3,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
 import { TokenDetailPanel } from 'popup/pages/token-detail/token-detail'
-import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, AddAccountPanel, BackupAccountPanel } from './components'
+import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, AddAccountPanel, BackupAccountPanel } from './components/index'
 import { ReceivePanel } from '../receive/receive'
 import { SendPanel } from '../send/send'
 
@@ -79,7 +79,14 @@ export const HomePage = () => {
   return (
     <HomeContainer
       tokenDetail={
-        <TokenDetailPanel tokenId={preTokenId} isPanelOpen={isPanelOpenTokenDetail} showPanel={showPanelTokenDetail} dismissPanel={dismissPanelTokenDetail} />
+        <TokenDetailPanel
+          showPanelReceive={showPanelReceive}
+          showPanelSend={showPanelSend}
+          tokenId={preTokenId}
+          isPanelOpen={isPanelOpenTokenDetail}
+          showPanel={showPanelTokenDetail}
+          dismissPanel={dismissPanelTokenDetail}
+        />
       }
       receive={<ReceivePanel isPanelOpen={isPanelOpenReceive} showPanel={showPanelReceive} dismissPanel={() => onDismissPanelRight('receive')} />}
       send={<SendPanel isPanelOpen={isPanelOpenSend} showPanel={showPanelSend} dismissPanel={() => onDismissPanelRight('send')} />}

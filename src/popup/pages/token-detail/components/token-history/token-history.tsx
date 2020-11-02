@@ -3,19 +3,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import classNames from 'classnames'
 import React from 'react'
+import { useGetHistory } from 'queries/token.queries'
 import styles from './token-history.module.css'
 import './token-history.css'
 
-export const TokenHistoty = () => {
+export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = ({ tokenId, accountName }) => {
   const [activeBtn, setActiveBtn] = React.useState('btn-send')
+  const { data, status } = useGetHistory(accountName, tokenId)
+  console.log(data)
   const onClickBtn = (value) => {
     const preNode = document.querySelector(`.token-history .${activeBtn}`) as HTMLElement
     preNode.classList.remove('isActive')
     const activeNode = document.querySelector(`.token-history .${value}`) as HTMLElement
     activeNode.classList.add('isActive')
     setActiveBtn(value)
-    console.log(preNode)
-    console.log(activeNode)
   }
   const listItem = [
     {

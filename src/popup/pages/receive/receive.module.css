@@ -6,7 +6,7 @@
 
 .container {
   position: absolute;
-  z-index: 2000;
+  z-index: 1000000000000000000;
 }
 .headerIcon {
   position: absolute;

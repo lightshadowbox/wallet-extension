@@ -75,10 +75,10 @@ interface ErrorSendToken {
   code: string
   message: string
 }
-export const useSendNativeToken = (hidePanel: () => void, setMessage: (value: any) => void) => {
+export const useSendToken = (hidePanel: () => void, setMessage: (value: any) => void) => {
   return useMutation(
     (variables: { accountName: string; paymentInfoList: PaymentInfoModel[]; tokenId: string }) =>
-      sendNativeToken(variables.accountName, variables.paymentInfoList, variables.tokenId),
+      sendToken(variables.accountName, variables.paymentInfoList, variables.tokenId),
     {
       onSuccess: async () => {
         // hidePanel()
@@ -96,15 +96,17 @@ export const useSendNativeToken = (hidePanel: () => void, setMessage: (value: an
     },
   )
 }
-const sendNativeToken = async (accountName: string, paymentInfoList: any[], tokenId) => {
+const sendToken = async (accountName: string, paymentInfoList: any[], tokenId: string) => {
   const account = await getAccountRuntime(accountName)
-  if (tokenId === null) {
-    const history = await account.nativeToken.transfer(paymentInfoList, '20')
-    console.log(history)
-  } else {
+  console.log(account)
+  console.log(tokenId)
+  if (tokenId !== '0000000000000000000000000000000000000000000000000000000000000004') {
     const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
     const history1 = await token.transfer(paymentInfoList, '20', '1')
     console.log(history1)
+  } else {
+    const history = await account.nativeToken.transfer(paymentInfoList, '20')
+    console.log(history)
   }
 }
 export const addAccount = async (accountName: string) => {
