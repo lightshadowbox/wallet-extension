@@ -4,10 +4,10 @@ import { getFromCache } from 'services/query-cache'
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
+import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
 import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 import { CONSTANT } from 'incognito-sdk/build/web/module'
-import { useGetAccount } from 'queries/account.queries'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { createTokenSearchIndex } from 'services/fulltext'
 import { useGetWallet } from './wallet.queries'
@@ -114,6 +114,23 @@ export const getTokenList = async () => {
   }
 
   return keyBy(concat([PRV], tokensMapped, customTokenMapped), 'tokenId')
+}
+export const useGetHistory = (accountName: string, tokenId: string) => {
+  return useQuery([useGetHistory.name, accountName, tokenId], () => getHistory(accountName, tokenId), {
+    enabled: accountName,
+  })
+}
+const getHistory = async (accountName: string, tokenId: string) => {
+  const account = await getAccountRuntime(accountName)
+  if (tokenId === '0000000000000000000000000000000000000000000000000000000000000004') {
+    const histories = await account.nativeToken.getTxHistories()
+    console.log(histories)
+    return histories
+  }
+  const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+  const histories = await token.getTxHistories()
+  console.log('Token tx histories', histories)
+  return histories
 }
 
 export const useFetchToken = () => {

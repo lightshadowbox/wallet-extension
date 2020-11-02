@@ -3,8 +3,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
-import classNames from 'classnames'
 import { useGetListAccount } from 'queries/account.queries'
+import classNames from 'classnames'
+import { useSendToken } from 'queries/create-account.mutation'
+import { useGetTokenForAccount } from 'queries/token.queries'
+import { Message } from './message/message'
 import styles from './send.module.css'
 
 import './send.css'
@@ -37,6 +40,7 @@ interface Props {
   showPanel: () => void
   dismissPanel: () => void
 }
+const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 
 const useComponentVisible = (initialIsVisible) => {
   const [isComponentVisible, setIsComponentVisible] = useState(initialIsVisible)
@@ -66,83 +70,56 @@ const useComponentVisible = (initialIsVisible) => {
   return { ref, isComponentVisible, setIsComponentVisible }
 }
 
-const DropdownCoins = React.memo(() => {
+const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (value) => void }> = React.memo(({ accountName, active, setActive }) => {
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
-  const coins = [
-    {
-      id: 'neo',
-      name: 'NEO',
-    },
-    {
-      id: 'bitcoin',
-      name: 'BITCOIN',
-    },
-  ]
-  const [active, setActive] = useState('neo')
+  const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
   const onChangeCoin = (id) => {
     setActive(id)
     setIsComponentVisible(!isComponentVisible)
   }
+  const onLoadImageFail = React.useCallback((e) => {
+    e.target.src = 'https://picsum.photos/200'
+  }, [])
 
-  return (
-    <div ref={ref} className="dropdown inline-block relative">
-      <input type="hidden" name="coin" value={active} />
-      <button
-        onClick={() => setIsComponentVisible(!isComponentVisible)}
-        type="button"
-        className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            opacity="0.2"
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M23.9349 12.0002C23.9349 18.5927 18.5908 23.937 11.9983 23.937C5.40576 23.937 0.0615234 18.5927 0.0615234 12.0002C0.0615234 5.40772 5.40576 0.0634766 11.9983 0.0634766C18.5907 0.0634766 23.9349 5.40772 23.9349 12.0002Z"
-            fill="#52BA00"
+  if (status === 'success') {
+    return (
+      <div ref={ref} className="dropdown inline-block relative">
+        <input type="hidden" name="coin" value={active} />
+        <button
+          onClick={() => setIsComponentVisible(!isComponentVisible)}
+          type="button"
+          className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
+        >
+          <img
+            className="send-icon"
+            src={active ? tokenAccounts.find((item) => item.tokenId === active).icon : tokenAccounts[0].icon}
+            alt="icon"
+            onError={onLoadImageFail}
           />
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M13.0957 5.53845L6.67186 7.63209L11.016 9.54453L17.4199 7.43889L13.0957 5.53845ZM6.46143 7.81899L10.8448 9.71943V17.5385L6.46143 15.638V7.81899ZM12.9773 13.9005V9.11619L17.5383 7.61379V15.5294L12.9773 13.9005Z"
-            fill="#83BD67"
-          />
-        </svg>
-        <span className="mr-2 ml-2">{coins.find((item) => item.id === active).name}</span>
-        <Icon className="text-gray-7" iconName="ChevronDown" />
-      </button>
-      <ul
-        className={`${isComponentVisible ? 'block' : 'hidden'}
-        dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}
-      >
-        {coins.map((item) => (
-          <li key={item.id} className="border-b border-gray-9 bg-white">
-            <button
-              className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
-              type="button"
-              onClick={() => onChangeCoin(item.id)}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  opacity="0.2"
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M23.9349 12.0002C23.9349 18.5927 18.5908 23.937 11.9983 23.937C5.40576 23.937 0.0615234 18.5927 0.0615234 12.0002C0.0615234 5.40772 5.40576 0.0634766 11.9983 0.0634766C18.5907 0.0634766 23.9349 5.40772 23.9349 12.0002Z"
-                  fill="#52BA00"
-                />
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M13.0957 5.53845L6.67186 7.63209L11.016 9.54453L17.4199 7.43889L13.0957 5.53845ZM6.46143 7.81899L10.8448 9.71943V17.5385L6.46143 15.638V7.81899ZM12.9773 13.9005V9.11619L17.5383 7.61379V15.5294L12.9773 13.9005Z"
-                  fill="#83BD67"
-                />
-              </svg>
-              <span className="self-center ml-2">{item.name}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
+          <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.tokenId === active).name : tokenAccounts[0].name}</span>
+          <Icon className="text-gray-7" iconName="ChevronDown" />
+        </button>
+        <ul
+          className={`${isComponentVisible ? 'block' : 'hidden'}
+          dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}
+        >
+          {tokenAccounts.map((item) => (
+            <li key={item.tokenId} className="border-b border-gray-9 bg-white">
+              <button
+                className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
+                type="button"
+                onClick={() => onChangeCoin(item.tokenId)}
+              >
+                <img onError={onLoadImageFail} className="send-icon" src={item.icon} alt="icon" />
+                <span className="self-center ml-2">{item.name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  return <h1>Loading...</h1>
 })
 
 /**
@@ -150,9 +127,36 @@ const DropdownCoins = React.memo(() => {
  */
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, ...props }) => {
   const { data: accounts, isSuccess } = useGetListAccount()
+  const [message, setMessage] = React.useState({
+    message: '',
+    name: '',
+  })
+  const [sendToken, sendTokenStatus] = useSendToken(dismissPanel, setMessage)
+  const [paymentInfo, setPaymentInfo] = React.useState({
+    paymentAddressStr: '',
+    amount: '10',
+    message: '',
+  })
+  const [selectedAccount, setSelectedAccount] = React.useState('Account 0')
+
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
+  const [active, setActive] = useState(PRV_TOKEN_ID)
+  const onChangeAccount = React.useCallback(() => {
+    const element = document.querySelector('#transfer-account') as HTMLInputElement
+    setSelectedAccount(element.value)
+    setActive(PRV_TOKEN_ID)
+  }, [selectedAccount])
+  React.useEffect(() => {
+    setTimeout(() => {
+      setMessage({
+        message: '',
+        name: '',
+      })
+    }, 3000)
+  }, [message.message])
   return (
-    <div className={['storybook-send', mode].join(' ')} style={{ backgroundColor }} {...props}>
+    <div className={['storybook-send', mode, 'relative'].join(' ')} style={{ backgroundColor }} {...props}>
+      {message.message !== '' ? <Message message={message.message} name={message.name} /> : null}
       <header>
         <div className="flex p-4">
           <div className={classNames('flex flex-row relative w-full')}>
@@ -185,7 +189,11 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                   Transfer account
                 </div>
                 <div className="field__wrapper relative">
-                  <select id="transfer-account" className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5">
+                  <select
+                    onChange={onChangeAccount}
+                    id="transfer-account"
+                    className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5"
+                  >
                     {isSuccess ? accounts.map((account) => <option key={account.accountName}>{account.accountName}</option>) : <option>...</option>}
                   </select>
                   <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
@@ -201,7 +209,8 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     type="text"
                     className="mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
                     id="receiving-account"
-                    value="TQOA279HZ88VWOUEZ9209IKQ"
+                    value={paymentInfo.paymentAddressStr}
+                    onChange={(e) => setPaymentInfo({ ...paymentInfo, paymentAddressStr: e.target.value })}
                     name="receiving-account"
                   />
                   <span className="icon absolute right-0 top-0 transform translate-y-6 -translate-x-2">
@@ -215,9 +224,14 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 </div>
 
                 <div className="mt-6 mb-6 text-center">
-                  <DropdownCoins />
+                  <DropdownCoins active={active} setActive={setActive} accountName={selectedAccount} />
                   <h2 className="price text-6xl font-medium mb-4 mt-2">12.5</h2>
-                  <input className="bg-white text-center outline-none w-full placeholder-gray-8:placeholder" placeholder="Write note here..." />
+                  <input
+                    className="bg-white text-center outline-none w-full placeholder-gray-8:placeholder"
+                    placeholder="Write note here..."
+                    value={paymentInfo.message}
+                    onChange={(e) => setPaymentInfo({ ...paymentInfo, message: e.target.value })}
+                  />
                 </div>
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
@@ -225,15 +239,25 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     <span className="mr-1 font-medium">0.025</span>
                     <div className="field__wrapper relative inline-block">
                       <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
-                        <option>TRX</option>
-                        <option>ABC</option>
-                        <option>XYZ</option>
+                        <option>PRV</option>
                       </select>
                       <Icon className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2" iconName="ChevronDown" />
                     </div>
                   </div>
                 </div>
-                <button type="button" className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center">
+                <button
+                  onClick={() => {
+                    const paymentInfoList = []
+                    paymentInfoList.push(paymentInfo)
+                    return sendToken({
+                      accountName: selectedAccount,
+                      paymentInfoList,
+                      tokenId: active,
+                    })
+                  }}
+                  type="button"
+                  className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center"
+                >
                   <Icon className="mr-2 text-white" iconName="Send" />
                   <span className="text-white">Send</span>
                 </button>

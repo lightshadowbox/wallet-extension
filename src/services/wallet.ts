@@ -1,8 +1,10 @@
+/* eslint-disable import/no-mutable-exports */
 import * as Mnemonic from 'bitcore-mnemonic'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk'
 import { WalletInstance } from 'incognito-sdk'
+import { AccountModelType, serializeAccount } from 'models/account-model'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
 import { createDraft, finishDraft } from 'immer'
@@ -11,7 +13,7 @@ import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
 
-let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boolean; runtimePassword?: string }> = createDraft({
+export let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boolean; runtimePassword?: string }> = createDraft({
   walletRuntime: null,
   loaded: false,
 })
@@ -31,6 +33,11 @@ export const loadingWallet = async () => {
     await unlockWallet()
     return runtime.walletRuntime
   }
+}
+export const getBackupAccount = async (accountName: string) => {
+  const accountInstance = await getAccountRuntime(accountName)
+  const accountSerizialed = await serializeAccount(accountInstance)
+  return accountSerizialed
 }
 
 export const getWalletInstance = async () => {
@@ -218,9 +225,4 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
 
   const result = await tokenInstance.getAvaiableBalance()
   return result.toNumber()
-}
-
-export const getBackupAccount = async (accountName: string) => {
-  const account = await getAccountRuntime(accountName)
-  return account.key.keySet
 }

@@ -2,6 +2,7 @@ import { AccountModelType, serializeAccount } from 'models/account-model'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { useQuery } from 'react-query'
 import { getAccountRuntime, getBackupAccount } from 'services/wallet'
+import { toPRV } from 'services/utils'
 import * as i from 'incognito-sdk'
 import { useGetWallet } from './wallet.queries'
 
@@ -20,7 +21,6 @@ export const useGetAccount = () => {
     },
   )
 }
-
 export type GetListAccountType = { accountName: string; USD: string; PRV: string }
 export const useGetListAccount = () => {
   const { data: wallet } = useGetWallet()

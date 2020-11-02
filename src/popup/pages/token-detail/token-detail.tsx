@@ -7,7 +7,9 @@ import classNames from 'classnames'
 
 import { Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
-import { Header, DetailCover, TokenHistoty } from './components/index'
+import { getTokenFromTokenIds } from 'queries/token.queries'
+import { useSettingStore } from 'popup/stores/features/settings'
+import { Header, DetailCover, TokenHistory } from './components/index'
 import styles from './token-detail.module.css'
 import './token-detail.css'
 
@@ -16,6 +18,8 @@ interface Props {
   showPanel: () => void
   dismissPanel: () => void
   tokenId: string
+  showPanelReceive: () => void
+  showPanelSend: () => void
 }
 
 const TokenDetailContainer: React.FC<{
@@ -33,7 +37,7 @@ const TokenDetailContainer: React.FC<{
     </div>
   )
 }
-export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId }) => {
+export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelReceive, showPanelSend }) => {
   const onDismissPanelRight = () => {
     const element = document.querySelector('.token-detail') as HTMLElement
     element.style.animation = 'none'
@@ -43,6 +47,7 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
       dismissPanel()
     }, 160)
   }
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (
@@ -52,9 +57,9 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <TokenDetailContainer
-              header={<Header title="ZClassic" icon="ChromeBack" dismissPanel={onDismissPanelRight} />}
-              detailCover={<DetailCover />}
-              tokenHistory={<TokenHistoty />}
+              header={<Header title={getTokenFromTokenIds([tokenId])[tokenId].name} icon="ChromeBack" dismissPanel={onDismissPanelRight} />}
+              detailCover={<DetailCover tokenId={tokenId} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
+              tokenHistory={<TokenHistory tokenId={tokenId} accountName={selectedAccount} />}
             />
           </Panel>
         </Customizer>
