@@ -18,22 +18,20 @@ interface Props {
 
 export const BalanceListCell: React.FC<{
   item: {
-    tokenId: string
-    name: string
-    icon: string
-    type: number
-    isFollowing: boolean
+    TokenId: string
+    Name: string
+    Icon: string
   }
   showPanelTokenDetail: (value) => void
 }> = ({ item, showPanelTokenDetail }) => {
-  const balance = useGetTokenBalance(item.tokenId)
+  const balance = useGetTokenBalance(item.TokenId)
   return (
-    <div onClick={() => showPanelTokenDetail(item.tokenId)} className={classNames('flex p-4 hover:bg-gray-6 cursor-pointer')}>
+    <div onClick={() => showPanelTokenDetail(item.TokenId)} className={classNames('flex p-4 hover:bg-gray-6 cursor-pointer')}>
       <div className={classNames('flex items-center w-12')}>
-        <Persona showUnknownPersonaCoin={!item?.tokenId} imageUrl={item?.icon} size={PersonaSize.size32} hidePersonaDetails />
+        <Persona showUnknownPersonaCoin={!item?.TokenId} imageUrl={item?.Icon} size={PersonaSize.size32} hidePersonaDetails />
       </div>
       <div className={classNames('flex items-center flex-grow')}>
-        <Label>{item.name}</Label>
+        <Label>{item.Name}</Label>
       </div>
       <div className={classNames('flex items-center justify-end')}>
         <Label className={classNames('text-gray-2 text-xs font-normal text-base')}>

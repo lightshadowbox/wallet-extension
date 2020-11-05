@@ -6,7 +6,10 @@
   "icons": {
     "128": "logo.png"
   },
-  "permissions": [],
+  "permissions": [
+    "<all_urls>"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {
     "default_icon": "logo.png",
     "default_popup": "index.html"

@@ -92,11 +92,11 @@ const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (va
         >
           <img
             className="send-icon"
-            src={active ? tokenAccounts.find((item) => item.tokenId === active).icon : tokenAccounts[0].icon}
+            src={active ? tokenAccounts.find((item) => item.TokenId === active).Icon : tokenAccounts[0].Icon}
             alt="icon"
             onError={onLoadImageFail}
           />
-          <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.tokenId === active).name : tokenAccounts[0].name}</span>
+          <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.TokenId === active).Name : tokenAccounts[0].Name}</span>
           <Icon className="text-gray-7" iconName="ChevronDown" />
         </button>
         <ul
@@ -104,14 +104,14 @@ const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (va
           dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}
         >
           {tokenAccounts.map((item) => (
-            <li key={item.tokenId} className="border-b border-gray-9 bg-white">
+            <li key={item.TokenId} className="border-b border-gray-9 bg-white">
               <button
                 className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
                 type="button"
-                onClick={() => onChangeCoin(item.tokenId)}
+                onClick={() => onChangeCoin(item.TokenId)}
               >
-                <img onError={onLoadImageFail} className="send-icon" src={item.icon} alt="icon" />
-                <span className="self-center ml-2">{item.name}</span>
+                <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
+                <span className="self-center ml-2">{item.Name}</span>
               </button>
             </li>
           ))}
