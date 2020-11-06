@@ -2,3 +2,23 @@
   z-index: 10000;
   background-color: transparent;
 }
+.dropdownContainer {
+  width: 100%;
+  height: 100%;
+}
+.dropdownItem {
+  display: flex;
+  flex-direction: row;
+  padding: 12px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.dropdownItem:hover {
+  background-color: #eff3fe;
+}
+.dropdownItem p {
+  margin-left: 20px;
+}
+.dropdownItem:last-child {
+  color: red;
+}

@@ -5,14 +5,16 @@ import React from 'react'
 import classNames from 'classnames'
 import { useGetTokenBalance } from 'queries/token.queries'
 import { FontIcon } from '@fluentui/react'
+import { useSettingStore } from 'popup/stores/features/settings'
 import styles from './detail-cover.module.css'
 
-export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => void; showPanelSend: () => void }> = ({
+export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => void; showPanelSend: (e, tokenId, accountName) => void }> = ({
   tokenId,
   showPanelReceive,
   showPanelSend,
 }) => {
   const { data: totalBalance, isSuccess } = useGetTokenBalance(tokenId)
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return (
     <div className={classNames('w-full h-full')}>
       <div className={classNames('p-16')}>
@@ -31,7 +33,12 @@ export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => vo
           <FontIcon iconName="QRCode" />
           <a href="#">Receive</a>
         </div>
-        <div onClick={showPanelSend} className={styles.btnSend}>
+        <div
+          onClick={(e) => {
+            showPanelSend(e, tokenId, selectedAccount)
+          }}
+          className={styles.btnSend}
+        >
           <FontIcon iconName="Send" />
           <a href="#">Send</a>
         </div>

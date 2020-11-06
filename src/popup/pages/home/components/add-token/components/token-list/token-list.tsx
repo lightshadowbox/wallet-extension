@@ -23,6 +23,7 @@ const theme: ITheme = getTheme()
 const { palette, semanticColors, fonts } = theme
 interface Props {
   valueInput: string
+  showCustom: boolean
 }
 const classNamesList = mergeStyleSets({
   container: {
@@ -77,10 +78,9 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
-
   const isFollowingToken = React.useMemo(() => {
     return account?.followingTokens?.indexOf(item.TokenID) !== -1
-  }, [account?.followingTokens])
+  }, [account?.followingTokens, item.TokenID])
 
   const onLoadImageFail = (e) => {
     console.log(e)
@@ -132,33 +132,52 @@ interface Item {
   item: TokenItemInterface
 }
 
-export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput }) => {
+export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput, showCustom }) => {
   const { data: allTokens } = useFetchToken()
+  const { data: account } = useGetAccount()
   const { data: searchIndex } = useSearchableTokenList('PSymbol', 'Name')
   const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('PSymbol', 'Name')
-
-  const [showCustom, setShowCustom] = React.useState(false)
-  console.log(searchIndex)
+  const sortArrayByFollowing = React.useCallback(
+    (tokenList: any[]) => {
+      const listFollowing = []
+      const listWithoutFollowing = []
+      for (let i = 0; i < tokenList.length; i++) {
+        if (account.followingTokens.includes(tokenList[i].TokenID)) {
+          listFollowing.push(tokenList[i])
+        } else {
+          listWithoutFollowing.push(tokenList[i])
+        }
+      }
+      console.log(tokenList)
+      return listFollowing.concat(listWithoutFollowing)
+    },
+    [allTokens, valueInput],
+  )
   const tokenList = React.useMemo(() => {
     if (!allTokens) {
       return []
     }
-
+    if (showCustom && `${valueInput}`.trim() !== '') {
+      return searchOnlyVerifiedIndex.search<TokenItemInterface>(valueInput).map((i) => {
+        return i
+      })
+    }
     if (`${valueInput}`.trim() !== '') {
       return searchIndex.search<TokenItemInterface>(valueInput).map((i) => {
-        return i.item
+        return i
       })
     }
 
     return orderBy(allTokens, ['Verified', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'desc'])
   }, [allTokens, valueInput, searchIndex])
+
   const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [allTokens])
 
   if (tokenList) {
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
-          <List items={tokenList} onRenderCell={onRenderCell} />
+          <List items={sortArrayByFollowing(tokenList)} onRenderCell={onRenderCell} />
         </div>
       </FocusZone>
     )

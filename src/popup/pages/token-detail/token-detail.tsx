@@ -48,6 +48,7 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
     }, 160)
   }
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
+
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (

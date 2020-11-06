@@ -11,6 +11,7 @@ import { createWalletWithPassword, followToken, importAccountFromPrivateKey, unf
 import { useGetTokenForAccount } from './token.queries'
 import { GET_WALLET_KEY } from './wallet.queries'
 
+const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const useCreateWallet = () => {
   return useMutation((params: { password: string; name: string }) => createWalletWithPassword(params.name, params.password), {
     onSuccess: async (data, { name }) => {
@@ -98,14 +99,12 @@ export const useSendToken = (hidePanel: () => void, setMessage: (value: any) => 
 }
 const sendToken = async (accountName: string, paymentInfoList: any[], tokenId: string) => {
   const account = await getAccountRuntime(accountName)
-  console.log(account)
-  console.log(tokenId)
-  if (tokenId !== '0000000000000000000000000000000000000000000000000000000000000004') {
+  if (tokenId !== PRV_TOKEN_ID) {
     const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
-    const history1 = await token.transfer(paymentInfoList, '20', '1')
+    const history1 = await token.transfer(paymentInfoList, '1', '1')
     console.log(history1)
   } else {
-    const history = await account.nativeToken.transfer(paymentInfoList, '20')
+    const history = await account.nativeToken.transfer(paymentInfoList, '0.0000001')
     console.log(history)
   }
 }

@@ -6,11 +6,13 @@ import classNames from 'classnames'
 import styles from './dropdown-menu.module.css'
 import './dropdown-menu.css'
 
-export const DropdownMenu: React.FC<{ showPanelBackup: () => void; onOpenMenuClick: () => void; showPanelAcc: () => void }> = ({
-  showPanelBackup,
-  onOpenMenuClick,
-  showPanelAcc,
-}) => {
+interface Item {
+  name: string
+  icon: string
+  showPanel: () => void
+  clickHandleName: (value) => void
+}
+export const DropdownMenu: React.FC<{ onOpenMenuClick: () => void; listItem: Item[] }> = ({ onOpenMenuClick, listItem }) => {
   const ref = React.useRef<HTMLDivElement>(null)
   const handleClickOutside = (event: Event) => {
     if (ref.current && !ref.current.contains(event.target as Node)) {
@@ -24,44 +26,21 @@ export const DropdownMenu: React.FC<{ showPanelBackup: () => void; onOpenMenuCli
     }
   })
   return (
-    <div ref={ref} className={classNames(`absolute inset-0 dropdown ${styles.dropdownContainer}`)}>
+    <div ref={ref} className={classNames(`absolute inset-0 ${styles.dropdownContainer}`)}>
       <ul>
-        <li
-          onClick={() => {
-            showPanelAcc()
-            onOpenMenuClick()
-          }}
-          className={styles.dropdownItem}
-        >
-          <FontIcon iconName="Contact" />
-          <p>Account</p>
-        </li>
-        <li
-          onClick={() => {
-            showPanelBackup()
-            onOpenMenuClick()
-          }}
-          className={styles.dropdownItem}
-        >
-          <FontIcon iconName="Subscribe" />
-          <p>Backup</p>
-        </li>
-        <li className={styles.dropdownItem}>
-          <FontIcon iconName="Lock" />
-          <p>Lock</p>
-        </li>
-        <li className={styles.dropdownItem}>
-          <FontIcon iconName="ChromeFullScreen" />
-          <p>Full Screen</p>
-        </li>
-        <li className={styles.dropdownItem}>
-          <FontIcon iconName="InfoSolid" />
-          <p>About us</p>
-        </li>
-        <li className={styles.dropdownItem}>
-          <FontIcon iconName="Leave" />
-          <p>Log out</p>
-        </li>
+        {listItem.map((a) => (
+          <li
+            onClick={() => {
+              a.showPanel()
+              a.clickHandleName(a.name)
+              onOpenMenuClick()
+            }}
+            className={`${styles.dropdownItem} dropdownItem`}
+          >
+            <FontIcon iconName={a.icon} />
+            <p>{a.name}</p>
+          </li>
+        ))}
       </ul>
     </div>
   )

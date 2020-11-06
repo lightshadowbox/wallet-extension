@@ -41,6 +41,13 @@ export const HomePage = () => {
   const [isPanelOpenSend, { setTrue: showPanelSend, setFalse: dismissPanelSend }] = useBoolean(false)
   const [isPanelOpenBackup, { setTrue: showPanelBackup, setFalse: dismissPanelBackup }] = useBoolean(false)
   const [isPanelOpenTokenDetail, { setTrue: showPanelTokenDetail, setFalse: dismissPanelTokenDetail }] = useBoolean(false)
+  const [tokenId, setTokenId] = React.useState(null)
+  const [accountName, setAccountName] = React.useState(null)
+  const onShowPanelSend = (event = null, tokenId = null, accountName = null) => {
+    showPanelSend()
+    setTokenId(tokenId)
+    setAccountName(accountName)
+  }
   const onShowPanelTokenDetail = (tokenId) => {
     showPanelTokenDetail()
     setTokenPreId(tokenId)
@@ -52,6 +59,7 @@ export const HomePage = () => {
     setTimeout(() => {
       element.style.animation = 'moveInRight 0.3s'
       if (panel === 'send') {
+        setTokenId(null)
         dismissPanelSend()
       } else if (panel === 'receive') {
         dismissPanelReceive()
@@ -81,7 +89,7 @@ export const HomePage = () => {
       tokenDetail={
         <TokenDetailPanel
           showPanelReceive={showPanelReceive}
-          showPanelSend={showPanelSend}
+          showPanelSend={onShowPanelSend}
           tokenId={preTokenId}
           isPanelOpen={isPanelOpenTokenDetail}
           showPanel={showPanelTokenDetail}
@@ -89,8 +97,16 @@ export const HomePage = () => {
         />
       }
       receive={<ReceivePanel isPanelOpen={isPanelOpenReceive} showPanel={showPanelReceive} dismissPanel={() => onDismissPanelRight('receive')} />}
-      send={<SendPanel isPanelOpen={isPanelOpenSend} showPanel={showPanelSend} dismissPanel={() => onDismissPanelRight('send')} />}
-      cover={<WalletCover showPanel={showPanelAcc} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
+      send={
+        <SendPanel
+          tokenId={tokenId}
+          accountName={accountName}
+          isPanelOpen={isPanelOpenSend}
+          showPanel={onShowPanelSend}
+          dismissPanel={() => onDismissPanelRight('send')}
+        />
+      }
+      cover={<WalletCover showPanel={showPanelAcc} showPanelReceive={showPanelReceive} showPanelSend={onShowPanelSend} />}
       menu={<WalletMenu showPanel={showPanelNetwork} showPanelAcc={showPanelAcc} showPanelBackup={showPanelBackup} />}
       token={<AddTokenPanel isPanelOpen={isPanelOpenToken} showPanel={showPanelToken} dismissPanel={() => dismissPanelBottom('add-token')} />}
       network={<NetworkPanel isPanelOpen={isPanelOpenNetwork} showPanel={showPanelNetwork} dismissPanel={() => dismissPanelBottom('network')} />}

@@ -12,7 +12,9 @@ export default {
   },
 } as Meta
 
-const Template: Story = (args) => <SearchInput placeholder="Choose network name..." setValueInput={(value) => console.log('clicked')} {...args} />
+const Template: Story = (args) => (
+  <SearchInput setShowCustom={(value) => console.log(value)} placeholder="Choose network name..." setValueInput={(value) => console.log('clicked')} {...args} />
+)
 
 export const Primary = Template.bind({})
 Primary.args = {

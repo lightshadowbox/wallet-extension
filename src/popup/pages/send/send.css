@@ -13,6 +13,17 @@
   font-weight: 500;
 }
 
+@keyframes dropdownOut {
+  from {
+    height: 150px;
+    opacity: 1;
+  }
+  to {
+    height: 0px;
+    opacity: 0;
+  }
+}
+
 .mini-cube {
   width: 5px;
   height: 5px;
@@ -26,7 +37,9 @@
   max-height: 80px;
   overflow: scroll;
 }
-
+.content .dropdown .dropdownItem:last-child {
+  color: black;
+}
 .text-with-mini-cube {
   position: relative;
   padding-left: 10px;
@@ -59,6 +72,10 @@
   animation-fill-mode: forwards;
   animation-delay: 0.1s;
   opacity: 0;
+}
+.token-dropdown {
+  width: 100%;
+  overflow: hidden;
 }
 @keyframes moveInRight {
   from {

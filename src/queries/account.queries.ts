@@ -45,6 +45,19 @@ export const useGetListAccount = () => {
   )
 }
 
-export const useGetBackupAccount = (accountName: string) => {
-  return useQuery([useGetBackupAccount.name, accountName], () => getBackupAccount(accountName))
+export const useGetBackupAccount = (accountName = null) => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useQuery(
+    [useGetBackupAccount.name, accountName, selectedAccount],
+    () => {
+      if (!accountName) {
+        return getBackupAccount(selectedAccount)
+      }
+      return getBackupAccount(accountName)
+    },
+    {
+      enabled: selectedAccount,
+      refetchOnWindowFocus: true,
+    },
+  )
 }

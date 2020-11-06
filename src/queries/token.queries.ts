@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query'
 import { getFromCache } from 'services/query-cache'
+import { historyServices, CONSTANT } from 'incognito-sdk'
 
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
@@ -7,7 +8,7 @@ import { AxiosError } from 'axios'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
 import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
-import { CONSTANT } from 'incognito-sdk/build/web/module'
+
 import { useSettingStore } from 'popup/stores/features/settings'
 import { createTokenSearchIndex } from 'services/fulltext'
 import { useGetWallet } from './wallet.queries'
@@ -167,21 +168,19 @@ export const getTokenList = async () => {
   return keyBy(concat([PRV], tokensMapped, customTokenMapped), 'TokenID')
 }
 
-export const useGetHistory = (accountName: string, tokenId: string) => {
-  return useQuery([useGetHistory.name, accountName, tokenId], () => getHistory(accountName, tokenId), {
-    enabled: accountName,
+export const useGetHistory = (AccountName: string, tokenId: string | null) => {
+  return useQuery([useGetHistory.name, AccountName, tokenId], () => getHistory(AccountName, tokenId), {
+    enabled: AccountName,
   })
 }
-const getHistory = async (accountName: string, tokenId: string) => {
-  const account = await getAccountRuntime(accountName)
-  if (tokenId === '0000000000000000000000000000000000000000000000000000000000000004') {
-    const histories = await account.nativeToken.getTxHistories()
-    console.log(histories)
-    return histories
-  }
-  const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
-  const histories = await token.getTxHistories()
-  console.log('Token tx histories', histories)
+const getHistory = async (AccountName: string, tokenId: string | null = null) => {
+  console.log(AccountName)
+  const account = await getAccountRuntime(AccountName)
+  console.log(account.key.keySet.publicKeySerialized)
+  const histories = await historyServices.getTxHistoryByPublicKey(
+    account.key.keySet.publicKeySerialized, // publicKeySerialized of the account
+    null,
+  )
   return histories
 }
 
@@ -239,7 +238,18 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
   )
 }
 
-export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVIDSTR) => {
+export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVIDSTR, accountName: string | null = null) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  return useQuery([useGetTokenBalance.name, selectedAccount, token], () => getTokenBalanceForAccount(selectedAccount, token))
+  return useQuery(
+    [useGetTokenBalance.name, accountName, selectedAccount, token],
+    () => {
+      if (!accountName) {
+        return getTokenBalanceForAccount(selectedAccount, token)
+      }
+      return getTokenBalanceForAccount(accountName, token)
+    },
+    {
+      enabled: selectedAccount,
+    },
+  )
 }
