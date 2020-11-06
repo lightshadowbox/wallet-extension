@@ -27,6 +27,7 @@ export const AddTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismiss
   const layerHostId = useId('layerHost')
   const [valueInput, setValueInput] = React.useState('')
   const scopedSettings = useLayerSettings(true, layerHostId)
+  const [showCustom, setShowCustom] = React.useState(false)
   return (
     isPanelOpen && (
       <div className={`absolute inset-0 add-token ${styles.container}`}>
@@ -34,8 +35,8 @@ export const AddTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismiss
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <AddTokenContainer
               header={<Header title="Add Token" icon="ChromeClose" dismissPanel={dismissPanel} setValueInput={setValueInput} />}
-              searchInput={<SearchInput placeholder="Choose token..." setValueInput={setValueInput} />}
-              list={<ListGhostingExample valueInput={valueInput} />}
+              searchInput={<SearchInput setShowCustom={setShowCustom} placeholder="Choose token..." setValueInput={setValueInput} />}
+              list={<ListGhostingExample showCustom={showCustom} valueInput={valueInput} />}
             >
               <div>Body will coming soon </div>
             </AddTokenContainer>

@@ -57,7 +57,7 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <TokenDetailContainer
-              header={<Header title={getTokenFromTokenIds([tokenId])[tokenId].name} icon="ChromeBack" dismissPanel={onDismissPanelRight} />}
+              header={<Header title={getTokenFromTokenIds([tokenId])[tokenId].Name} icon="ChromeBack" dismissPanel={onDismissPanelRight} />}
               detailCover={<DetailCover tokenId={tokenId} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
               tokenHistory={<TokenHistory tokenId={tokenId} accountName={selectedAccount} />}
             />
