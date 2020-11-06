@@ -15,7 +15,7 @@ export const SearchInput: React.FC<{ placeholder: string; setValueInput: (value)
       <FontIcon iconName="Search" />
     </div>
     <div className={styles.verifyContainer}>
-      <input type="checkbox" value="verified" className="check-verify" id="verify" />
+      <input type="checkbox" onChange={(e) => setShowCustom(e.target.checked)} value="verified" className="check-verify" id="verify" />
       <label htmlFor="verify">Verified</label>
     </div>
   </div>
