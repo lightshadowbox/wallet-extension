@@ -5,6 +5,7 @@ import { useTheme } from 'popup/services'
 import { fade } from 'popup/services/utils'
 import React from 'react'
 import { DropdownMenu } from '../index'
+import styles from './wallet-menu.module.css'
 
 interface Props {
   showPanel: () => void
@@ -12,6 +13,44 @@ interface Props {
   showPanelAcc: () => void
 }
 export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPanelAcc }) => {
+  const listItem = [
+    {
+      icon: 'Contact',
+      name: 'Account',
+      showPanel: showPanelAcc,
+      clickHandleName: (name) => console.log('panel'),
+    },
+    {
+      icon: 'Subscribe',
+      name: 'Backup',
+      showPanel: showPanelBackup,
+      clickHandleName: (name) => console.log('panel'),
+    },
+    {
+      icon: 'Lock',
+      name: 'Lock',
+      showPanel: () => console.log('panel'),
+      clickHandleName: (name) => console.log('panel'),
+    },
+    {
+      icon: 'ChromeFullScreen',
+      name: 'Full Screen',
+      showPanel: () => console.log('panel'),
+      clickHandleName: (name) => console.log('panel'),
+    },
+    {
+      icon: 'InfoSolid',
+      name: 'About us',
+      showPanel: () => console.log('panel'),
+      clickHandleName: (name) => console.log('panel'),
+    },
+    {
+      icon: 'Leave',
+      name: 'Log out',
+      showPanel: () => console.log('panel'),
+      clickHandleName: (name) => console.log('panel'),
+    },
+  ]
   const [isOpen, setIsOpen] = React.useState(false)
   const onOpenMenuClick = React.useCallback(() => {
     if (isOpen) {
@@ -50,7 +89,11 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
       </SecondaryButton>
       <div className={classNames('flex-grow')} />
       <div className={classNames('relative menu')}>
-        {isOpen ? <DropdownMenu showPanelAcc={showPanelAcc} showPanelBackup={showPanelBackup} onOpenMenuClick={onOpenMenuClick} /> : null}
+        {isOpen ? (
+          <div className={`absolute dropdown ${styles.dropdownContainer}`}>
+            <DropdownMenu listItem={listItem} onOpenMenuClick={onOpenMenuClick} />
+          </div>
+        ) : null}
         <FaButton onClick={onOpenMenuClick} iconProps={{ iconName: 'MoreVertical' }} iconColor={theme.palette.white} />
       </div>
     </>

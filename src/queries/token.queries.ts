@@ -124,6 +124,7 @@ const getHistory = async (accountName: string, tokenId: string) => {
   const account = await getAccountRuntime(accountName)
   if (tokenId === '0000000000000000000000000000000000000000000000000000000000000004') {
     const histories = await account.nativeToken.getTxHistories()
+    console.log(accountName)
     console.log(histories)
     return histories
   }
@@ -176,7 +177,21 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
   )
 }
 
-export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVIDSTR) => {
+export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVIDSTR, accountName: string | null = null) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  return useQuery([useGetTokenBalance.name, selectedAccount, token], () => getTokenBalanceForAccount(selectedAccount, token))
+  return useQuery(
+    [useGetTokenBalance.name, accountName, selectedAccount, token],
+    () => {
+      if (!accountName) {
+        console.log('hi')
+        return getTokenBalanceForAccount(selectedAccount, token)
+      }
+      console.log('hello')
+      console.log(accountName)
+      return getTokenBalanceForAccount(accountName, token)
+    },
+    {
+      enabled: selectedAccount,
+    },
+  )
 }

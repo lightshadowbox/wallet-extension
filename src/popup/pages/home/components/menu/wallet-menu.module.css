@@ -1,0 +1,35 @@
+.dropdownContainer {
+  z-index: 10000000;
+  background-color: white;
+  width: 180px;
+  height: 250px;
+  top: 40px;
+  left: -150px;
+  padding: 10px;
+  border: 1px solid #d8d8d8;
+  padding: 10px 0px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  animation: dropdownIn 0.3s;
+  animation-fill-mode: forwards;
+  overflow: hidden;
+}
+@keyframes dropdownIn {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: 250px;
+    opacity: 1;
+  }
+}
+@keyframes dropdownOut {
+  from {
+    height: 250px;
+    opacity: 1;
+  }
+  to {
+    height: 0px;
+    opacity: 0;
+  }
+}

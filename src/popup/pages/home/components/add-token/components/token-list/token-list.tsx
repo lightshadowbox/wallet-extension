@@ -78,10 +78,9 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
-
   const isFollowingToken = React.useMemo(() => {
-    return account?.followingTokens?.indexOf(item.tokenId) !== -1
-  }, [account?.followingTokens])
+    return account?.followingTokens?.includes(item.tokenId)
+  }, [account?.followingTokens, item.tokenId])
 
   const onLoadImageFail = (e) => {
     e.target.src = 'https://picsum.photos/200'
@@ -131,29 +130,42 @@ interface Item {
 
 export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput }) => {
   const { data: allTokens } = useFetchToken()
+  const { data: account } = useGetAccount()
   const { data: searchIndex } = useSearchableTokenList('name', 'symbol', 'pSymbol')
-
+  const sortArrayByFollowing = React.useCallback(
+    (tokenList: any[]) => {
+      const listFollowing = []
+      const listWithoutFollowing = []
+      for (let i = 0; i < tokenList.length; i++) {
+        if (account.followingTokens.includes(tokenList[i].tokenId)) {
+          listFollowing.push(tokenList[i])
+        } else {
+          listWithoutFollowing.push(tokenList[i])
+        }
+      }
+      return listFollowing.concat(listWithoutFollowing)
+    },
+    [allTokens, valueInput],
+  )
   const tokenList = React.useMemo(() => {
     if (!allTokens) {
       return []
     }
-
+    const list = orderBy(allTokens, ['tokenType', 'verified'], 'desc')
     if (`${valueInput}`.trim() !== '') {
-      return orderBy(searchIndex.search(valueInput), ['score', 'name'], 'asc').map((i: Item) => {
-        return i.item
-      })
+      const searchedList = list.filter((item) => item.name.trim().toLowerCase().indexOf(valueInput.trim().toLowerCase()) !== -1)
+      return searchedList
     }
-
-    return orderBy(allTokens, ['tokenType', 'verified'], 'desc')
+    return list
   }, [allTokens, valueInput, searchIndex])
+
   const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [allTokens])
 
-  console.log(tokenList)
   if (tokenList) {
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
-          <List items={tokenList} onRenderCell={onRenderCell} />
+          <List items={sortArrayByFollowing(tokenList)} onRenderCell={onRenderCell} />
         </div>
       </FocusZone>
     )

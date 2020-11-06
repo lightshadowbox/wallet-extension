@@ -4,9 +4,11 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
 import { useGetListAccount } from 'queries/account.queries'
+import { useSettingStore } from 'popup/stores/features/settings'
 import classNames from 'classnames'
 import { useSendToken } from 'queries/create-account.mutation'
-import { useGetTokenForAccount } from 'queries/token.queries'
+import { useGetTokenForAccount, useGetTokenBalance } from 'queries/token.queries'
+import { DropdownMenu } from '../home/components/index'
 import { Message } from './message/message'
 import styles from './send.module.css'
 
@@ -34,11 +36,15 @@ export interface SendProps {
    */
   onClick?: () => void
   dismissPanel: () => void
+  tokenId: string | null
+  accountName: string | null
 }
 interface Props {
   isPanelOpen: boolean
   showPanel: () => void
   dismissPanel: () => void
+  tokenId: string | null
+  accountName: string | null
 }
 const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 
@@ -70,62 +76,78 @@ const useComponentVisible = (initialIsVisible) => {
   return { ref, isComponentVisible, setIsComponentVisible }
 }
 
-const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (value) => void }> = React.memo(({ accountName, active, setActive }) => {
-  const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
-  const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
-  const onChangeCoin = (id) => {
-    setActive(id)
-    setIsComponentVisible(!isComponentVisible)
-  }
-  const onLoadImageFail = React.useCallback((e) => {
-    e.target.src = 'https://picsum.photos/200'
-  }, [])
-
-  if (status === 'success') {
-    return (
-      <div ref={ref} className="dropdown inline-block relative">
-        <input type="hidden" name="coin" value={active} />
-        <button
-          onClick={() => setIsComponentVisible(!isComponentVisible)}
-          type="button"
-          className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
-        >
-          <img
-            className="send-icon"
-            src={active ? tokenAccounts.find((item) => item.tokenId === active).icon : tokenAccounts[0].icon}
-            alt="icon"
-            onError={onLoadImageFail}
-          />
-          <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.tokenId === active).name : tokenAccounts[0].name}</span>
-          <Icon className="text-gray-7" iconName="ChevronDown" />
-        </button>
-        <ul
-          className={`${isComponentVisible ? 'block' : 'hidden'}
-          dropdown-menu absolute border-gray-9 border-t border-r border-l mt-1`}
-        >
-          {tokenAccounts.map((item) => (
-            <li key={item.tokenId} className="border-b border-gray-9 bg-white">
-              <button
-                className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
-                type="button"
-                onClick={() => onChangeCoin(item.tokenId)}
-              >
-                <img onError={onLoadImageFail} className="send-icon" src={item.icon} alt="icon" />
-                <span className="self-center ml-2">{item.name}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
-  return <h1>Loading...</h1>
-})
+const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (value) => void; tokenId: string | null }> = React.memo(
+  ({ accountName, active, setActive, tokenId }) => {
+    const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
+    const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
+    const onChangeCoin = (id) => {
+      setActive(id)
+      setIsComponentVisible(!isComponentVisible)
+    }
+    const onLoadImageFail = React.useCallback((e) => {
+      e.target.src = 'https://picsum.photos/200'
+    }, [])
+    if (status === 'success') {
+      return (
+        <div ref={ref} className="dropdown inline-block relative">
+          <input type="hidden" name="coin" value={active} />
+          <button
+            onClick={() => setIsComponentVisible(!isComponentVisible)}
+            type="button"
+            className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
+          >
+            {!tokenId ? (
+              <img
+                className="send-icon"
+                src={active ? tokenAccounts.find((item) => item.tokenId === active).icon : tokenAccounts[0].icon}
+                alt="icon"
+                onError={onLoadImageFail}
+              />
+            ) : (
+              <img
+                className="send-icon"
+                src={active ? tokenAccounts.find((item) => item.tokenId === tokenId).icon : tokenAccounts[0].icon}
+                alt="icon"
+                onError={onLoadImageFail}
+              />
+            )}
+            {!tokenId ? (
+              <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.tokenId === active).name : tokenAccounts[0].name}</span>
+            ) : (
+              <span className="mr-2 ml-2">{tokenAccounts.find((item) => item.tokenId === tokenId).name}</span>
+            )}
+            {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
+          </button>
+          {!tokenId ? (
+            <ul
+              className={`${isComponentVisible ? 'block' : 'hidden'}
+          dropdown-menu absolute border-gray-9 border-t z-50 border-r border-l mt-1 token-dropdown`}
+            >
+              {tokenAccounts.map((item) => (
+                <li key={item.tokenId} className="border-b border-gray-9 bg-white">
+                  <button
+                    className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
+                    type="button"
+                    onClick={() => onChangeCoin(item.tokenId)}
+                  >
+                    <img onError={onLoadImageFail} className="send-icon" src={item.icon} alt="icon" />
+                    <span className="self-center ml-2">{item.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      )
+    }
+    return <h1>Loading...</h1>
+  },
+)
 
 /**
  * Primary UI component for user interaction
  */
-export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, ...props }) => {
+export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, tokenId, accountName, ...props }) => {
   const { data: accounts, isSuccess } = useGetListAccount()
   const [message, setMessage] = React.useState({
     message: '',
@@ -134,18 +156,24 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const [sendToken, sendTokenStatus] = useSendToken(dismissPanel, setMessage)
   const [paymentInfo, setPaymentInfo] = React.useState({
     paymentAddressStr: '',
-    amount: '10',
+    amount: '',
     message: '',
   })
-  const [selectedAccount, setSelectedAccount] = React.useState('Account 0')
+  const [listItem, setListItem] = React.useState([])
+  const selectAccount = useSettingStore((s) => s.selectAccountName)
+  const [selectedAccount, setSelectedAccount] = React.useState(selectAccount)
 
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   const [active, setActive] = useState(PRV_TOKEN_ID)
-  const onChangeAccount = React.useCallback(() => {
-    const element = document.querySelector('#transfer-account') as HTMLInputElement
-    setSelectedAccount(element.value)
-    setActive(PRV_TOKEN_ID)
-  }, [selectedAccount])
+
+  const { data: balance, isSuccess: balanceStatus } = useGetTokenBalance(!tokenId ? active : tokenId, selectedAccount)
+  const onChangeAccount = React.useCallback(
+    (accountName) => {
+      setSelectedAccount(accountName)
+      setActive(PRV_TOKEN_ID)
+    },
+    [selectedAccount],
+  )
   React.useEffect(() => {
     setTimeout(() => {
       setMessage({
@@ -154,6 +182,32 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       })
     }, 3000)
   }, [message.message])
+  const [isOpen, setIsOpen] = React.useState(false)
+  const onOpenMenuClick = React.useCallback(() => {
+    if (isOpen) {
+      const node = document.querySelector('.storybook-send .dropdown') as HTMLElement
+      node.style.animation = 'none'
+      node.style.animation = 'dropdownOut 0.3s'
+      return setTimeout(() => {
+        node.style.animation = 'dropdownIn 0.3s'
+        setIsOpen(!isOpen)
+      }, 200)
+    }
+    return setIsOpen(!isOpen)
+  }, [isOpen])
+  React.useEffect(() => {
+    if (isSuccess) {
+      const temp = accounts.map((account) => {
+        return {
+          name: account.accountName,
+          icon: 'Contact',
+          showPanel: onChangeAccount,
+          clickHandleName: onChangeAccount,
+        }
+      })
+      setListItem(temp)
+    }
+  }, [isSuccess])
   return (
     <div className={['storybook-send', mode, 'relative'].join(' ')} style={{ backgroundColor }} {...props}>
       {message.message !== '' ? <Message message={message.message} name={message.name} /> : null}
@@ -163,7 +217,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
             <div onClick={dismissPanel} className={styles.headerIcon}>
               <Icon iconName="ChromeBack" />
             </div>
-            <div className="flex-1 text-center font-medium text-base">Receive</div>
+            <div className="flex-1 text-center font-medium text-base">Send</div>
           </div>
         </div>
       </header>
@@ -189,16 +243,25 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                   Transfer account
                 </div>
                 <div className="field__wrapper relative">
-                  <select
-                    onChange={onChangeAccount}
-                    id="transfer-account"
-                    className="appearance-none mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-5"
+                  <div
+                    onClick={!accountName ? onOpenMenuClick : () => {}}
+                    className="appearance-none relative bg-white outline-none w-full border-b border-gray-9 pt-1 pb-1 pl-1 pr-5 flex flex-row items-center transfer cursor-pointer"
                   >
-                    {isSuccess ? accounts.map((account) => <option key={account.accountName}>{account.accountName}</option>) : <option>...</option>}
-                  </select>
-                  <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
+                    <img className="send-icon mr-2" alt="hinh anh" src="https://picsum.photos/200" />
+                    <p>{!accountName ? selectedAccount : accountName}</p>
+                    {!accountName ? (
+                      isOpen && isSuccess ? (
+                        <div className={`absolute dropdown ${styles.dropdownContainer}`}>
+                          <DropdownMenu listItem={listItem} onOpenMenuClick={onOpenMenuClick} />
+                        </div>
+                      ) : null
+                    ) : null}
+                  </div>
+                  {!accountName ? (
+                    <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
+                  ) : null}
                 </div>
-                <div className="mb-6 mt-2 text-gray-7">Balance: 12.50 NEO</div>
+                <div className="mb-6 mt-2 text-gray-7">Balance: {balanceStatus ? balance : 0} </div>
 
                 <div className="text-with-mini-cube">
                   <span className="mini-cube bg-orange-2" />
@@ -207,7 +270,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 <div className="field__wrapper relative">
                   <input
                     type="text"
-                    className="mt-2 bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
+                    className="bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
                     id="receiving-account"
                     value={paymentInfo.paymentAddressStr}
                     onChange={(e) => setPaymentInfo({ ...paymentInfo, paymentAddressStr: e.target.value })}
@@ -222,12 +285,26 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     </svg>
                   </span>
                 </div>
+                <div className="text-with-mini-cube mt-8">
+                  <span className="mini-cube bg-orange-2" />
+                  Amount
+                </div>
+                <div className="field__wrapper relative">
+                  <input
+                    type="text"
+                    className=" bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
+                    id="receiving-account"
+                    value={paymentInfo.amount}
+                    onChange={(e) => setPaymentInfo({ ...paymentInfo, amount: e.target.value })}
+                    placeholder="0.0"
+                    name="amount"
+                  />
+                </div>
 
                 <div className="mt-6 mb-6 text-center">
-                  <DropdownCoins active={active} setActive={setActive} accountName={selectedAccount} />
-                  <h2 className="price text-6xl font-medium mb-4 mt-2">12.5</h2>
+                  <DropdownCoins tokenId={tokenId} active={active} setActive={setActive} accountName={!accountName ? selectedAccount : accountName} />
                   <input
-                    className="bg-white text-center outline-none w-full placeholder-gray-8:placeholder"
+                    className="mt-2 bg-white text-center outline-none w-full placeholder-gray-8:placeholder"
                     placeholder="Write note here..."
                     value={paymentInfo.message}
                     onChange={(e) => setPaymentInfo({ ...paymentInfo, message: e.target.value })}
@@ -250,7 +327,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     const paymentInfoList = []
                     paymentInfoList.push(paymentInfo)
                     return sendToken({
-                      accountName: selectedAccount,
+                      accountName: !accountName ? selectedAccount : accountName,
                       paymentInfoList,
                       tokenId: active,
                     })
@@ -271,7 +348,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   )
 }
 
-export const SendPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
+export const SendPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, accountName }) => {
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (
@@ -279,7 +356,7 @@ export const SendPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPane
       <div className={`absolute inset-0 send ${styles.container}`}>
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
-            <SendContainer label="Send" dismissPanel={dismissPanel} />
+            <SendContainer label="Send" dismissPanel={dismissPanel} tokenId={tokenId} accountName={accountName} />
           </Panel>
         </Customizer>
         <LayerHost id={layerHostId} className={layerHostClass} />

@@ -3,6 +3,24 @@
   height: 100%;
   overflow: hidden;
 }
+.dropdownContainer {
+  z-index: 10000000;
+  background-color: white;
+  width: 320px;
+  top: 45px;
+  left: 0px;
+  height: 150px;
+  overflow: scroll;
+  padding: 10px;
+  border: 1px solid #d8d8d8;
+  border-top: none;
+  padding: 10px 0px;
+  animation: dropdownIn 0.3s;
+  animation-fill-mode: forwards;
+}
+.dropdownContainer li:last-child {
+  display: none;
+}
 
 .container {
   position: absolute;
@@ -22,4 +40,14 @@
 }
 .headerIcon i {
   @apply font-normal;
+}
+@keyframes dropdownIn {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: 150px;
+    opacity: 1;
+  }
 }
