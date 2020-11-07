@@ -19,7 +19,9 @@
     "noEmit": true,
     "jsx": "react",
     "baseUrl": "src",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noEmitHelpers": true,
+    "importHelpers": false,
   },
   "include": [
     "src",

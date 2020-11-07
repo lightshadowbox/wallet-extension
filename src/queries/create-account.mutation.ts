@@ -32,8 +32,8 @@ export const useAddToken = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useMutation((tokenId: string) => followToken(selectedAccount, tokenId), {
     onSuccess: async () => {
-      await queryCache.invalidateQueries([useGetAccount.name])
-      await queryCache.invalidateQueries([useGetTokenForAccount.name])
+      await queryCache.invalidateQueries(['useGetAccount.name'])
+      await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
     },
     onError: (err) => {
       console.error(err)
@@ -47,8 +47,8 @@ export const useRemoveToken = () => {
   return useMutation((tokenId: string) => unfollowToken(selectedAccount, tokenId), {
     onSuccess: async () => {
       // Reload cache of useGetTokenForAccount hook
-      await queryCache.invalidateQueries([useGetAccount.name])
-      await queryCache.invalidateQueries([useGetTokenForAccount.name])
+      await queryCache.invalidateQueries(['useGetAccount.name'])
+      await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
     },
     onError: (err) => {
       console.error(err)
@@ -58,7 +58,8 @@ export const useRemoveToken = () => {
 export const useAddAccount = (hidePanel: () => void) => {
   return useMutation((accountName: string) => addAccount(accountName), {
     onSuccess: async () => {
-      await queryCache.invalidateQueries([useGetListAccountName.name])
+      await queryCache.invalidateQueries(['useGetListAccountName.name'])
+      await queryCache.invalidateQueries(['useGetListAccountName.name'])
       hidePanel()
     },
     onError: (err) => {
@@ -120,9 +121,9 @@ export const useImportAccountFromPrivateKey = (onSuccess?: CallableFunction) => 
       // Select account to new
       store.dispatch(settingSlices.actions.selectAccount({ accountName: data.name }))
       // Reload cache of useGetTokenForAccount hook
-      await queryCache.invalidateQueries([useGetListAccountName.name])
-      await queryCache.invalidateQueries([useGetAccount.name])
-      await queryCache.invalidateQueries([useGetTokenForAccount.name])
+      await queryCache.invalidateQueries(['useGetListAccountName.name'])
+      await queryCache.invalidateQueries(['useGetAccount.name'])
+      await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
       onSuccess && onSuccess()
     },
     onError: (err) => {

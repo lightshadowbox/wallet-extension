@@ -226,3 +226,8 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
   const result = await tokenInstance.getAvaiableBalance()
   return result.toNumber()
 }
+
+export const getAccountListName = async () => {
+  const wallet = await getWalletInstance()
+  return wallet.masterAccount.getAccounts().map((i) => i.name)
+}
