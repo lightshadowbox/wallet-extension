@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useRef, useEffect } from 'react'
-import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
+import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, Persona, PersonaSize } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
-import { useGetListAccount } from 'queries/account.queries'
+import { useGetListAccountName } from 'queries/account.queries'
 import { useSettingStore } from 'popup/stores/features/settings'
 import classNames from 'classnames'
 import { useSendToken } from 'queries/create-account.mutation'
@@ -148,12 +148,12 @@ const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (va
  * Primary UI component for user interaction
  */
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, tokenId, accountName, ...props }) => {
-  const { data: accounts, isSuccess } = useGetListAccount()
+  const { data: accountNames, isSuccess } = useGetListAccountName()
   const [message, setMessage] = React.useState({
     message: '',
     name: '',
   })
-  const [sendToken, sendTokenStatus] = useSendToken(dismissPanel, setMessage)
+  const [sendToken] = useSendToken(dismissPanel, setMessage)
   const [paymentInfo, setPaymentInfo] = React.useState({
     paymentAddressStr: '',
     amount: '',
@@ -197,9 +197,9 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   }, [isOpen])
   React.useEffect(() => {
     if (isSuccess) {
-      const temp = accounts.map((account) => {
+      const temp = accountNames.map((accountName) => {
         return {
-          name: account.accountName,
+          name: accountName,
           icon: 'Contact',
           showPanel: onChangeAccount,
           clickHandleName: onChangeAccount,
@@ -208,6 +208,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       setListItem(temp)
     }
   }, [isSuccess])
+
   return (
     <div className={['storybook-send', mode, 'relative'].join(' ')} style={{ backgroundColor }} {...props}>
       {message.message !== '' ? <Message message={message.message} name={message.name} /> : null}
@@ -242,27 +243,14 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                   <span className="mini-cube bg-green-4" />
                   Transfer account
                 </div>
-                <div className="field__wrapper relative">
-                  <div
-                    onClick={!accountName ? onOpenMenuClick : () => {}}
-                    className="appearance-none relative bg-white outline-none w-full border-b border-gray-9 pt-1 pb-1 pl-1 pr-5 flex flex-row items-center transfer cursor-pointer"
-                  >
-                    <img className="send-icon mr-2" alt="hinh anh" src="https://picsum.photos/200" />
-                    <p>{!accountName ? selectedAccount : accountName}</p>
-                    {!accountName ? (
-                      isOpen && isSuccess ? (
-                        <div className={`absolute dropdown ${styles.dropdownContainer}`}>
-                          <DropdownMenu listItem={listItem} onOpenMenuClick={onOpenMenuClick} />
-                        </div>
-                      ) : null
-                    ) : null}
-                  </div>
-                  {!accountName ? (
-                    <Icon className="icon text-gray-7 absolute right-0 top-0 transform translate-y-6 -translate-x-2" iconName="ChevronDown" />
-                  ) : null}
+                <div className="field__wrapper relative" style={{ padding: 12 }}>
+                  <Persona
+                    imageAlt={selectedAccount}
+                    text={selectedAccount}
+                    size={PersonaSize.size48}
+                    secondaryText={`Balance: ${balanceStatus ? balance : 0}`}
+                  />
                 </div>
-                <div className="mb-6 mt-2 text-gray-7">Balance: {balanceStatus ? balance : 0} </div>
-
                 <div className="text-with-mini-cube">
                   <span className="mini-cube bg-orange-2" />
                   Receiving account

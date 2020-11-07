@@ -7,7 +7,14 @@
     "128": "logo.png"
   },
   "permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "serial",
+    "storage",
+    "videoCapture",
+    "nativeMessaging",
+    "idle",
+    "system.network",
+    "browser"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {

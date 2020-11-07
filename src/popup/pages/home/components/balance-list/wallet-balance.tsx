@@ -51,7 +51,7 @@ export const WalletBalance: React.FC<Props> = ({ showPanel, showPanelTokenDetail
       const i = tokenListData[index]
       return <BalanceListCell item={i} showPanelTokenDetail={showPanelTokenDetail} />
     },
-    [tokenListData?.length],
+    [tokenListData],
   )
 
   return (
