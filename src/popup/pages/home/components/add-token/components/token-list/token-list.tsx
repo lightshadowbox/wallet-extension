@@ -9,7 +9,22 @@ import './token-list.css'
 import React from 'react'
 
 import classNames from 'classnames'
-import { FocusZone, FocusZoneDirection, FontIcon, getFocusStyle, getTheme, Image, ImageFit, ITheme, List, mergeStyleSets } from '@fluentui/react'
+import {
+  FocusZone,
+  FocusZoneDirection,
+  FontIcon,
+  getFocusStyle,
+  getTheme,
+  Image,
+  ImageFit,
+  ITheme,
+  List,
+  mergeStyleSets,
+  IPersonaSharedProps,
+  Persona,
+  PersonaSize,
+  PersonaPresence,
+} from '@fluentui/react'
 
 import { useGetAccount } from 'queries/account.queries'
 import { TokenItemInterface, useFetchToken, useSearchableOnlyVerifiedToken, useSearchableTokenList } from 'queries/token.queries'
@@ -78,6 +93,12 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
+  const examplePersona: IPersonaSharedProps = {
+    imageUrl: item.Icon,
+    imageInitials: item.Name[0] + item.Name[1],
+    text: item.Name,
+    secondaryText: item.PSymbol || item.Symbol,
+  }
   const isFollowingToken = React.useMemo(() => {
     return account?.followingTokens?.indexOf(item.TokenID) !== -1
   }, [account?.followingTokens, item.TokenID])
@@ -89,21 +110,7 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
 
   return (
     <div className={`${classNamesList.itemCell} token-list-container justify-between`} data-is-focusable>
-      <div className={classNames('flex flex-row cursor-pointer')}>
-        <div className={classNames(`imgContainer ${styles.imgContainer}`)}>
-          <img onError={onLoadImageFail} className={classNamesList.itemImage} src={item.Icon} />
-          {item.Verified ? (
-            <div className={styles.containerIcon}>
-              <FontIcon iconName="SkypeCircleCheck" />
-            </div>
-          ) : null}
-        </div>
-        <div className={classNamesList.itemContent} style={{ display: 'flex', alignItems: 'center' }}>
-          <div className={classNamesList.itemName}>
-            {item.Name} ({item.PSymbol || item.Symbol})
-          </div>
-        </div>
-      </div>
+      <Persona {...examplePersona} presence={item.Verified ? PersonaPresence.online : PersonaPresence.offline} imageAlt="Image" />
       <div className={classNames('flex flex-row items-center justify-center btn-token')}>
         {isFollowingToken ? (
           <button
@@ -148,7 +155,6 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
           listWithoutFollowing.push(tokenList[i])
         }
       }
-      console.log(tokenList)
       return listFollowing.concat(listWithoutFollowing)
     },
     [allTokens, valueInput],
