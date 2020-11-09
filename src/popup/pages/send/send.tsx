@@ -121,7 +121,7 @@ const DropdownCoins: React.FC<{ accountName: string; active: any; setActive: (va
           {!tokenId ? (
             <ul
               className={`${isComponentVisible ? 'block' : 'hidden'}
-          dropdown-menu absolute border-gray-9 border-t z-50 border-r border-l mt-1 token-dropdown`}
+          dropdown-menu absolute border-gray-9 border-t border-r border-l token-dropdown`}
             >
               {tokenAccounts.map((item) => (
                 <li key={item.TokenId} className="border-b border-gray-9 bg-white">
