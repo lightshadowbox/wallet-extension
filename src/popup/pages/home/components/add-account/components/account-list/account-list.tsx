@@ -46,10 +46,11 @@ const AccountItem: React.FC<{ name: string }> = ({ name }) => {
     </li>
   )
 }
+
 export const AccountList = () => {
   const { data: accountListName, isLoading } = useGetListAccountName()
 
-  if (isLoading) {
+  if (isLoading || !accountListName) {
     return (
       <div className={classNames('mt-4 p-4')}>
         <Shimmer />

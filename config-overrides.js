@@ -1,7 +1,7 @@
 const { addReactRefresh } = require('customize-cra-react-refresh')
 const { override, overrideDevServer, addWebpackPlugin, addPostcssPlugins } = require('customize-cra')
 const WorkerPlugin = require('worker-plugin')
-
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   webpack: function (config, env) {

@@ -169,14 +169,12 @@ export const getTokenList = async () => {
 }
 
 export const useGetHistory = (AccountName: string, tokenId: string | null) => {
-  return useQuery([useGetHistory.name, AccountName, tokenId], () => getHistory(AccountName, tokenId), {
+  return useQuery(['useGetHistory.name', AccountName, tokenId], () => getHistory(AccountName, tokenId), {
     enabled: AccountName,
   })
 }
 const getHistory = async (AccountName: string, tokenId: string | null = null) => {
-  console.log(AccountName)
   const account = await getAccountRuntime(AccountName)
-  console.log(account.key.keySet.publicKeySerialized)
   const histories = await historyServices.getTxHistoryByPublicKey(
     account.key.keySet.publicKeySerialized, // publicKeySerialized of the account
     null,
@@ -185,18 +183,18 @@ const getHistory = async (AccountName: string, tokenId: string | null = null) =>
 }
 
 export const useFetchToken = () => {
-  return useQuery(useFetchToken.name, getTokenList, { refetchOnWindowFocus: false, refetchInterval: 60 * 60 * 60 })
+  return useQuery('useFetchToken.name', getTokenList, { refetchOnWindowFocus: false, refetchInterval: 60 * 60 * 60 })
 }
 
 export const useSearchableTokenList = (...searchFields: string[]) => {
   const { data: tokenList } = useFetchToken()
-  return useQuery(useSearchableTokenList.name, () => createTokenSearchIndex(Object.values(tokenList), ...searchFields), { enabled: tokenList })
+  return useQuery('useSearchableTokenList.name', () => createTokenSearchIndex(Object.values(tokenList), ...searchFields), { enabled: tokenList })
 }
 
 export const useSearchableOnlyVerifiedToken = (...searchFields: string[]) => {
   const { data: tokenList } = useFetchToken()
   return useQuery(
-    useSearchableOnlyVerifiedToken.name,
+    'useSearchableOnlyVerifiedToken.name',
     () =>
       createTokenSearchIndex(
         Object.values(tokenList).filter((i) => i.Verified),
@@ -207,7 +205,7 @@ export const useSearchableOnlyVerifiedToken = (...searchFields: string[]) => {
 }
 
 export const getTokenFromTokenIds = (tokenIds: string[]) => {
-  const tokens = getFromCache<{ [key: string]: TokenItemInterface }>(useFetchToken.name)
+  const tokens = getFromCache<{ [key: string]: TokenItemInterface }>('useFetchToken.name')
   if (tokens && Object.keys(tokens).length > 0) {
     const filteredTokens = pick(tokens, ...tokenIds)
     return filteredTokens
@@ -219,7 +217,7 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
   const { data: tokenRemoteData } = useFetchToken()
   const { data: wallet } = useGetWallet()
   return useQuery(
-    [useGetTokenForAccount.name, selectedAccount],
+    ['useGetTokenForAccount.name', selectedAccount],
     async () => {
       const account = await getAccountRuntime(selectedAccount)
       const tokens = [CONSTANT.WALLET_CONSTANT.PRVIDSTR, ...account.privacyTokenIds]
@@ -241,7 +239,7 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
 export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVIDSTR, accountName: string | null = null) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useQuery(
-    [useGetTokenBalance.name, accountName, selectedAccount, token],
+    ['useGetTokenBalance.name', accountName, selectedAccount, token],
     () => {
       if (!accountName) {
         return getTokenBalanceForAccount(selectedAccount, token)
