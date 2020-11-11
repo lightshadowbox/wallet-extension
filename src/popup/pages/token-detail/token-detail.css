@@ -13,6 +13,16 @@
 .token-detail {
   animation: moveInRight 0.3s;
 }
+@keyframes moveOutRightReceive {
+  from {
+    opacity: 1;
+    transform: translate(0px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(360px);
+  }
+}
 
 @keyframes moveInRight {
   from {

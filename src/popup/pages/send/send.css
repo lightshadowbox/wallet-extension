@@ -70,7 +70,7 @@
   animation: none;
 }
 .send {
-  animation: moveInRight 0.1s;
+  animation: moveInRight 0.3s;
   animation-fill-mode: forwards;
   animation-delay: 0.1s;
   opacity: 0;
@@ -96,7 +96,7 @@
     transform: translate(0px);
   }
   to {
-    transform: translate(300px);
+    transform: translate(360px);
   }
 }
 .send .ms-LayerHost {

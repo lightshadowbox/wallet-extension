@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
@@ -5,7 +6,11 @@ import classNames from 'classnames'
 import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, TooltipHost, ITooltipHostStyles, FontIcon } from '@fluentui/react'
 import { QRCodeWallet } from 'popup/components/qr-code/qr-code'
 import { useGetAccount } from 'queries/account.queries'
-import { useId } from '@uifabric/react-hooks'
+import { useId, useBoolean } from '@uifabric/react-hooks'
+import { useGenerateDepositAddress } from 'queries/token.queries'
+import { CountDown } from 'popup/components/CountDown/CountDown'
+import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
+import { ShieldTokenPanel } from '../shield-token/shield-token-panel'
 import styles from './receive.module.css'
 import './receive.css'
 
@@ -31,6 +36,9 @@ export interface ReceiveProps {
    */
   onClick?: () => void
   dismissPanel: () => void
+  tokenId: string | null
+  showPanelShieldToken: () => void
+  defaultActive: string
 }
 
 /**
@@ -40,15 +48,39 @@ interface Props {
   isPanelOpen: boolean
   showPanel: () => void
   dismissPanel: () => void
+  tokenId: string | null
+  showPanelShieldToken: () => void
+  defaultActive: string
 }
 const calloutProps = { gapSpace: 0 }
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } }
 
-export const ReceiveContainer: React.FC<ReceiveProps> = ({ primary = false, size = 'medium', backgroundColor, label, dismissPanel, ...props }) => {
+export const ReceiveContainer: React.FC<ReceiveProps> = ({
+  primary = false,
+  size = 'medium',
+  backgroundColor,
+  label,
+  dismissPanel,
+  tokenId,
+  showPanelShieldToken,
+  defaultActive,
+  ...props
+}) => {
   const mode = primary ? 'storybook-receive--primary' : 'storybook-receive--secondary'
   const { data: account, status } = useGetAccount()
+  const { data: depositAddress, isSuccess } = useGenerateDepositAddress(tokenId)
+  const [active, setActive] = React.useState(defaultActive)
   const tooltipId = useId('tooltip')
   const [contentTooltip, setContentTooltip] = React.useState('Copy')
+  const onActiveHandle = (value) => {
+    if (active !== value) {
+      const element = document.querySelector(`.content .${value}`) as HTMLElement
+      const preElement = document.querySelector(`.content .${active}`) as HTMLElement
+      element.classList.add('active')
+      preElement.classList.remove('active')
+      setActive(value)
+    }
+  }
   const onClickCopy = React.useCallback((value: string) => {
     const text = value
     setContentTooltip('Copied')
@@ -64,7 +96,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({ primary = false, size
   }, [])
 
   return (
-    <div className={['storybook-receive', `storybook-receive--${size}`, mode].join(' ')} style={{ backgroundColor }} {...props}>
+    <div className={['storybook-receive', 'relative', `storybook-receive--${size}`, mode].join(' ')} style={{ backgroundColor }} {...props}>
       <header className="bg-blue-5 text-white">
         <div className={classNames('flex flex-row relative')}>
           <div onClick={dismissPanel} className={styles.headerIcon}>
@@ -77,37 +109,62 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({ primary = false, size
       <div className="content">
         <div className="card__container">
           <ul className="tabs flex font-normal">
-            <li className="tab flex-1 text-center active">
+            <li
+              onClick={() => onActiveHandle('in-network')}
+              className={defaultActive === 'in-network' ? 'tab flex-1 text-center in-network active' : 'tab flex-1 text-center in-network'}
+            >
               <button type="button" className="bg-white inline-block py-2 px-4">
                 In Network
               </button>
             </li>
-            <li className="tab flex-1 text-center">
+            <li
+              onClick={() => {
+                onActiveHandle('out-network')
+                if (!tokenId) {
+                  showPanelShieldToken()
+                  setTimeout(() => {
+                    dismissPanel()
+                  }, 500)
+                }
+              }}
+              className={defaultActive === 'out-network' ? 'tab out-network flex-1 text-center active' : 'tab out-network flex-1 text-center'}
+            >
               <button type="button" className="bg-white inline-block py-2 px-4 hover:text-black hover:font-medium">
                 Out Network
               </button>
             </li>
           </ul>
           <div className="card-desc w-full">
-            <div className="text-center">
-              <div className="qr mt-5 mb-12">
-                <QRCodeWallet keyAddress={account.paymentAddress} />
-              </div>
-              <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
-                <div
-                  onClick={() => onClickCopy(account.paymentAddress)}
-                  className="flex flex-row items-center justify-center code text-xl break-all cursor-pointer"
-                >
-                  <p className={styles.keyText}>{account.paymentAddress}</p>
-                  <Icon className="text-blue-5 inline" iconName="Copy" />
+            {isSuccess ? (
+              <div className="text-center">
+                {/* Count down will coming soon */}
+                {/* {depositAddress && active === 'out-network' ? <CountDown /> : null} */}
+                <div className="qr mt-2 mb-12">
+                  {!depositAddress || active === 'in-network' ? (
+                    <QRCodeWallet keyAddress={account.paymentAddress} />
+                  ) : (
+                    <QRCodeWallet keyAddress={depositAddress} />
+                  )}
                 </div>
-              </TooltipHost>
-
-              <button type="button" className="mt-5 bg-blue-6 text-blue-5 py-4 px-4 rounded flex flex-row items-center w-full justify-center">
-                <Icon className="text-blue-5 mr-2" iconName="ShareiOS" />
-                <span>Share</span>
-              </button>
-            </div>
+                <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
+                  <div
+                    onClick={() => onClickCopy(!depositAddress || active === 'in-network' ? account.paymentAddress : depositAddress)}
+                    className="flex flex-row items-center justify-center code text-xl break-all cursor-pointer"
+                  >
+                    <p className={styles.keyText}>{!depositAddress || active === 'in-network' ? account.paymentAddress : depositAddress}</p>
+                    <Icon className="text-blue-5 inline" iconName="Copy" />
+                  </div>
+                </TooltipHost>
+                <button type="button" className="mt-5 bg-blue-6 text-blue-5 py-4 px-4 rounded flex flex-row items-center w-full justify-center">
+                  <Icon className="text-blue-5 mr-2" iconName="ShareiOS" />
+                  <span>Share</span>
+                </button>
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <SpinnerWallet />
+              </div>
+            )}
             <div className="hidden">Tab #2</div>
           </div>
         </div>
@@ -115,7 +172,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({ primary = false, size
     </div>
   )
 }
-export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
+export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId = null, showPanelShieldToken, defaultActive }) => {
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (
@@ -123,7 +180,13 @@ export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissP
       <div className={`absolute inset-0 receive ${styles.container}`}>
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
-            <ReceiveContainer label="Receive" dismissPanel={dismissPanel} />
+            <ReceiveContainer
+              defaultActive={defaultActive}
+              showPanelShieldToken={showPanelShieldToken}
+              tokenId={tokenId}
+              label="Receive"
+              dismissPanel={dismissPanel}
+            />
           </Panel>
         </Customizer>
         <LayerHost id={layerHostId} className={layerHostClass} />

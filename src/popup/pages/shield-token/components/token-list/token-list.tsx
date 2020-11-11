@@ -12,17 +12,13 @@ import classNames from 'classnames'
 import {
   FocusZone,
   FocusZoneDirection,
-  FontIcon,
   getFocusStyle,
   getTheme,
-  Image,
-  ImageFit,
   ITheme,
   List,
   mergeStyleSets,
   IPersonaSharedProps,
   Persona,
-  PersonaSize,
   PersonaPresence,
 } from '@fluentui/react'
 
@@ -30,15 +26,16 @@ import { useGetAccount } from 'queries/account.queries'
 import { TokenItemInterface, useFetchToken, useSearchableOnlyVerifiedToken, useSearchableTokenList } from 'queries/token.queries'
 
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
-import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
 import { orderBy } from 'lodash'
-import styles from './token-list.module.css'
 
 const theme: ITheme = getTheme()
+const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 const { palette, semanticColors, fonts } = theme
 interface Props {
   valueInput: string
   showCustom: boolean
+  showPanelReceive: () => void
+  setTokenId: (value) => void
 }
 const classNamesList = mergeStyleSets({
   container: {
@@ -89,68 +86,47 @@ const classNamesList = mergeStyleSets({
   },
 })
 
-export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
-  const [addToken, addTokenStatus] = useAddToken()
-  const [removeToken, removeTokenStatus] = useRemoveToken()
-  const { data: account } = useGetAccount()
+export const TokenCell: React.FC<{ item: TokenItemInterface; onClickHandle: () => void; setTokenId: (value) => void }> = ({
+  item,
+  onClickHandle,
+  setTokenId,
+}) => {
   const examplePersona: IPersonaSharedProps = {
     imageUrl: item.Icon,
     imageInitials: item.Name[0] + item.Name[1],
     text: item.Name,
     secondaryText: item.PSymbol || item.Symbol,
   }
-  const isFollowingToken = React.useMemo(() => {
-    return account?.followingTokens?.indexOf(item.TokenID) !== -1
-  }, [account?.followingTokens, item.TokenID])
   return (
-    <div className={`${classNamesList.itemCell} token-list-container justify-between`} data-is-focusable>
+    <div
+      onClick={() => {
+        if (item.TokenID !== PRV_TOKEN_ID) {
+          onClickHandle()
+          setTokenId(item.TokenID)
+        }
+      }}
+      className={`${classNamesList.itemCell} cursor-pointer token-list-container justify-between`}
+      data-is-focusable
+    >
       <Persona {...examplePersona} presence={item.Verified ? PersonaPresence.online : PersonaPresence.offline} imageAlt="Image" />
-      <div className={classNames('flex flex-row items-center justify-center btn-token')}>
-        {isFollowingToken ? (
-          <button
-            onClick={() => {
-              removeToken(item.TokenID)
-            }}
-            className={styles.btnRemove}
-          >
-            Remove
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              addToken(item.TokenID)
-            }}
-            className={styles.btnAdd}
-          >
-            Add
-          </button>
-        )}
-      </div>
     </div>
   )
 }
-interface Item {
-  item: TokenItemInterface
-}
 
-export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput, showCustom }) => {
+export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput, showCustom, showPanelReceive, setTokenId }) => {
   const { data: allTokens } = useFetchToken()
   const { data: account } = useGetAccount()
   const { data: searchIndex } = useSearchableTokenList('PSymbol', 'Name')
   const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('PSymbol', 'Name')
   const sortArrayByFollowing = React.useCallback(
     (tokenList: any[]) => {
-      const listFollowing = []
-      const listWithoutFollowing = []
+      const listVerified = []
       for (let i = 0; i < tokenList.length; i++) {
-        if (account.followingTokens.includes(tokenList[i].TokenID)) {
-          listFollowing.push(tokenList[i])
-        } else {
-          listWithoutFollowing.push(tokenList[i])
+        if (tokenList[i].Verified) {
+          listVerified.push(tokenList[i])
         }
       }
-      console.log(listFollowing.concat(listWithoutFollowing))
-      return listFollowing.concat(listWithoutFollowing)
+      return listVerified
     },
     [allTokens, valueInput],
   )
@@ -172,13 +148,18 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     return orderBy(allTokens, ['Verified', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'desc'])
   }, [allTokens, valueInput, searchIndex])
 
-  const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [allTokens])
+  const onRenderCell = React.useCallback(
+    (item: TokenItemInterface, showPanelReceive: () => void, setTokenId: (value) => void): JSX.Element => (
+      <TokenCell setTokenId={setTokenId} item={item} onClickHandle={showPanelReceive} />
+    ),
+    [allTokens],
+  )
 
   if (tokenList) {
     return (
       <FocusZone direction={FocusZoneDirection.vertical}>
         <div className={classNames(`${classNamesList.container} list-token`)} data-is-scrollable>
-          <List items={sortArrayByFollowing(tokenList)} onRenderCell={onRenderCell} />
+          <List items={sortArrayByFollowing(tokenList)} onRenderCell={(item) => onRenderCell(item, showPanelReceive, setTokenId)} />
         </div>
       </FocusZone>
     )

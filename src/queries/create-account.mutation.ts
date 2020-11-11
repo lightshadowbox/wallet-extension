@@ -98,6 +98,29 @@ export const useSendToken = (hidePanel: () => void, setMessage: (value: any) => 
     },
   )
 }
+// const useBurningToken = (setMessage: (value: any) => void) => {
+//   return useMutation(
+//     (variables: { tokenId: string; address: string; accountName: string | null }) => burningToken(variables.tokenId, variables.address, variables.accountName),
+//     {
+//       onSuccess: async () => {},
+//       onError: (err) => {
+//         console.error(err)
+//       },
+//     },
+//   )
+// }
+// const burningToken = async (tokenId: string, address: string, accountName: string) => {
+//   const selectedAccount = useSettingStore((s) => s.selectAccountName)
+//   const account = await getAccountRuntime(accountName)
+//   const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+//   const history = await token.burning(
+//     address,
+//     '2000', // burning amount,
+//     '20', // fee in nano PRV
+//     '0', // the privacy token must has exchange rate to be fee
+//   )
+//   console.log('Privacy token burned with history', history)
+// }
 const sendToken = async (accountName: string, paymentInfoList: any[], tokenId: string) => {
   const account = await getAccountRuntime(accountName)
   if (tokenId !== PRV_TOKEN_ID) {

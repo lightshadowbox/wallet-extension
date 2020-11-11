@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
 import { TokenDetailPanel } from 'popup/pages/token-detail/token-detail'
 import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, AddAccountPanel, BackupAccountPanel } from './components/index'
+import { ShieldTokenPanel } from '../shield-token/shield-token-panel'
 import { ReceivePanel } from '../receive/receive'
 import { SendPanel } from '../send/send'
 
@@ -17,7 +18,8 @@ const HomeContainer: React.FC<{
   send: React.ReactNode
   backup: React.ReactNode
   tokenDetail: React.ReactNode
-}> = ({ children, cover, menu, network, token, account, receive, send, backup, tokenDetail }) => (
+  shield: React.ReactNode
+}> = ({ children, cover, menu, network, token, account, receive, send, backup, tokenDetail, shield }) => (
   <div className={classNames('flex flex-col relative w-full h-full overflow-hidden')}>
     <div className={classNames('absolute self-center mt-20 shadow-md w-11/12 h-56 z-10 bg-white')}>{cover}</div>
     <div className={classNames('flex flex-row align-top justify-between w-full h-48 bg-blue-1 p-4')}>{menu}</div>
@@ -25,6 +27,7 @@ const HomeContainer: React.FC<{
     <div className={classNames('w-full h-full')}>{network}</div>
     <div className={classNames('w-full h-full')}>{token}</div>
     <div className={classNames('w-full h-full')}>{account}</div>
+    <div className={classNames('w-full h-full')}>{shield}</div>
     <div className={classNames('w-full h-full')}>{receive}</div>
     <div className={classNames('w-full h-full')}>{send}</div>
     <div className={classNames('w-full h-full')}>{backup}</div>
@@ -36,6 +39,7 @@ export const HomePage = () => {
   const [preTokenId, setTokenPreId] = React.useState('')
   const [isPanelOpenNetwork, { setTrue: showPanelNetwork, setFalse: dismissPanelNetwork }] = useBoolean(false)
   const [isPanelOpenToken, { setTrue: showPanelToken, setFalse: dismissPanelToken }] = useBoolean(false)
+  const [isPanelOpenShieldToken, { setTrue: showPanelShieldToken, setFalse: dismissPanelShieldToken }] = useBoolean(false)
   const [isPanelOpenAcc, { setTrue: showPanelAcc, setFalse: dismissPanelAcc }] = useBoolean(false)
   const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
   const [isPanelOpenSend, { setTrue: showPanelSend, setFalse: dismissPanelSend }] = useBoolean(false)
@@ -64,7 +68,7 @@ export const HomePage = () => {
       } else if (panel === 'receive') {
         dismissPanelReceive()
       }
-    }, 160)
+    }, 290)
   }
   const dismissPanelBottom = (panel) => {
     const element = document.querySelector(`.${panel} .ms-Panel`) as HTMLElement
@@ -81,6 +85,8 @@ export const HomePage = () => {
         dismissPanelNetwork()
       } else if (panel === 'backupAccount') {
         dismissPanelBackup()
+      } else if (panel === 'shield-token') {
+        dismissPanelShieldToken()
       }
     }, 200)
   }
@@ -96,7 +102,19 @@ export const HomePage = () => {
           dismissPanel={dismissPanelTokenDetail}
         />
       }
-      receive={<ReceivePanel isPanelOpen={isPanelOpenReceive} showPanel={showPanelReceive} dismissPanel={() => onDismissPanelRight('receive')} />}
+      shield={
+        <ShieldTokenPanel isPanelOpen={isPanelOpenShieldToken} showPanel={showPanelShieldToken} dismissPanel={() => dismissPanelBottom('shield-token')} />
+      }
+      receive={
+        <ReceivePanel
+          defaultActive="in-network"
+          tokenId={null}
+          isPanelOpen={isPanelOpenReceive}
+          showPanel={showPanelReceive}
+          showPanelShieldToken={showPanelShieldToken}
+          dismissPanel={() => onDismissPanelRight('receive')}
+        />
+      }
       send={
         <SendPanel
           tokenId={tokenId}

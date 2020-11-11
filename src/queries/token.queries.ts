@@ -136,7 +136,7 @@ export type CustomTokenAPIResult = {
   Verified: boolean
   Amount: number
 }
-
+const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const getTokenList = async () => {
   const tokens = await api.get<{ Result: TokenAPIResultItem[] }>('https://api-service.incognito.org/ptoken/list')
   const customTokens = await api.get<{ Result: CustomTokenAPIResult[] }>('https://api-service.incognito.org/pcustomtoken/list')
@@ -233,6 +233,24 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
       return remoteData
     },
     { enabled: wallet && selectedAccount && tokenRemoteData },
+  )
+}
+export const useGenerateDepositAddress = (tokenId: string) => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useQuery(
+    [useGenerateDepositAddress.name, tokenId, selectedAccount],
+    async () => {
+      if (!tokenId) {
+        return null
+      }
+      const account = await getAccountRuntime(selectedAccount)
+      const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+      const ethDepositAddress = await token.bridgeGenerateDepositAddress()
+      return ethDepositAddress
+    },
+    {
+      enabled: [tokenId, selectedAccount],
+    },
   )
 }
 

@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import classNames from 'classnames'
-import { useGetTokenBalance } from 'queries/token.queries'
+import { useGetTokenBalance, getTokenFromTokenIds } from 'queries/token.queries'
 import { FontIcon } from '@fluentui/react'
 import { useSettingStore } from 'popup/stores/features/settings'
 import styles from './detail-cover.module.css'
@@ -15,6 +15,7 @@ export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => vo
 }) => {
   const { data: totalBalance, isSuccess } = useGetTokenBalance(tokenId)
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  const tokenDetail = getTokenFromTokenIds([tokenId])
   return (
     <div className={classNames('w-full h-full')}>
       <div className={classNames('p-16')}>
@@ -29,7 +30,18 @@ export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => vo
         </div>
       </div>
       <div className={classNames('flex flex-row w-full')}>
-        <div onClick={showPanelReceive} className={styles.btnReceive}>
+        <div
+          onClick={showPanelReceive}
+          className={styles.btnReceive}
+          style={
+            !tokenDetail[tokenId].Verified
+              ? {
+                  opacity: 0.4,
+                  pointerEvents: 'none',
+                }
+              : {}
+          }
+        >
           <FontIcon iconName="QRCode" />
           <a href="#">Receive</a>
         </div>
