@@ -40,6 +40,7 @@ export const useGetAccountBasicInfo = (accountName: string) => {
 
 export const useGetBackupAccount = (accountName = null) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  console.log(selectedAccount)
   return useQuery(
     ['useGetBackupAccount.name', accountName, selectedAccount],
     () => {
