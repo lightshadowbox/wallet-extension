@@ -27,7 +27,7 @@ export const DropdownMenu: React.FC<{ onOpenMenuClick: () => void; listItem: Ite
   })
   return (
     <div ref={ref} className={classNames(`absolute inset-0 ${styles.dropdownContainer}`)}>
-      <ul>
+      <ul className="w-full h-full">
         {listItem.map((a) => (
           <li
             onClick={() => {

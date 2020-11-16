@@ -34,12 +34,15 @@ export const loadingWallet = async () => {
     return runtime.walletRuntime
   }
 }
+export const removeAccount = async (accountName: string) => {
+  const wallet = await getWalletInstance()
+  wallet.masterAccount.removeAccount(accountName)
+}
 export const getBackupAccount = async (accountName: string) => {
   const accountInstance = await getAccountRuntime(accountName)
   const accountSerizialed = await serializeAccount(accountInstance)
   return accountSerizialed
 }
-
 export const getWalletInstance = async () => {
   await loadingWallet()
   return runtime.walletRuntime

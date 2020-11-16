@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query'
 import { getFromCache } from 'services/query-cache'
 import { historyServices, CONSTANT } from 'incognito-sdk'
-
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
@@ -228,6 +227,7 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
           TokenId,
           Name: d?.Name || 'UNKNOWN',
           Icon: d?.Icon || '/logo.png',
+          Verified: d?.Verified || false,
         }
       })
       return remoteData

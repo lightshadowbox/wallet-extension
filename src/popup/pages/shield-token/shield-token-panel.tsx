@@ -49,7 +49,7 @@ export const ShieldTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <ShieldTokenContainer
-              header={<Header title="Add Token" icon="ChromeClose" dismissPanel={dismissPanel} setValueInput={setValueInput} />}
+              header={<Header title="Shield" icon="ChromeClose" dismissPanel={dismissPanel} setValueInput={setValueInput} />}
               searchInput={<SearchInput setShowCustom={setShowCustom} placeholder="Choose token..." setValueInput={setValueInput} />}
               list={<ListGhostingExample setTokenId={setTokenId} showPanelReceive={showPanelReceive} showCustom={showCustom} valueInput={valueInput} />}
               receive={

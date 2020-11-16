@@ -3,6 +3,9 @@
   height: 200px;
   padding: 16px;
 }
+.ms-Panel-contentInner {
+  transform: translateX(0px) !important;
+}
 
 .storybook-receive header .desc {
   margin-top: 12px;

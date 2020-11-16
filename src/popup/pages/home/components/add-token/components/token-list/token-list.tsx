@@ -93,11 +93,12 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
   const { data: account } = useGetAccount()
+  console.log(item)
   const examplePersona: IPersonaSharedProps = {
-    imageUrl: item.Icon,
-    imageInitials: item.Name[0] + item.Name[1],
-    text: item.Name,
-    secondaryText: item.PSymbol || item.Symbol,
+    imageUrl: item?.Icon,
+    imageInitials: item?.Name[0] + item?.Name[1],
+    text: item?.Name,
+    secondaryText: item?.PSymbol || item?.Symbol,
   }
   const isFollowingToken = React.useMemo(() => {
     return account?.followingTokens?.indexOf(item.TokenID) !== -1
@@ -160,12 +161,12 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     }
     if (showCustom && `${valueInput}`.trim() !== '') {
       return searchOnlyVerifiedIndex.search<TokenItemInterface>(valueInput).map((i) => {
-        return i
+        return i.item
       })
     }
     if (`${valueInput}`.trim() !== '') {
       return searchIndex.search<TokenItemInterface>(valueInput).map((i) => {
-        return i
+        return i.item
       })
     }
 

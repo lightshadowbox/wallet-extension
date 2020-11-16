@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
-import { useId, useBoolean } from '@uifabric/react-hooks'
+import { useId } from '@uifabric/react-hooks'
 
 import { Header, SearchInput, ListGhostingExample } from './components/index'
 import styles from './add-token-panel.module.css'

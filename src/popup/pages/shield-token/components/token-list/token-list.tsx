@@ -136,12 +136,12 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     }
     if (showCustom && `${valueInput}`.trim() !== '') {
       return searchOnlyVerifiedIndex.search<TokenItemInterface>(valueInput).map((i) => {
-        return i
+        return i.item
       })
     }
     if (`${valueInput}`.trim() !== '') {
       return searchIndex.search<TokenItemInterface>(valueInput).map((i) => {
-        return i
+        return i.item
       })
     }
 

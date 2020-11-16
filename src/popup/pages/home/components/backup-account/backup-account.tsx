@@ -34,7 +34,6 @@ export const BackupAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
   const scopedSettings = useLayerSettings(true, layerHostId)
   const account = useGetBackupAccount()
   const [selectedAccount, setSelectedAccount] = React.useState(null)
-  console.log(account)
   const onClose = React.useCallback(() => {
     dismissPanel()
     setSelectedAccount(null)
