@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import { FaButton, SecondaryButton } from 'popup/components/button'
 import { useTheme } from 'popup/services'
 import { fade } from 'popup/services/utils'
-import { useRemoveAccount } from 'queries/create-account.mutation'
 import React from 'react'
 import { DropdownMenu } from '../index'
 import styles from './wallet-menu.module.css'
@@ -14,7 +13,6 @@ interface Props {
   showPanelAcc: () => void
 }
 export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPanelAcc }) => {
-  const [removeAccount] = useRemoveAccount()
   const listItem = [
     {
       icon: 'Contact',
@@ -49,7 +47,7 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
     {
       icon: 'Leave',
       name: 'Log out',
-      showPanel: () => removeAccount(),
+      showPanel: () => console.log('coming soon'),
       clickHandleName: (name) => console.log('panel'),
     },
   ]
