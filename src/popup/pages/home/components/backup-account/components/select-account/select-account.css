@@ -1,0 +1,9 @@
+.select-account .dropdown li:last-child {
+  display: flex;
+  flex-direction: row;
+  padding: 12px;
+  font-size: 15px;
+  cursor: pointer;
+  color: black;
+  font-weight: 300;
+}

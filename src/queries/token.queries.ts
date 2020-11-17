@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query'
 import { getFromCache } from 'services/query-cache'
 import { historyServices, CONSTANT } from 'incognito-sdk'
-
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
@@ -136,7 +135,7 @@ export type CustomTokenAPIResult = {
   Verified: boolean
   Amount: number
 }
-
+const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const getTokenList = async () => {
   const tokens = await api.get<{ Result: TokenAPIResultItem[] }>('https://api-service.incognito.org/ptoken/list')
   const customTokens = await api.get<{ Result: CustomTokenAPIResult[] }>('https://api-service.incognito.org/pcustomtoken/list')
@@ -228,11 +227,30 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
           TokenId,
           Name: d?.Name || 'UNKNOWN',
           Icon: d?.Icon || '/logo.png',
+          Verified: d?.Verified || false,
         }
       })
       return remoteData
     },
     { enabled: wallet && selectedAccount && tokenRemoteData },
+  )
+}
+export const useGenerateDepositAddress = (tokenId: string) => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useQuery(
+    [useGenerateDepositAddress.name, tokenId, selectedAccount],
+    async () => {
+      if (!tokenId) {
+        return null
+      }
+      const account = await getAccountRuntime(selectedAccount)
+      const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+      const ethDepositAddress = await token.bridgeGenerateDepositAddress()
+      return ethDepositAddress
+    },
+    {
+      enabled: [tokenId, selectedAccount],
+    },
   )
 }
 

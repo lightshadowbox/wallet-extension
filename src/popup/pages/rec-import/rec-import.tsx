@@ -22,7 +22,7 @@ export const RecImport: React.FC<{ showPanel: () => void }> = ({ showPanel }) =>
   <div className={`border border-dashed w-full ${styles.borderContainer}`}>
     <div className={classNames('flex flex-row items-center')}>
       <FontIcon iconName="Import" className={classNamesIcon.deepBlue} />
-      <p className={styles.paragraph}>A crypto wallet & gateway to blockchain apps.</p>
+      <p className={styles.paragraph}>Already a crypto enthusiast?</p>
     </div>
     <div onClick={showPanel} className={`flex w-full ${styles.btn}`}>
       <SecondaryButton full>Import</SecondaryButton>

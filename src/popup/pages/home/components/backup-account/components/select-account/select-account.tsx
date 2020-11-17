@@ -1,9 +1,12 @@
 import React from 'react'
 import { getBackupAccount } from 'services/wallet'
+import { useGetWallet } from 'queries/wallet.queries'
 import { AccountModelType } from 'models/account-model'
+import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { DropdownMenu } from 'popup/pages/home/components/dropdown-menu/dropdown-menu'
 import styles from './select-account.module.css'
+import './select-account.css'
 
 export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModelType) => void; data: any; status: string }> = ({
   changeAccount,
@@ -11,6 +14,7 @@ export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModel
   status,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false)
+  const accounts = useGetWallet()
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const [preAccount, setPreAccount] = React.useState(null)
   const [listItem, setListItem] = React.useState([])
@@ -20,11 +24,10 @@ export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModel
     changeAccount(account)
   }
   React.useEffect(() => {
-    if (status) {
-      console.log(data.accounts)
-      const temp = data.accounts.map((account) => {
+    if (accounts) {
+      const temp = accounts.data.masterAccount.child.map((account) => {
         return {
-          name: account,
+          name: account.name,
           icon: 'Contact',
           showPanel: () => {},
           clickHandleName: onChangeOption,
@@ -32,7 +35,7 @@ export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModel
       })
       setListItem(temp)
     }
-  }, [status])
+  }, [accounts.isSuccess])
   const onOpenMenuClick = React.useCallback(() => {
     if (isOpen) {
       const node = document.querySelector('.backupAccount .dropdown') as HTMLElement
@@ -47,7 +50,7 @@ export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModel
   }, [isOpen])
   if (status !== 'loading') {
     return (
-      <div onClick={onOpenMenuClick} className={styles.container} onChange={onChangeOption}>
+      <div onClick={onOpenMenuClick} className={`${styles.container} select-account`} onChange={onChangeOption}>
         <img className="send-icon mr-2" alt="hinh anh" src="https://picsum.photos/200" />
         <p>{preAccount || selectedAccount}</p>
         {isOpen ? (
@@ -58,5 +61,9 @@ export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModel
       </div>
     )
   }
-  return <h1>Loading</h1>
+  return (
+    <div className="h-full w-full">
+      <SpinnerWallet />
+    </div>
+  )
 }

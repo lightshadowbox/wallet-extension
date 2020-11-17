@@ -51,6 +51,9 @@
   background-color: #276ef1;
   width: 200px;
 }
+.btnReceive a {
+  cursor: inherit;
+}
 .btnSwap {
   cursor: pointer;
   margin: 0 3px;

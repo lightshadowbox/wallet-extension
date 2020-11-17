@@ -1,48 +1,72 @@
 import classNames from 'classnames'
 import React from 'react'
 import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
-import { useId } from '@uifabric/react-hooks'
-
+import { useId, useBoolean } from '@uifabric/react-hooks'
+import { ReceivePanel } from 'popup/pages/receive/receive'
 import { Header, SearchInput, ListGhostingExample } from './components/index'
-import styles from './add-token-panel.module.css'
-import './add-token-panel.css'
+import styles from './shield-token-panel.module.css'
+import './shield-token-panel.css'
 
 interface Props {
   isPanelOpen: boolean
   showPanel: () => void
   dismissPanel: () => void
 }
-const AddTokenContainer: React.FC<{
+const ShieldTokenContainer: React.FC<{
   header: React.ReactNode
   searchInput: React.ReactNode
   list: React.ReactNode
-}> = ({ header, searchInput, list }) => (
+  receive: React.ReactNode
+}> = ({ header, searchInput, list, receive }) => (
   <div className={classNames('flex flex-col relative justify-center items-center p-md bg-white')}>
+    <div className={classNames('w-full h-full')}>{receive}</div>
     <div className={classNames('w-full h-full')}>{header}</div>
     <div className={classNames('w-full h-full')}>{searchInput}</div>
     <div className={classNames('w-full h-full')}>{list}</div>
   </div>
 )
-export const AddTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
+export const ShieldTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
   const layerHostId = useId('layerHost')
   const [valueInput, setValueInput] = React.useState('')
+  const [tokenId, setTokenId] = React.useState('')
   const scopedSettings = useLayerSettings(true, layerHostId)
   const [showCustom, setShowCustom] = React.useState(false)
+  const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
+  const onDismissPanelRight = (panel) => {
+    const element = document.querySelector(`.shield-token .${panel} .ms-Panel`) as HTMLElement
+    element.style.animation = 'none'
+    element.style.animation = 'moveOutRight 0.3s'
+    setTimeout(() => {
+      element.style.animation = 'moveInRight 0.3s'
+      if (panel === 'receive') {
+        dismissPanelReceive()
+      }
+    }, 160)
+  }
   return (
     isPanelOpen && (
-      <div className={`absolute inset-0 add-token ${styles.container}`}>
+      <div className={`absolute inset-0 shield-token ${styles.container}`}>
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
-            <AddTokenContainer
-              header={<Header title="Add Token" icon="ChromeClose" dismissPanel={dismissPanel} setValueInput={setValueInput} />}
+            <ShieldTokenContainer
+              header={<Header title="Shield" icon="ChromeClose" dismissPanel={dismissPanel} setValueInput={setValueInput} />}
               searchInput={<SearchInput setShowCustom={setShowCustom} placeholder="Choose token..." setValueInput={setValueInput} />}
-              list={<ListGhostingExample showCustom={showCustom} valueInput={valueInput} />}
+              list={<ListGhostingExample setTokenId={setTokenId} showPanelReceive={showPanelReceive} showCustom={showCustom} valueInput={valueInput} />}
+              receive={
+                <ReceivePanel
+                  defaultActive="out-network"
+                  showPanelShieldToken={showPanelReceive}
+                  tokenId={tokenId}
+                  isPanelOpen={isPanelOpenReceive}
+                  showPanel={showPanelReceive}
+                  dismissPanel={() => onDismissPanelRight('receive')}
+                />
+              }
             >
               <div>Body will coming soon </div>
-            </AddTokenContainer>
+            </ShieldTokenContainer>
           </Panel>
         </Customizer>
-
         <LayerHost id={layerHostId} className={layerHostClass} />
       </div>
     )

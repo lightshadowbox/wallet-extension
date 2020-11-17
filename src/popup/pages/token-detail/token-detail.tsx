@@ -6,8 +6,9 @@ import React from 'react'
 import classNames from 'classnames'
 
 import { Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
-import { useId } from '@uifabric/react-hooks'
+import { useId, useBoolean } from '@uifabric/react-hooks'
 import { getTokenFromTokenIds } from 'queries/token.queries'
+import { ReceivePanel } from 'popup/pages/receive/receive'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { Header, DetailCover, TokenHistory } from './components/index'
 import styles from './token-detail.module.css'
@@ -26,26 +27,42 @@ const TokenDetailContainer: React.FC<{
   header: React.ReactNode
   detailCover: React.ReactNode
   tokenHistory: React.ReactNode
-}> = ({ header, detailCover, tokenHistory }) => {
+  receive: React.ReactNode
+}> = ({ header, detailCover, tokenHistory, receive }) => {
   return (
     <div className={classNames(`flex flex-col w-full justify-between relative ${styles.tokenDetailContainer}`)}>
       <div className={classNames('flex flex-col')}>
         <div className={classNames('w-full')}>{header}</div>
         <div className={classNames('w-full ')}>{detailCover}</div>
-        <div className={classNames('w-full ')}>{tokenHistory}</div>
+        <div className={classNames('w-full')}>{tokenHistory}</div>
+        <div className={classNames('test w-full h-full')}>{receive}</div>
       </div>
     </div>
   )
 }
-export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelReceive, showPanelSend }) => {
-  const onDismissPanelRight = () => {
+export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelSend }) => {
+  const onDismissPanelDetail = () => {
     const element = document.querySelector('.token-detail') as HTMLElement
     element.style.animation = 'none'
-    element.style.animation = 'moveOutRight 0.3s'
+    element.style.animation = 'moveOutRightReceive 0.3s'
     setTimeout(() => {
       element.style.animation = 'moveInRight 0.3s'
       dismissPanel()
-    }, 160)
+    }, 290)
+  }
+  const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
+  const onDismissPanelRight = (panel) => {
+    const element = document.querySelector('.receive') as HTMLElement
+    console.log(element)
+
+    element.style.animation = 'moveOutRightReceive 0.3s'
+    element.style.animationFillMode = 'forwards'
+    setTimeout(() => {
+      element.style.animation = 'moveInRight 0.3s'
+      if (panel === 'receive') {
+        dismissPanelReceive()
+      }
+    }, 290)
   }
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
 
@@ -58,7 +75,17 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <TokenDetailContainer
-              header={<Header title={getTokenFromTokenIds([tokenId])[tokenId].Name} icon="ChromeBack" dismissPanel={onDismissPanelRight} />}
+              receive={
+                <ReceivePanel
+                  defaultActive="out-network"
+                  showPanelShieldToken={showPanelReceive}
+                  tokenId={tokenId}
+                  isPanelOpen={isPanelOpenReceive}
+                  showPanel={showPanelReceive}
+                  dismissPanel={() => onDismissPanelRight('receive')}
+                />
+              }
+              header={<Header title={getTokenFromTokenIds([tokenId])[tokenId].Name} icon="ChromeBack" dismissPanel={onDismissPanelDetail} />}
               detailCover={<DetailCover tokenId={tokenId} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
               tokenHistory={<TokenHistory tokenId={tokenId} accountName={selectedAccount} />}
             />

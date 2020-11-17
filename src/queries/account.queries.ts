@@ -50,7 +50,6 @@ export const useGetBackupAccount = (accountName = null) => {
     },
     {
       enabled: selectedAccount,
-      refetchOnWindowFocus: true,
     },
   )
 }

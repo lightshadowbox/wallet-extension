@@ -21,7 +21,7 @@ export const RecCreate: React.FC<Props> = ({ showPanel }) => (
   <div className={`border border-dashed ${styles.borderContainer}`}>
     <div className={classNames('flex flex-row items-center')}>
       <FontIcon iconName="Add" className={classNamesIcon.deepBlue} />
-      <p className={styles.paragraph}>A crypto wallet & gateway to blockchain apps.</p>
+      <p className={styles.paragraph}>You're new in town?</p>
     </div>
     <div className={`flex w-full ${styles.btn}`}>
       <Button onClick={showPanel} full>
