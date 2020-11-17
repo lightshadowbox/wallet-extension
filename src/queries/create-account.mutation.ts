@@ -36,24 +36,6 @@ export const useAddToken = () => {
     },
   })
 }
-export const useRemoveAccount = () => {
-  const selectedAccount = useSettingStore((s) => s.selectAccountName)
-
-  return useMutation(() => console.log('Coming soon!'), {
-    onSuccess: async () => {
-      const accountName = await getAccountListName()[0]
-      console.log(accountName)
-      // store.dispatch(store.dispatch(settingSlices.actions.selectAccount({ accountName })))
-      await queryCache.invalidateQueries(['useGetAccount.name'])
-      await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
-      await queryCache.invalidateQueries(['useGetTokenBalance.name'])
-    },
-    onError: (err) => {
-      console.error(err)
-    },
-  })
-}
-
 export const useRemoveToken = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
 
