@@ -34,9 +34,7 @@ export const ModalAddAccount: React.FunctionComponent<Props> = ({ showModal, hid
     setName('')
   })
 
-  const clickAddAccount = React.useCallback(() => {
-    addAccount(name)
-  }, [name])
+  const clickAddAccount = () => addAccount(name)
 
   return (
     <div>

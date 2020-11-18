@@ -1,9 +1,3 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable no-plusplus */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-import './token-list.css'
-
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 import React from 'react'
@@ -33,6 +27,7 @@ import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
 import { orderBy } from 'lodash'
 import styles from './token-list.module.css'
+import './token-list.css'
 
 const theme: ITheme = getTheme()
 const { palette, semanticColors, fonts } = theme
@@ -92,7 +87,10 @@ const classNamesList = mergeStyleSets({
 export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
   const [addToken, addTokenStatus] = useAddToken()
   const [removeToken, removeTokenStatus] = useRemoveToken()
-  const { data: account } = useGetAccount()
+  const {
+    data: { followingTokens },
+  } = useGetAccount()
+
   console.log(item)
   const examplePersona: IPersonaSharedProps = {
     imageUrl: item?.Icon,
@@ -101,8 +99,8 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     secondaryText: item?.PSymbol || item?.Symbol,
   }
   const isFollowingToken = React.useMemo(() => {
-    return account?.followingTokens?.indexOf(item.TokenID) !== -1
-  }, [account?.followingTokens, item.TokenID])
+    return followingTokens?.indexOf(item.TokenID) !== -1
+  }, [followingTokens, item.TokenID])
   return (
     <div className={`${classNamesList.itemCell} token-list-container justify-between`} data-is-focusable>
       <Persona {...examplePersona} presence={item.Verified ? PersonaPresence.online : PersonaPresence.offline} imageAlt="Image" />
@@ -139,22 +137,19 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
   const { data: account } = useGetAccount()
   const { data: searchIndex } = useSearchableTokenList('PSymbol', 'Name')
   const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('PSymbol', 'Name')
-  const sortArrayByFollowing = React.useCallback(
-    (tokenList: any[]) => {
-      const listFollowing = []
-      const listWithoutFollowing = []
-      for (let i = 0; i < tokenList.length; i++) {
-        if (account.followingTokens.includes(tokenList[i].TokenID)) {
-          listFollowing.push(tokenList[i])
-        } else {
-          listWithoutFollowing.push(tokenList[i])
-        }
+  const sortArrayByFollowing = (tokenList: any[]) => {
+    const listFollowing = []
+    const listWithoutFollowing = []
+    for (let i = 0; i < tokenList.length; i++) {
+      if (account.followingTokens.includes(tokenList[i].TokenID)) {
+        listFollowing.push(tokenList[i])
+      } else {
+        listWithoutFollowing.push(tokenList[i])
       }
-      console.log(listFollowing.concat(listWithoutFollowing))
-      return listFollowing.concat(listWithoutFollowing)
-    },
-    [allTokens, valueInput],
-  )
+    }
+    return listFollowing.concat(listWithoutFollowing)
+  }
+
   const tokenList = React.useMemo(() => {
     if (!allTokens) {
       return []
@@ -171,9 +166,9 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     }
 
     return orderBy(allTokens, ['Verified', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'desc'])
-  }, [allTokens, valueInput, searchIndex])
+  }, [searchOnlyVerifiedIndex, showCustom, allTokens, valueInput, searchIndex])
 
-  const onRenderCell = React.useCallback((item: TokenItemInterface): JSX.Element => <TokenCell item={item} />, [allTokens])
+  const onRenderCell = (item: TokenItemInterface): JSX.Element => <TokenCell item={item} />
 
   if (tokenList) {
     return (

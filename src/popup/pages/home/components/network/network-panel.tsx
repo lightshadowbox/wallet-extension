@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import React from 'react'
-import { Toggle, LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
+import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
 import { Header, SearchInput, ListNetwork } from './components/index'
 import './network-panel.css'
@@ -22,7 +22,7 @@ export const NetworkContainer: React.FC<{
     <div className={classNames('w-full h-full')}>{list}</div>
   </div>
 )
-export const NetworkPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
+export const NetworkPanel: React.FC<Props> = ({ isPanelOpen, dismissPanel }) => {
   const layerHostId = useId('layerHost')
 
   const scopedSettings = useLayerSettings(true, layerHostId)

@@ -31,7 +31,7 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
     // you must manually specify the callout target.
     target: `#${buttonId}`,
   })
-  const onClickCopy = React.useCallback(() => {
+  const onClickCopy = () => {
     const text = account.data.paymentAddress
     setContentTooltip('Copied')
     setTimeout(() => {
@@ -43,7 +43,7 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
       document.body.removeChild(elem)
       setContentTooltip('Copy')
     }, 1500)
-  }, [account?.data?.paymentAddress])
+  }
 
   if (account.isSuccess) {
     return (

@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import { Icon, Label, List, Persona, PersonaSize, Stack, Spinner, SpinnerSize } from '@fluentui/react'
+import { Icon, Label, List, Persona, PersonaSize, Spinner, SpinnerSize } from '@fluentui/react'
 import classNames from 'classnames'
 import React from 'react'
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'

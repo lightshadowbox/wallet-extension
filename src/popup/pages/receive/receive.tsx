@@ -3,14 +3,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
 import classNames from 'classnames'
-import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, TooltipHost, ITooltipHostStyles, FontIcon } from '@fluentui/react'
+import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, TooltipHost, ITooltipHostStyles } from '@fluentui/react'
 import { QRCodeWallet } from 'popup/components/qr-code/qr-code'
 import { useGetAccount } from 'queries/account.queries'
-import { useId, useBoolean } from '@uifabric/react-hooks'
+import { useId } from '@uifabric/react-hooks'
 import { useGenerateDepositAddress } from 'queries/token.queries'
-import { CountDown } from 'popup/components/CountDown/CountDown'
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
-import { ShieldTokenPanel } from '../shield-token/shield-token-panel'
 import styles from './receive.module.css'
 import './receive.css'
 
@@ -67,7 +65,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
   ...props
 }) => {
   const mode = primary ? 'storybook-receive--primary' : 'storybook-receive--secondary'
-  const { data: account, status } = useGetAccount()
+  const { data: account } = useGetAccount()
   const { data: depositAddress, isSuccess } = useGenerateDepositAddress(tokenId)
   const [active, setActive] = React.useState(defaultActive)
   const tooltipId = useId('tooltip')
@@ -81,7 +79,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
       setActive(value)
     }
   }
-  const onClickCopy = React.useCallback((value: string) => {
+  const onClickCopy = (value: string) => {
     const text = value
     setContentTooltip('Copied')
     setTimeout(() => {
@@ -93,7 +91,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
       document.execCommand('copy')
       document.body.removeChild(elem)
     }, 1500)
-  }, [])
+  }
 
   return (
     <div className={['storybook-receive', 'relative', `storybook-receive--${size}`, mode].join(' ')} style={{ backgroundColor }} {...props}>
@@ -172,7 +170,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
     </div>
   )
 }
-export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId = null, showPanelShieldToken, defaultActive }) => {
+export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, dismissPanel, tokenId = null, showPanelShieldToken, defaultActive }) => {
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (

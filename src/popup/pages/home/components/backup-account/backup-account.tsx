@@ -34,18 +34,18 @@ export const BackupAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
   const scopedSettings = useLayerSettings(true, layerHostId)
   const account = useGetBackupAccount()
   const [selectedAccount, setSelectedAccount] = React.useState(null)
-  const onClose = React.useCallback(() => {
+  const onClose = () => {
     dismissPanel()
     setSelectedAccount(null)
-  }, [account])
-  const onDownloadClick = React.useCallback(() => {
+  }
+  const onDownloadClick = () => {
     if (account.isSuccess) {
       !selectedAccount ? downloadAccountBackup(account.data.name) : downloadAccountBackup(selectedAccount.name)
       setTimeout(() => {
         onClose()
       }, 500)
     }
-  }, [account.isSuccess, account, selectedAccount])
+  }
   return (
     isPanelOpen && (
       <div className={`absolute inset-0 backupAccount ${styles.container}`}>

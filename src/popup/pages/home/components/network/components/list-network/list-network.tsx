@@ -32,13 +32,13 @@ const list = [
 export const ListNetwork = () => {
   return (
     <ul className="list">
-      {list.map((a) => (
-        <li className={`flex flex-row item ${styles.item}`}>
+      {list.map(({ name, color }) => (
+        <li key={name} className={`flex flex-row item ${styles.item}`}>
           <div className={styles.front}>
-            <div style={{ color: a.color }}>
+            <div style={{ color }}>
               <FontIcon iconName="CircleFill" />
             </div>
-            <span className={styles.name}>{a.name}</span>
+            <span className={styles.name}>{name}</span>
           </div>
           <div style={{ color: '#276EF1' }}>
             <FontIcon iconName="Accept" />
