@@ -11,6 +11,7 @@ interface Item {
   icon: string
   showPanel: () => void
   clickHandleName: (value) => void
+  disable?: boolean
 }
 export const DropdownMenu: React.FC<{ onOpenMenuClick: () => void; listItem: Item[] }> = ({ onOpenMenuClick, listItem }) => {
   const ref = React.useRef<HTMLDivElement>(null)
@@ -28,17 +29,20 @@ export const DropdownMenu: React.FC<{ onOpenMenuClick: () => void; listItem: Ite
   return (
     <div ref={ref} className={classNames(`absolute inset-0 ${styles.dropdownContainer}`)}>
       <ul className="w-full h-full">
-        {listItem.map((a) => (
+        {listItem.map(({ showPanel, clickHandleName, name, icon }) => (
           <li
+            key={name}
             onClick={() => {
-              a.showPanel()
-              a.clickHandleName(a.name)
-              onOpenMenuClick()
+              if (showPanel) {
+                showPanel()
+                clickHandleName?.call(name)
+                onOpenMenuClick()
+              }
             }}
-            className={`${styles.dropdownItem} dropdownItem`}
+            className={`${styles.dropdownItem} ${!showPanel ? styles.disabled : ''}`}
           >
-            <FontIcon iconName={a.icon} />
-            <p>{a.name}</p>
+            <FontIcon iconName={icon} />
+            <p>{name}</p>
           </li>
         ))}
       </ul>

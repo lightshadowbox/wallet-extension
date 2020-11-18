@@ -29,25 +29,25 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
     {
       icon: 'Lock',
       name: 'Lock',
-      showPanel: () => console.log('panel'),
+      showPanel: null,
       clickHandleName: (name) => console.log('panel'),
     },
     {
       icon: 'ChromeFullScreen',
       name: 'Full Screen',
-      showPanel: () => console.log('panel'),
+      showPanel: null,
       clickHandleName: (name) => console.log('panel'),
     },
     {
       icon: 'InfoSolid',
       name: 'About us',
-      showPanel: () => console.log('panel'),
+      showPanel: () => null,
       clickHandleName: (name) => console.log('panel'),
     },
     {
       icon: 'Leave',
       name: 'Log out',
-      showPanel: () => console.log('coming soon'),
+      showPanel: () => null,
       clickHandleName: (name) => console.log('panel'),
     },
   ]
