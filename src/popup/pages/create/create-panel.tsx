@@ -34,19 +34,19 @@ const CreateContainer: React.FC<{
   const [createWallet, status] = useCreateWallet()
   const [isError, setIsError] = React.useState(false)
   const history = useHistory()
-  const onCreateBtnClick = React.useCallback(() => {
+  const onCreateBtnClick = () => {
     if (passwordWallet === confirmPassword) {
       createWallet({ name: nameWallet, password: passwordWallet })
     } else {
       setIsError(true)
     }
-  }, [passwordWallet, confirmPassword])
+  }
 
   React.useEffect(() => {
     if (status.isSuccess) {
       history.push('/')
     }
-  }, [status.isSuccess])
+  }, [status.isSuccess, history])
 
   return (
     <div className={classNames(`flex flex-col w-full justify-between relative ${styles.createContainer}`)}>

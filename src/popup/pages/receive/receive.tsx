@@ -3,14 +3,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
 import classNames from 'classnames'
-import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, TooltipHost, ITooltipHostStyles, FontIcon } from '@fluentui/react'
+import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, TooltipHost, ITooltipHostStyles } from '@fluentui/react'
 import { QRCodeWallet } from 'popup/components/qr-code/qr-code'
 import { useGetAccount } from 'queries/account.queries'
-import { useId, useBoolean } from '@uifabric/react-hooks'
+import { useId } from '@uifabric/react-hooks'
 import { useGenerateDepositAddress } from 'queries/token.queries'
-import { CountDown } from 'popup/components/CountDown/CountDown'
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
-import { ShieldTokenPanel } from '../shield-token/shield-token-panel'
+import { FaButton } from 'popup/components/button'
+import { useTheme } from 'popup/services'
 import styles from './receive.module.css'
 import './receive.css'
 
@@ -66,12 +66,15 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
   defaultActive,
   ...props
 }) => {
+  const theme = useTheme()
   const mode = primary ? 'storybook-receive--primary' : 'storybook-receive--secondary'
-  const { data: account, status } = useGetAccount()
+  const { data: account } = useGetAccount()
   const { data: depositAddress, isSuccess } = useGenerateDepositAddress(tokenId)
   const [active, setActive] = React.useState(defaultActive)
   const tooltipId = useId('tooltip')
   const [contentTooltip, setContentTooltip] = React.useState('Copy')
+
+  // Event handlers
   const onActiveHandle = (value) => {
     if (active !== value) {
       const element = document.querySelector(`.content .${value}`) as HTMLElement
@@ -81,7 +84,8 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
       setActive(value)
     }
   }
-  const onClickCopy = React.useCallback((value: string) => {
+
+  const onClickCopy = (value: string) => {
     const text = value
     setContentTooltip('Copied')
     setTimeout(() => {
@@ -93,18 +97,18 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
       document.execCommand('copy')
       document.body.removeChild(elem)
     }, 1500)
-  }, [])
+  }
 
   return (
     <div className={['storybook-receive', 'relative', `storybook-receive--${size}`, mode].join(' ')} style={{ backgroundColor }} {...props}>
       <header className="bg-blue-5 text-white">
         <div className={classNames('flex flex-row relative')}>
-          <div onClick={dismissPanel} className={styles.headerIcon}>
-            <Icon iconName="ChromeBack" />
-          </div>
-          <div className="flex-1 text-center font-medium text-base">Receive</div>
+          <FaButton className={styles.headerIcon} onClick={dismissPanel} iconProps={{ iconName: 'ChromeBack' }} iconColor={theme.palette.white} />
+          <div className="flex-1 text-center font-medium text-lg">Receive</div>
         </div>
-        <div className="desc text-center text-xs">This account support TRX, TRC10, TRC20 tokens</div>
+        <div className="desc text-center text-xs">
+          {active === 'in-network' ? 'Recieve from accounts within Incognito Network' : 'Receive from accounts outside of Incognito Network'}
+        </div>
       </header>
       <div className="content">
         <div className="card__container">
@@ -172,7 +176,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
     </div>
   )
 }
-export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId = null, showPanelShieldToken, defaultActive }) => {
+export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, dismissPanel, tokenId = null, showPanelShieldToken, defaultActive }) => {
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (

@@ -4,7 +4,7 @@ import { FaButton, SecondaryButton } from 'popup/components/button'
 import { useTheme } from 'popup/services'
 import { fade } from 'popup/services/utils'
 import React from 'react'
-import { DropdownMenu } from '../index'
+import { DropdownMenu } from 'popup/pages/home/components/dropdown-menu/dropdown-menu'
 import styles from './wallet-menu.module.css'
 
 interface Props {
@@ -29,25 +29,25 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
     {
       icon: 'Lock',
       name: 'Lock',
-      showPanel: () => console.log('panel'),
+      showPanel: null,
       clickHandleName: (name) => console.log('panel'),
     },
     {
       icon: 'ChromeFullScreen',
       name: 'Full Screen',
-      showPanel: () => console.log('panel'),
+      showPanel: null,
       clickHandleName: (name) => console.log('panel'),
     },
     {
       icon: 'InfoSolid',
       name: 'About us',
-      showPanel: () => console.log('panel'),
+      showPanel: () => null,
       clickHandleName: (name) => console.log('panel'),
     },
     {
       icon: 'Leave',
       name: 'Log out',
-      showPanel: () => console.log('coming soon'),
+      showPanel: () => null,
       clickHandleName: (name) => console.log('panel'),
     },
   ]

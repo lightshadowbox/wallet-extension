@@ -10,7 +10,9 @@ import { useId, useBoolean } from '@uifabric/react-hooks'
 import { getTokenFromTokenIds } from 'queries/token.queries'
 import { ReceivePanel } from 'popup/pages/receive/receive'
 import { useSettingStore } from 'popup/stores/features/settings'
-import { Header, DetailCover, TokenHistory } from './components/index'
+import { Header } from 'popup/components/header/header'
+import { DetailCover, TokenHistory } from './components'
+
 import styles from './token-detail.module.css'
 import './token-detail.css'
 
@@ -41,6 +43,15 @@ const TokenDetailContainer: React.FC<{
   )
 }
 export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelSend }) => {
+  // States
+  const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  const tokenInfos = getTokenFromTokenIds([tokenId])
+  const layerHostId = useId('layerHost')
+  const scopedSettings = useLayerSettings(true, layerHostId)
+  /**
+   * Event Handlers
+   */
   const onDismissPanelDetail = () => {
     const element = document.querySelector('.token-detail') as HTMLElement
     element.style.animation = 'none'
@@ -50,7 +61,6 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
       dismissPanel()
     }, 290)
   }
-  const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
   const onDismissPanelRight = (panel) => {
     const element = document.querySelector('.receive') as HTMLElement
     console.log(element)
@@ -64,10 +74,7 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
       }
     }, 290)
   }
-  const selectedAccount = useSettingStore((s) => s.selectAccountName)
 
-  const layerHostId = useId('layerHost')
-  const scopedSettings = useLayerSettings(true, layerHostId)
   return (
     isPanelOpen &&
     tokenId && (
@@ -85,7 +92,7 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
                   dismissPanel={() => onDismissPanelRight('receive')}
                 />
               }
-              header={<Header title={getTokenFromTokenIds([tokenId])[tokenId].Name} icon="ChromeBack" dismissPanel={onDismissPanelDetail} />}
+              header={<Header title={tokenInfos[tokenId].Name} icon="ChromeBack" dismissPanel={onDismissPanelDetail} />}
               detailCover={<DetailCover tokenId={tokenId} showPanelReceive={showPanelReceive} showPanelSend={showPanelSend} />}
               tokenHistory={<TokenHistory tokenId={tokenId} accountName={selectedAccount} />}
             />

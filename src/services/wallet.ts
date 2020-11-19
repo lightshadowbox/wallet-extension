@@ -4,7 +4,7 @@ import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk'
 import { WalletInstance } from 'incognito-sdk'
-import { AccountModelType, serializeAccount } from 'models/account-model'
+import { serializeAccount } from 'models/account-model'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
 import { createDraft, finishDraft } from 'immer'

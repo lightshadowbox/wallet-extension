@@ -14,29 +14,30 @@ export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModel
   status,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false)
-  const accounts = useGetWallet()
+  const { isSuccess, data: walletData } = useGetWallet()
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const [preAccount, setPreAccount] = React.useState(null)
   const [listItem, setListItem] = React.useState([])
-  const onChangeOption = async (accountName) => {
-    const account = await getBackupAccount(accountName)
-    setPreAccount(accountName)
-    changeAccount(account)
-  }
+  const onChangeOption = React.useCallback(
+    async (accountName) => {
+      const account = await getBackupAccount(accountName)
+      setPreAccount(accountName)
+      changeAccount(account)
+    },
+    [setPreAccount, changeAccount],
+  )
   React.useEffect(() => {
-    if (accounts) {
-      const temp = accounts.data.masterAccount.child.map((account) => {
-        return {
-          name: account.name,
-          icon: 'Contact',
-          showPanel: () => {},
-          clickHandleName: onChangeOption,
-        }
-      })
-      setListItem(temp)
-    }
-  }, [accounts.isSuccess])
-  const onOpenMenuClick = React.useCallback(() => {
+    const items = walletData?.masterAccount.child.map((account) => {
+      return {
+        name: account.name,
+        icon: 'Contact',
+        showPanel: () => {},
+        clickHandleName: onChangeOption,
+      }
+    })
+    setListItem(items)
+  }, [isSuccess, walletData, onChangeOption])
+  const onOpenMenuClick = () => {
     if (isOpen) {
       const node = document.querySelector('.backupAccount .dropdown') as HTMLElement
       node.style.animation = 'none'
@@ -47,7 +48,8 @@ export const SelectAccount: React.FC<{ changeAccount: (accountName: AccountModel
       }, 200)
     }
     return setIsOpen(!isOpen)
-  }, [isOpen])
+  }
+
   if (status !== 'loading') {
     return (
       <div onClick={onOpenMenuClick} className={`${styles.container} select-account`} onChange={onChangeOption}>

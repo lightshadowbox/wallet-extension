@@ -20,14 +20,14 @@ export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKe
   const [importPrivateKey, status] = useImportAccountFromPrivateKey(() => closePopup())
   const [error, setError] = React.useState('')
 
-  const onImportClick = React.useCallback(() => {
+  const onImportClick = () => {
     setError('')
     if (privateKey.trim() !== '' && privateKey.trim() !== '') {
       importPrivateKey({ accountName, privateKey })
     } else {
       setError('Please enter private key and account name')
     }
-  }, [privateKey, accountName])
+  }
 
   React.useEffect(() => {
     if (status.isError) {
@@ -35,7 +35,7 @@ export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKe
     } else {
       setError('')
     }
-  }, [status.isError])
+  }, [status.isError, status.error])
 
   return (
     <div className={classNames('w-full h-full flex flex-col justify-between')}>

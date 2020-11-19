@@ -4,8 +4,9 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useGetTokenBalance, getTokenFromTokenIds } from 'queries/token.queries'
-import { FontIcon } from '@fluentui/react'
+import { FontIcon, Label, PrimaryButton } from '@fluentui/react'
 import { useSettingStore } from 'popup/stores/features/settings'
+import { Button, SecondaryButton } from 'popup/components/button'
 import styles from './detail-cover.module.css'
 
 export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => void; showPanelSend: (e, tokenId, accountName) => void }> = ({
@@ -16,48 +17,34 @@ export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => vo
   const { data: totalBalance, isSuccess } = useGetTokenBalance(tokenId)
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const tokenDetail = getTokenFromTokenIds([tokenId])
+
   return (
-    <div className={classNames('w-full h-full')}>
-      <div className={classNames('p-16')}>
-        <div className={classNames('flex flex-row w-full items-end justify-center')}>
+    <div className={styles.detailCover__container}>
+      <div className={styles.detailCover__balanceInfo}>
+        <Label className={styles.detailCover__balance}>
           {/* coming soon */}
-          {isSuccess ? <span className={styles.price}>{totalBalance}</span> : <span className={styles.price}>0</span>}
-          <p className={styles.usd}>USD</p>
-        </div>
-        <div className={classNames(`flex flex-row w-full items-end justify-center m-2 ${styles.prv}`)}>
-          <span>{totalBalance}</span>
-          <p>Balance</p>
-        </div>
+          {isSuccess ? totalBalance : 0}
+        </Label>
+        <Label className={styles.detailCover__balanceLabel}>Balance</Label>
       </div>
       <div className={classNames('flex flex-row w-full')}>
-        <div
-          onClick={showPanelReceive}
-          className={styles.btnReceive}
-          style={
-            !tokenDetail[tokenId].Verified
-              ? {
-                  opacity: 0.4,
-                  pointerEvents: 'none',
-                }
-              : {}
-          }
-        >
-          <FontIcon iconName="QRCode" />
-          <a href="#">Receive</a>
-        </div>
-        <div
+        <Button full className="w-1/3" onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} disabled={!tokenDetail[tokenId].Verified}>
+          Receive
+        </Button>
+        <SecondaryButton
+          full
+          spacious
           onClick={(e) => {
             showPanelSend(e, tokenId, selectedAccount)
           }}
-          className={styles.btnSend}
+          iconProps={{ iconName: 'Send' }}
+          className="w-1/3"
         >
-          <FontIcon iconName="Send" />
-          <a href="#">Send</a>
-        </div>
-        <div className={styles.btnSwap}>
-          <FontIcon iconName="Switch" />
-          <a href="#">Swap</a>
-        </div>
+          Send
+        </SecondaryButton>
+        <SecondaryButton full className="w-1/3" iconProps={{ iconName: 'Switch' }} backgroundColor="#e1e1e1" textColor="#1d1d1d">
+          {'Swap  '}
+        </SecondaryButton>
       </div>
     </div>
   )

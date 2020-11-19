@@ -118,18 +118,15 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
   const { data: account } = useGetAccount()
   const { data: searchIndex } = useSearchableTokenList('PSymbol', 'Name')
   const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('PSymbol', 'Name')
-  const sortArrayByFollowing = React.useCallback(
-    (tokenList: any[]) => {
-      const listVerified = []
-      for (let i = 0; i < tokenList.length; i++) {
-        if (tokenList[i].Verified) {
-          listVerified.push(tokenList[i])
-        }
+  const sortArrayByFollowing = (tokenList: any[]) => {
+    const listVerified = []
+    for (let i = 0; i < tokenList.length; i++) {
+      if (tokenList[i].Verified) {
+        listVerified.push(tokenList[i])
       }
-      return listVerified
-    },
-    [allTokens, valueInput],
-  )
+    }
+    return listVerified
+  }
   const tokenList = React.useMemo(() => {
     if (!allTokens) {
       return []
@@ -146,13 +143,10 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     }
 
     return orderBy(allTokens, ['Verified', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'desc'])
-  }, [allTokens, valueInput, searchIndex])
+  }, [searchOnlyVerifiedIndex, showCustom, allTokens, searchIndex, valueInput])
 
-  const onRenderCell = React.useCallback(
-    (item: TokenItemInterface, showPanelReceive: () => void, setTokenId: (value) => void): JSX.Element => (
-      <TokenCell setTokenId={setTokenId} item={item} onClickHandle={showPanelReceive} />
-    ),
-    [allTokens],
+  const onRenderCell = (item: TokenItemInterface, showPanelReceive: () => void, setTokenId: (value) => void): JSX.Element => (
+    <TokenCell setTokenId={setTokenId} item={item} onClickHandle={showPanelReceive} />
   )
 
   if (tokenList) {

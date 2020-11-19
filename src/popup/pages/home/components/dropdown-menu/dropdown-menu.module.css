@@ -18,3 +18,13 @@
 .dropdownItem:last-child {
   color: red;
 }
+
+.disabled {
+  @apply text-gray-3;
+  cursor: default;
+}
+
+.disabled:hover {
+  @apply bg-white;
+}
+

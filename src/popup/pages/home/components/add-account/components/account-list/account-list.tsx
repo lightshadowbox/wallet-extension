@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react'
 import classNames from 'classnames'
-import { useGetListAccountName, useGetAccount, useGetAccountBasicInfo } from 'queries/account.queries'
+import { useGetListAccountName, useGetAccountBasicInfo } from 'queries/account.queries'
 import { FontIcon, Persona, Spinner } from '@fluentui/react'
 import { Shimmer } from 'popup/components/shimmer/shimmer'
 import { store } from 'popup/stores'
@@ -12,9 +12,9 @@ import styles from './account-list.module.css'
 const AccountItem: React.FC<{ name: string }> = ({ name }) => {
   const currentAccount = useSettingStore((s) => s.selectAccountName)
 
-  const switchAccount = React.useCallback((accountName: string) => {
+  const switchAccount = (accountName: string) => {
     store.dispatch(settingSlices.actions.selectAccount({ accountName }))
-  }, [])
+  }
 
   const { data: accountInfo } = useGetAccountBasicInfo(name)
 
@@ -60,7 +60,7 @@ export const AccountList = () => {
   return (
     <ul className={classNames('mt-4 p-4')}>
       {accountListName.map((name) => {
-        return <AccountItem name={name} />
+        return <AccountItem key={name} name={name} />
       })}
     </ul>
   )

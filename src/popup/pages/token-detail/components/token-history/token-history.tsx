@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import classNames from 'classnames'
 import React from 'react'
+import classNames from 'classnames'
 import { useGetHistory } from 'queries/token.queries'
 import styles from './token-history.module.css'
 import './token-history.css'

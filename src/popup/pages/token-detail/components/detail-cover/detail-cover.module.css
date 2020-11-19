@@ -68,3 +68,30 @@
   background-color: #eeeeee;
   width: 200px;
 }
+
+
+.detailCover__container {
+  @apply w-full;
+  @apply h-full;
+  @apply pl-4;
+  @apply pr-4;
+}
+
+.detailCover__balance {
+  @apply text-5xl;
+  @apply font-semibold;
+}
+
+.detailCover__balanceLabel {
+  @apply text-sm;
+  @apply text-gray-2;
+}
+
+.detailCover__balanceInfo {
+  @apply flex;
+  @apply flex-col;
+  @apply w-full;
+  @apply items-center;
+  @apply justify-center;
+  @apply h-40
+}

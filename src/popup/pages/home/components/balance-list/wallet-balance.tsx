@@ -1,15 +1,15 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import { Icon, Label, List, Persona, PersonaSize, Stack, Spinner, SpinnerSize } from '@fluentui/react'
+import { Icon, Label, List, Persona, PersonaSize, Spinner, SpinnerSize } from '@fluentui/react'
 import classNames from 'classnames'
 import React from 'react'
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
-import './wallet-balance.css'
 import { SecondaryButton } from 'popup/components/button'
 
 import { useSettingStore } from 'popup/stores/features/settings'
 import { useGetTokenBalance, useGetTokenForAccount } from 'queries/token.queries'
+import styles from './wallet-balance.module.css'
 
 interface Props {
   showPanel: () => void
@@ -49,13 +49,13 @@ export const WalletBalance: React.FC<Props> = ({ showPanel, showPanelTokenDetail
   const cellRender = React.useCallback(
     (_, index: number, showPanelTokenDetail: (value) => void): JSX.Element => {
       const i = tokenListData[index]
-      return <BalanceListCell item={i} showPanelTokenDetail={showPanelTokenDetail} />
+      return <BalanceListCell key={i.Name} item={i} showPanelTokenDetail={showPanelTokenDetail} />
     },
     [tokenListData],
   )
 
   return (
-    <div className="lsb-WalletBalance--container">
+    <div className={styles.walletBalance__container}>
       <SecondaryButton full backgroundColor="transparent">
         <div onClick={showPanel} className={classNames('w-full flex items-center')}>
           <div className={classNames('flex items-center w-12 pl-2')}>
@@ -64,7 +64,7 @@ export const WalletBalance: React.FC<Props> = ({ showPanel, showPanelTokenDetail
           <div className={classNames('flex flex-grow text-sm')}>Add token</div>
         </div>
       </SecondaryButton>
-      <div className="lsb-WalletBalance--list">
+      <div className={styles.walletBalance__list}>
         {tokenListData ? (
           <List items={tokenListData || []} onRenderCell={(_, index: number) => cellRender(_, index, showPanelTokenDetail)} />
         ) : (
