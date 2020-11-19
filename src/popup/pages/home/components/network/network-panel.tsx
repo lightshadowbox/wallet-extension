@@ -2,9 +2,11 @@ import classNames from 'classnames'
 import React from 'react'
 import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
-import { Header, SearchInput, ListNetwork } from './components/index'
+import { SearchInput, ListNetwork } from './components'
+
 import './network-panel.css'
 import styles from './network-panel.module.css'
+import { Header } from 'popup/components/header/header'
 
 interface Props {
   isPanelOpen: boolean

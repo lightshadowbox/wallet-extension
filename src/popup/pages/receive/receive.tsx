@@ -9,6 +9,8 @@ import { useGetAccount } from 'queries/account.queries'
 import { useId } from '@uifabric/react-hooks'
 import { useGenerateDepositAddress } from 'queries/token.queries'
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
+import { FaButton } from 'popup/components/button'
+import { useTheme } from 'popup/services'
 import styles from './receive.module.css'
 import './receive.css'
 
@@ -64,6 +66,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
   defaultActive,
   ...props
 }) => {
+  const theme = useTheme()
   const mode = primary ? 'storybook-receive--primary' : 'storybook-receive--secondary'
   const { data: account } = useGetAccount()
   const { data: depositAddress, isSuccess } = useGenerateDepositAddress(tokenId)
@@ -97,10 +100,8 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
     <div className={['storybook-receive', 'relative', `storybook-receive--${size}`, mode].join(' ')} style={{ backgroundColor }} {...props}>
       <header className="bg-blue-5 text-white">
         <div className={classNames('flex flex-row relative')}>
-          <div onClick={dismissPanel} className={styles.headerIcon}>
-            <Icon iconName="ChromeBack" />
-          </div>
-          <div className="flex-1 text-center font-medium text-base">Receive</div>
+          <FaButton className={styles.headerIcon} onClick={dismissPanel} iconProps={{ iconName: 'ChromeBack' }} iconColor={theme.palette.white} />
+          <div className="flex-1 text-center font-medium text-lg">Receive</div>
         </div>
         <div className="desc text-center text-xs">This account support TRX, TRC10, TRC20 tokens</div>
       </header>

@@ -25,7 +25,7 @@ export const DropdownMenu: React.FC<{ onOpenMenuClick: () => void; listItem: Ite
     return () => {
       document.removeEventListener('click', handleClickOutside, true)
     }
-  })
+  }, [])
   return (
     <div ref={ref} className={classNames(`absolute inset-0 ${styles.dropdownContainer}`)}>
       <ul className="w-full h-full">

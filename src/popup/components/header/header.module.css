@@ -1,0 +1,22 @@
+.headerLayout__main {
+    @apply flex;
+    @apply flex-row;
+    @apply relative;
+    @apply w-full;
+    @apply h-full;
+    @apply justify-center;
+    @apply items-center;
+    @apply p-4;
+}
+
+.headerLayout__icon {
+    @apply absolute;
+    @apply left-0;
+    @apply ml-4;
+}
+
+.headerLayout__title {
+    @apply font-medium;
+    @apply text-lg;
+}
+

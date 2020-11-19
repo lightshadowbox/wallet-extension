@@ -10,6 +10,9 @@ import { useSettingStore } from 'popup/stores/features/settings'
 import classNames from 'classnames'
 import { useSendToken, useBurningToken } from 'queries/create-account.mutation'
 import { useGetTokenForAccount, useGetTokenBalance, getTokenFromTokenIds } from 'queries/token.queries'
+import { FaButton } from 'popup/components/button'
+import { Header } from 'popup/components/header/header'
+import { useTheme } from 'popup/services'
 import { Message } from './message/message'
 import styles from './send.module.css'
 
@@ -198,6 +201,7 @@ const DropdownCoins: React.FC<{
  * Primary UI component for user interaction
  */
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, tokenId, accountName, ...props }) => {
+  const theme = useTheme()
   const [message, setMessage] = React.useState({
     message: '',
     name: '',
@@ -242,16 +246,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   return (
     <div className={['storybook-send', mode, 'relative'].join(' ')} style={{ backgroundColor }} {...props}>
       {message.message !== '' ? <Message message={message.message} name={message.name} /> : null}
-      <header>
-        <div className="flex p-4">
-          <div className={classNames('flex flex-row relative w-full')}>
-            <div onClick={dismissPanel} className={styles.headerIcon}>
-              <Icon iconName="ChromeBack" />
-            </div>
-            <div className="flex-1 text-center font-medium text-base">Send</div>
-          </div>
-        </div>
-      </header>
+      <Header title="Send" icon="ChromeBack" dismissPanel={dismissPanel} />
       <div className="content content-send mt-2">
         <div className="card__container">
           <ul className="tabs flex font-normal">
@@ -321,7 +316,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     </svg>
                   </span>
                 </div>
-                <div className="text-with-mini-cube mt-8">
+                <div className="text-with-mini-cube mt-6">
                   <span className="mini-cube bg-orange-2" />
                   Amount
                 </div>

@@ -60,7 +60,7 @@ export const AccountList = () => {
   return (
     <ul className={classNames('mt-4 p-4')}>
       {accountListName.map((name) => {
-        return <AccountItem name={name} />
+        return <AccountItem key={name} name={name} />
       })}
     </ul>
   )

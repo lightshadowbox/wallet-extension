@@ -6,9 +6,10 @@ import { useGetWalletGeneral } from 'queries/wallet.queries'
 import { Button } from 'popup/components/button'
 import { downloadAccountBackup } from 'services/wallet'
 import { useGetBackupAccount } from 'queries/account.queries'
+import { Header } from 'popup/components/header/header'
 import styles from './backup-account.module.css'
 import './backup-account.css'
-import { Header, ListData, SelectAccount } from './components/index'
+import { ListData, SelectAccount } from './components'
 
 interface Props {
   isPanelOpen: boolean

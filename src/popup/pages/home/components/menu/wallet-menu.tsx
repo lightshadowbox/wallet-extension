@@ -4,7 +4,7 @@ import { FaButton, SecondaryButton } from 'popup/components/button'
 import { useTheme } from 'popup/services'
 import { fade } from 'popup/services/utils'
 import React from 'react'
-import { DropdownMenu } from '../index'
+import { DropdownMenu } from 'popup/pages/home/components/dropdown-menu/dropdown-menu'
 import styles from './wallet-menu.module.css'
 
 interface Props {

@@ -10,7 +10,9 @@ import { useId, useBoolean } from '@uifabric/react-hooks'
 import { getTokenFromTokenIds } from 'queries/token.queries'
 import { ReceivePanel } from 'popup/pages/receive/receive'
 import { useSettingStore } from 'popup/stores/features/settings'
-import { Header, DetailCover, TokenHistory } from './components/index'
+import { Header } from 'popup/components/header/header'
+import { DetailCover, TokenHistory } from './components'
+
 import styles from './token-detail.module.css'
 import './token-detail.css'
 
