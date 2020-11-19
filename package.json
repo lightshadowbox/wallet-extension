@@ -111,8 +111,8 @@
   },
   "scripts": {
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
-    "start": "PORT=3000 react-app-rewired start",
-    "start:popup": "PORT=3000 react-app-rewired start",
+    "start": "react-app-rewired start",
+    "start:popup": "react-app-rewired start",
     "build": "react-app-rewired build",
     "build:dev": "NODE_ENV=development react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
