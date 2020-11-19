@@ -73,6 +73,8 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
   const [active, setActive] = React.useState(defaultActive)
   const tooltipId = useId('tooltip')
   const [contentTooltip, setContentTooltip] = React.useState('Copy')
+
+  // Event handlers
   const onActiveHandle = (value) => {
     if (active !== value) {
       const element = document.querySelector(`.content .${value}`) as HTMLElement
@@ -82,6 +84,7 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
       setActive(value)
     }
   }
+
   const onClickCopy = (value: string) => {
     const text = value
     setContentTooltip('Copied')
@@ -103,7 +106,9 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
           <FaButton className={styles.headerIcon} onClick={dismissPanel} iconProps={{ iconName: 'ChromeBack' }} iconColor={theme.palette.white} />
           <div className="flex-1 text-center font-medium text-lg">Receive</div>
         </div>
-        <div className="desc text-center text-xs">This account support TRX, TRC10, TRC20 tokens</div>
+        <div className="desc text-center text-xs">
+          {active === 'in-network' ? 'Recieve from accounts within Incognito Network' : 'Receive from accounts outside of Incognito Network'}
+        </div>
       </header>
       <div className="content">
         <div className="card__container">
