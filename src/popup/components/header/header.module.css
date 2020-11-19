@@ -1,6 +1,6 @@
 .headerLayout__main {
     @apply flex;
-    @apply flex-row;
+    @apply flex-col;
     @apply relative;
     @apply w-full;
     @apply h-full;
@@ -18,5 +18,13 @@
 .headerLayout__title {
     @apply font-medium;
     @apply text-lg;
+}
+
+.headerLayout__divider {
+    @apply absolute;
+    @apply bottom-0;
+    @apply bg-gray-5;
+    @apply w-11/12;
+    height: 1px;
 }
 
