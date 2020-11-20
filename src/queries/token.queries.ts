@@ -137,15 +137,16 @@ export type CustomTokenAPIResult = {
 }
 const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const getTokenList = async () => {
+
   const tokens = await api.get<{ Result: TokenAPIResultItem[] }>('https://api-service.incognito.org/ptoken/list')
   const customTokens = await api.get<{ Result: CustomTokenAPIResult[] }>('https://api-service.incognito.org/pcustomtoken/list')
-
+  
   const tokensMapped = tokens.data.Result.map<TokenItemInterface>((i) => ({
     IsCustom: false,
     Icon: `https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/${(i.Symbol || i.PSymbol).toLowerCase()}@2x.png`,
     ...i,
     TokenType: 'pToken',
-  }))
+  }));
 
   const customTokenMapped = customTokens.data.Result.map<Partial<TokenItemInterface>>((i) => ({
     IsCustom: true,
@@ -195,7 +196,7 @@ export const useSearchableOnlyVerifiedToken = (...searchFields: string[]) => {
   return useQuery(
     'useSearchableOnlyVerifiedToken.name',
     () =>
-      createTokenSearchIndex(
+      createTokenSearchIndex<TokenItemInterface[]>(
         Object.values(tokenList).filter((i) => i.Verified),
         ...searchFields,
       ),
