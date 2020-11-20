@@ -15,3 +15,7 @@
 .input:focus {
   border-bottom: 1px solid #276ef1;
 }
+.errMsg {
+  @apply text-red-1;
+  margin-top: 10px;
+}

@@ -24,13 +24,13 @@ interface Props {
 const CreateContainer: React.FC<{
   header: React.ReactNode
   password: React.ReactNode
-  confirm: React.ReactNode
+  confirmRender: (errMsg: string) => React.ReactNode
   btn: React.ReactNode
   name: React.ReactNode
   nameWallet: string
   passwordWallet: string
   confirmPassword: string
-}> = ({ header, password, confirm, btn, name, nameWallet, passwordWallet, confirmPassword }) => {
+}> = ({ header, password, confirmRender, btn, name, nameWallet, passwordWallet, confirmPassword }) => {
   const [createWallet, status] = useCreateWallet()
   const [isError, setIsError] = React.useState(false)
   const history = useHistory()
@@ -54,7 +54,7 @@ const CreateContainer: React.FC<{
         <div className={classNames('w-full')}>{header}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{name}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{password}</div>
-        <div className={classNames(`w-full ${styles.item}`)}>{confirm}</div>
+        <div className={classNames(`w-full ${styles.item}`)}>{confirmRender(isError ? "Password must be the same" : "")}</div>
       </div>
       <div onClick={onCreateBtnClick} className={classNames(`w-full flex ${styles.itemBtn}`)}>
         {btn}
@@ -68,6 +68,11 @@ export const CreatePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPa
   const [nameWallet, setNameWallet] = useState('')
   const [passwordWallet, setPasswordWallet] = useState('')
   const [confirmPassword, setConfirmPass] = useState('')
+  const renderConfirmPassword = React.useCallback((errMsg: string) => {
+    return (
+      <ConfirmPassword setConfirmPass={setConfirmPass} errMsg={errMsg} />
+    )
+  }, [confirmPassword]);
   return (
     isPanelOpen && (
       <div className={`absolute inset-0 create ${styles.container}`}>
@@ -76,10 +81,10 @@ export const CreatePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPa
             <CreateContainer
               nameWallet={nameWallet}
               passwordWallet={passwordWallet}
-              confirmPassword={confirmPassword}
               header={<Header dismissPanel={dismissPanel} />}
               password={<Password setPasswordWallet={setPasswordWallet} />}
-              confirm={<ConfirmPassword setConfirmPass={setConfirmPass} />}
+              confirmRender={renderConfirmPassword}
+              confirmPassword={confirmPassword}
               btn={<Button full>Next</Button>}
               name={<WalletName setName={setNameWallet} />}
             >
