@@ -25,7 +25,7 @@ import { TokenItemInterface, useFetchToken, useSearchableOnlyVerifiedToken, useS
 
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import { useAddToken, useRemoveToken } from 'queries/create-account.mutation'
-import { orderBy } from 'lodash'
+import { orderBy, filter } from 'lodash'
 import styles from './token-list.module.css'
 import './token-list.css'
 
@@ -91,7 +91,6 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     data: { followingTokens },
   } = useGetAccount()
 
-  console.log(item)
   const examplePersona: IPersonaSharedProps = {
     imageUrl: item?.Icon,
     imageInitials: item?.Name[0] + item?.Name[1],
@@ -154,18 +153,13 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
     if (!allTokens) {
       return []
     }
-    if (showCustom && `${valueInput}`.trim() !== '') {
-      return searchOnlyVerifiedIndex.search<TokenItemInterface>(valueInput).map((i) => {
-        return i.item
-      })
-    }
+
     if (`${valueInput}`.trim() !== '') {
-      return searchIndex.search<TokenItemInterface>(valueInput).map((i) => {
-        return i.item
-      })
+      const baseSearch = showCustom ? searchOnlyVerifiedIndex : searchIndex
+      return baseSearch.search<TokenItemInterface>(`^${valueInput}`).map((i) => i.item)
     }
 
-    return orderBy(allTokens, ['Verified', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'desc'])
+    return orderBy(filter(allTokens, { Verified: showCustom }), ['Verified', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'desc'])
   }, [searchOnlyVerifiedIndex, showCustom, allTokens, valueInput, searchIndex])
 
   const onRenderCell = (item: TokenItemInterface): JSX.Element => <TokenCell item={item} />

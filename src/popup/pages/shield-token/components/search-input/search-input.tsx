@@ -13,6 +13,6 @@ export const SearchInput: React.FC<{ placeholder: string; setValueInput: (value)
     <input type="text" className={styles.input} placeholder={placeholder} onChange={(e) => setValueInput(e.target.value)} />
     <div className={styles.icon}>
       <FontIcon iconName="Search" />
-    </div>
+    </div>–
   </div>
 )

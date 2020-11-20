@@ -35,7 +35,7 @@ export const DropdownMenu: React.FC<{ onOpenMenuClick: () => void; listItem: Ite
             onClick={() => {
               if (showPanel) {
                 showPanel()
-                clickHandleName?.call(name)
+                clickHandleName(name)
                 onOpenMenuClick()
               }
             }}
