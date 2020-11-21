@@ -67,26 +67,30 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
   const theme = useTheme()
   return (
     <>
-      <SecondaryButton
-        textColor={theme.palette.white}
-        backgroundColor={fade(theme.palette.white, 0.2)}
-        menuIconProps={{ iconName: 'ChevronDown' }}
-        coverSize="small"
-        rounded
-        onClick={showPanel}
-      >
-        DAppChain
-      </SecondaryButton>
-      <SecondaryButton
-        textColor={theme.palette.white}
-        backgroundColor={fade(theme.palette.white, 0.2)}
-        menuIconProps={{ iconName: 'ChevronDown' }}
-        coverSize="small"
-        spacious
-        rounded
-      >
-        USD
-      </SecondaryButton>
+      {false && (
+        <SecondaryButton
+          textColor={theme.palette.white}
+          backgroundColor={fade(theme.palette.white, 0.2)}
+          menuIconProps={{ iconName: 'ChevronDown' }}
+          coverSize="small"
+          rounded
+          onClick={showPanel}
+        >
+          DAppChain
+        </SecondaryButton>
+      )}
+      {false && (
+        <SecondaryButton
+          textColor={theme.palette.white}
+          backgroundColor={fade(theme.palette.white, 0.2)}
+          menuIconProps={{ iconName: 'ChevronDown' }}
+          coverSize="small"
+          spacious
+          rounded
+        >
+          USD
+        </SecondaryButton>
+      )}
       <div className={classNames('flex-grow')} />
       <div className={classNames('relative menu')}>
         {isOpen ? (
