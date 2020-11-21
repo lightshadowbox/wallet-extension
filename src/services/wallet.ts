@@ -227,7 +227,7 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
   }
 
   const result = await tokenInstance.getAvaiableBalance()
-  return result.toNumber()
+  return (result.toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2)
 }
 
 export const getAccountListName = async () => {
