@@ -54,7 +54,7 @@ const CreateContainer: React.FC<{
         <div className={classNames('w-full')}>{header}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{name}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{password}</div>
-        <div className={classNames(`w-full ${styles.item}`)}>{confirmRender(isError ? "Password must be the same" : "")}</div>
+        <div className={classNames(`w-full ${styles.item}`)}>{confirmRender(isError ? "The passwords do not match. Please check & try again." : "")}</div>
       </div>
       <div onClick={onCreateBtnClick} className={classNames(`w-full flex ${styles.itemBtn}`)}>
         {btn}
