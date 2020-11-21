@@ -115,31 +115,10 @@ export type TokenAPIResultItem = {
   volume24: number
 }
 
-export type CustomTokenAPIResult = {
-  ID: number
-  CreatedAt: string
-  UpdatedAt: string
-  DeletedAt?: any
-  TokenID: string
-  Image: string
-  IsPrivacy: number
-  Name: string
-  Symbol: string
-  OwnerAddress: string
-  OwnerName: string
-  OwnerEmail: string
-  OwnerWebsite: string
-  UserID: number
-  ShowOwnerAddress: number
-  Description: string
-  Verified: boolean
-  Amount: number
-}
 const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const getTokenList = async () => {
 
   const tokens = await api.get<{ Result: TokenAPIResultItem[] }>('https://api-service.incognito.org/ptoken/list')
-  const customTokens = await api.get<{ Result: CustomTokenAPIResult[] }>('https://api-service.incognito.org/pcustomtoken/list')
   
   const tokensMapped = tokens.data.Result.map<TokenItemInterface>((i) => ({
     IsCustom: false,
@@ -147,13 +126,6 @@ export const getTokenList = async () => {
     ...i,
     TokenType: 'pToken',
   }));
-
-  const customTokenMapped = customTokens.data.Result.map<Partial<TokenItemInterface>>((i) => ({
-    IsCustom: true,
-    Icon: i.Image || `https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/${i.Symbol.toLowerCase()}@2x.png`,
-    TokenType: 'custom',
-    ...i,
-  }))
 
   const PRV: Partial<TokenItemInterface> = {
     TokenID: CONSTANT.WALLET_CONSTANT.PRVIDSTR,
@@ -165,7 +137,7 @@ export const getTokenList = async () => {
     Icon: 'https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/prv@2x.png',
   }
 
-  return keyBy(concat([PRV], tokensMapped, customTokenMapped), 'TokenID')
+  return keyBy(concat([PRV], tokensMapped), 'TokenID')
 }
 
 export const useGetHistory = (AccountName: string, tokenId: string | null) => {
