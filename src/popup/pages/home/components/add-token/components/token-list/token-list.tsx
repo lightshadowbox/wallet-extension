@@ -134,8 +134,8 @@ interface Item {
 export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput, showCustom }) => {
   const { data: allTokens } = useFetchToken()
   const { data: account } = useGetAccount()
-  const { data: searchIndex } = useSearchableTokenList('PSymbol', 'Name')
-  const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('PSymbol', 'Name')
+  const { data: searchIndex } = useSearchableTokenList('Symbol', 'PSymbol', 'Name')
+  const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('Symbol', 'PSymbol', 'Name')
   const sortArrayByFollowing = (tokenList: any[]) => {
     const listFollowing = []
     const listWithoutFollowing = []
@@ -159,7 +159,7 @@ export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput
       return baseSearch.search<TokenItemInterface>(`^${valueInput}`).map((i) => i.item)
     }
 
-    return orderBy(filter(allTokens, { Verified: showCustom }), ['Verified', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'desc'])
+    return orderBy(filter(allTokens, { Verified: showCustom }), ['Verified', 'Symbol', 'PSymbol', 'IsCustom'], ['desc', 'asc', 'asc', 'desc'])
   }, [searchOnlyVerifiedIndex, showCustom, allTokens, valueInput, searchIndex])
 
   const onRenderCell = (item: TokenItemInterface): JSX.Element => <TokenCell item={item} />
