@@ -65,7 +65,7 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
         </TooltipHost>
 
         <Label className={classNames('text-5xl p-0')}>
-          {balance || 0}
+          {balance || 12}
           <span className={classNames('ml-1 text-2xl text-gray-2')}>PRV</span>
         </Label>
         <Stack className={classNames('w-full mt-5 justify-between')} horizontal horizontalAlign="center">

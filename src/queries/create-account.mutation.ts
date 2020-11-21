@@ -121,6 +121,7 @@ const burningToken = async (tokenId: string, address: string, accountName: strin
 }
 const sendToken = async (accountName: string, paymentInfoList: any[], tokenId: string) => {
   const account = await getAccountRuntime(accountName)
+ 
   if (tokenId !== PRV_TOKEN_ID) {
     const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
     const history1 = await token.transfer(paymentInfoList, '1', '1')
