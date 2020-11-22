@@ -9,6 +9,8 @@ import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/
 
 import { createDraft, finishDraft } from 'immer'
 import { WritableDraft } from 'immer/dist/internal'
+import { MAX_DEX_FEE } from 'constants/fee.constant'
+import { TokenItemInterface } from 'queries/token.queries'
 import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
@@ -198,6 +200,7 @@ export const importAccountFromPrivateKey = async (accountName: string, privateKe
   const wallet = await getWalletInstance()
   const newAccount = await wallet.masterAccount.importAccount(accountName, privateKey)
   await backupWallet()
+
   return newAccount
 }
 
@@ -233,4 +236,23 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
 export const getAccountListName = async () => {
   const wallet = await getWalletInstance()
   return wallet.masterAccount.getAccounts().map((i) => i.name)
+}
+
+export const estimateFee = async (paymentAmount: number, nonNativePair?: TokenItemInterface[]) => {
+  if (paymentAmount === 0) return 0
+  if (nonNativePair) {
+    // try {
+    //   const inputPool = pair[inputToken.id];
+    //   const outputPool = pair[outputToken.id];
+    //   const initialPool = inputPool * outputPool;
+    //   const newInputPool = inputPool + inputValue;
+    //   const newOutputPoolWithFee = _.ceil(initialPool / newInputPool);
+    //   return outputPool - newOutputPoolWithFee;
+    // } catch (error) {
+    //   console.debug('CALCULATE OUTPUT', error);
+    // }
+    return 0
+  }
+
+  return MAX_DEX_FEE * i.CONSTANT.WALLET_CONSTANT.NanoUnit
 }

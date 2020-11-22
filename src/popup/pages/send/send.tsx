@@ -17,6 +17,7 @@ import { Message } from './message/message'
 import styles from './send.module.css'
 
 import './send.css'
+import { estimateFee } from 'services/wallet'
 
 export interface SendProps {
   /**
@@ -157,7 +158,7 @@ const DropdownCoins: React.FC<{
           )}
           {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
         </button>
-        {!tokenId ? (
+        {/* {!tokenId ? (
           <ul
             className={`${isComponentVisible ? 'block' : 'hidden'}
           dropdown-menu absolute border-gray-9 border-t border-r border-l token-dropdown`}
@@ -190,7 +191,7 @@ const DropdownCoins: React.FC<{
               ),
             )}
           </ul>
-        ) : null}
+        ) : null} */}
       </div>
     )
   }
@@ -201,7 +202,8 @@ const DropdownCoins: React.FC<{
  * Primary UI component for user interaction
  */
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, tokenId, accountName, ...props }) => {
-  const theme = useTheme()
+  const [estimatedFee, setFee] = React.useState(0)
+  const [feeToken, setFeeToken] = React.useState(PRV_TOKEN_ID)
   const [message, setMessage] = React.useState({
     message: '',
     name: '',
@@ -224,6 +226,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   const [activeMode, setActiveMode] = React.useState('in-network')
   const [active, setActive] = useState(PRV_TOKEN_ID)
+
   const onHandleActiveMode = (mode) => {
     if (activeMode !== mode) {
       const element = document.querySelector(`.content-send .${mode}`) as HTMLElement
@@ -233,6 +236,47 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       setActiveMode(mode)
     }
   }
+
+  const handleAmountInputChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeMode === 'in-network') {
+      setPaymentInfo({ ...paymentInfo, amount: e.target.value })
+      setFee(await estimateFee(Number(e.target.value) || 0))
+    } else if (activeMode === 'out-network') {
+      setEthInfo({ ...ethInfo, burningAmount: e.target.value })
+    } else {
+      setMessage({
+        name: 'error',
+        message: 'Something went wrong!',
+      })
+    }
+  }
+
+  const handleNoteChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeMode === 'in-network') {
+      setPaymentInfo({ ...paymentInfo, message: e.target.value })
+    } else if (activeMode === 'out-network') {
+      setEthInfo({ ...ethInfo, message: e.target.value })
+    } else {
+      setMessage({
+        name: 'error',
+        message: 'Something went wrong!',
+      })
+    }
+  }
+
+  const handleReceivingAddressChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeMode === 'in-network') {
+      setPaymentInfo({ ...paymentInfo, paymentAddressStr: e.target.value })
+    } else if (activeMode === 'out-network') {
+      setEthInfo({ ...ethInfo, outchainAddress: e.target.value })
+    } else {
+      setMessage({
+        name: 'error',
+        message: 'Something went wrong!',
+      })
+    }
+  }
+
   const { data: balance, isSuccess: balanceStatus } = useGetTokenBalance(!tokenId ? active : tokenId, selectedAccount)
   React.useEffect(() => {
     setTimeout(() => {
@@ -293,18 +337,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     className="bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
                     id="receiving-account"
                     value={activeMode === 'in-network' ? paymentInfo.paymentAddressStr : ethInfo.outchainAddress}
-                    onChange={(e) => {
-                      if (activeMode === 'in-network') {
-                        setPaymentInfo({ ...paymentInfo, paymentAddressStr: e.target.value })
-                      } else if (activeMode === 'out-network') {
-                        setEthInfo({ ...ethInfo, outchainAddress: e.target.value })
-                      } else {
-                        setMessage({
-                          name: 'error',
-                          message: 'Something went wrong!',
-                        })
-                      }
-                    }}
+                    onChange={handleReceivingAddressChanged}
                     name="receiving-account"
                   />
                   <span className="icon absolute right-0 top-0 transform translate-y-6 -translate-x-2">
@@ -326,18 +359,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     className=" bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
                     id="receiving-account"
                     value={activeMode === 'in-network' ? paymentInfo.amount : ethInfo.burningAmount}
-                    onChange={(e) => {
-                      if (activeMode === 'in-network') {
-                        setPaymentInfo({ ...paymentInfo, amount: e.target.value })
-                      } else if (activeMode === 'out-network') {
-                        setEthInfo({ ...ethInfo, burningAmount: e.target.value })
-                      } else {
-                        setMessage({
-                          name: 'error',
-                          message: 'Something went wrong!',
-                        })
-                      }
-                    }}
+                    onChange={handleAmountInputChanged}
                     placeholder="0.0"
                     name="amount"
                   />
@@ -355,24 +377,13 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     className="mt-2 bg-white text-center outline-none w-full placeholder-gray-8:placeholder"
                     placeholder="Write note here..."
                     value={activeMode === 'in-network' ? paymentInfo.message : ethInfo.message}
-                    onChange={(e) => {
-                      if (activeMode === 'in-network') {
-                        setPaymentInfo({ ...paymentInfo, message: e.target.value })
-                      } else if (activeMode === 'out-network') {
-                        setEthInfo({ ...ethInfo, message: e.target.value })
-                      } else {
-                        setMessage({
-                          name: 'error',
-                          message: 'Something went wrong!',
-                        })
-                      }
-                    }}
+                    onChange={handleNoteChanged}
                   />
                 </div>
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
                   <div className="coin__fee flex-1 text-right">
-                    <span className="mr-1 font-medium">0.025</span>
+                    <span className="mr-1 font-medium">{estimatedFee.toFixed(8)}</span>
                     <div className="field__wrapper relative inline-block">
                       <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
                         <option>PRV</option>
