@@ -117,15 +117,14 @@ export type TokenAPIResultItem = {
 
 const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const getTokenList = async () => {
-
   const tokens = await api.get<{ Result: TokenAPIResultItem[] }>('https://api-service.incognito.org/ptoken/list')
-  
+
   const tokensMapped = tokens.data.Result.map<TokenItemInterface>((i) => ({
     IsCustom: false,
     Icon: `https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/${(i.Symbol || i.PSymbol).toLowerCase()}@2x.png`,
     ...i,
     TokenType: 'pToken',
-  }));
+  }))
 
   const PRV: Partial<TokenItemInterface> = {
     TokenID: CONSTANT.WALLET_CONSTANT.PRVIDSTR,
@@ -213,7 +212,7 @@ export const useGenerateDepositAddress = (tokenId: string) => {
   return useQuery(
     [useGenerateDepositAddress.name, tokenId, selectedAccount],
     async () => {
-      if (!tokenId) {
+      if (!tokenId || CONSTANT.WALLET_CONSTANT.PRVIDSTR === tokenId) {
         return null
       }
       const account = await getAccountRuntime(selectedAccount)

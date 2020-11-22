@@ -30,6 +30,7 @@ export const useGetAccountBasicInfo = (accountName: string) => {
   return useQuery<GetListAccountType>(['useGetAccountBasicInfo.name', accountName], async () => {
     const account = await getAccountRuntime(accountName)
     const nanoPRV = await account.nativeToken.getAvaiableBalance()
+
     return {
       accountName: account.name,
       USD: '0.00',
