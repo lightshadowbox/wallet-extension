@@ -28,7 +28,7 @@ export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => vo
         <Label className={styles.detailCover__balanceLabel}>Balance</Label>
       </div>
       <div className={classNames('flex flex-row w-full')}>
-        <Button full className="w-1/3" onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} disabled={!tokenDetail[tokenId].Verified}>
+        <Button full className="w-1/3" onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} >
           Receive
         </Button>
         <SecondaryButton
