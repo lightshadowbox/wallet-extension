@@ -101,7 +101,11 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
     return followingTokens?.indexOf(item.TokenID) !== -1
   }, [followingTokens, item.TokenID])
   return (
-    <div className={`${classNamesList.itemCell} token-list-container justify-between`} data-is-focusable>
+    <div
+      onClick={() => (isFollowingToken ? removeToken(item.TokenID) : addToken(item.TokenID))}
+      className={`${classNamesList.itemCell} token-list-container justify-between cursor-pointer`}
+      data-is-focusable
+    >
       <Persona {...examplePersona} presence={item.Verified ? PersonaPresence.online : PersonaPresence.offline} imageAlt="Image" />
       <div className={classNames('flex flex-row items-center justify-center btn-token')}>
         {isFollowingToken ? (
