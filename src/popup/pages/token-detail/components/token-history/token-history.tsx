@@ -10,7 +10,7 @@ import './token-history.css'
 export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = ({ tokenId, accountName }) => {
   const [activeBtn, setActiveBtn] = React.useState('btn-send')
   const { data, status } = useGetHistory(accountName, tokenId)
-  console.log(data)
+
   const onClickBtn = (value) => {
     const preNode = document.querySelector(`.token-history .${activeBtn}`) as HTMLElement
     preNode.classList.remove('isActive')

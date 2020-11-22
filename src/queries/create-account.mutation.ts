@@ -74,8 +74,14 @@ interface ErrorSendToken {
 }
 export const useSendToken = (hidePanel: () => void, setMessage: (value: any) => void) => {
   return useMutation(
-    (variables: { accountName: string; paymentInfoList: PaymentInfoModel[]; tokenId: string }) =>
-      sendToken(variables.accountName, variables.paymentInfoList, variables.tokenId),
+    (variables: { accountName: string; paymentInfoList: PaymentInfoModel[]; tokenId: string; nativeFee: number; privacyFee?: number }) =>
+      sendToken({
+        accountName: variables.accountName,
+        paymentInfoList: variables.paymentInfoList,
+        tokenId: variables.tokenId,
+        nativeFee: variables.nativeFee,
+        privacyFee: variables.privacyFee,
+      }),
     {
       onSuccess: async () => {
         // hidePanel()
@@ -119,15 +125,25 @@ const burningToken = async (tokenId: string, address: string, accountName: strin
   const history = await token.burning(address, burningAmount, '20', '0')
   console.log('Privacy token burned with history', history)
 }
-const sendToken = async (accountName: string, paymentInfoList: any[], tokenId: string) => {
+
+export interface SendInNetworkPayload {
+  accountName: string
+  paymentInfoList: any[]
+  tokenId: string
+  nativeFee: number // nanoPRV
+  privacyFee?: number // nanoPRV
+}
+
+const sendToken = async (payload: SendInNetworkPayload) => {
+  const { accountName, paymentInfoList, tokenId, nativeFee, privacyFee = 20 } = payload
   const account = await getAccountRuntime(accountName)
- 
+
   if (tokenId !== PRV_TOKEN_ID) {
     const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
-    const history1 = await token.transfer(paymentInfoList, '1', '1')
-    console.log(history1)
+    const history = await token.transfer(paymentInfoList, nativeFee.toString(), privacyFee.toString())
+    console.log(history)
   } else {
-    const history = await account.nativeToken.transfer(paymentInfoList, '0.0000001')
+    const history = await account.nativeToken.transfer(paymentInfoList, nativeFee.toString())
     console.log(history)
   }
 }

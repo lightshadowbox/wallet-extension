@@ -12,6 +12,7 @@ import { useSendToken, useBurningToken } from 'queries/create-account.mutation'
 import { useGetTokenForAccount, useGetTokenBalance, getTokenFromTokenIds } from 'queries/token.queries'
 import { FaButton } from 'popup/components/button'
 import { Header } from 'popup/components/header/header'
+import { estimateFee } from 'services/wallet'
 import { useTheme } from 'popup/services'
 import { Message } from './message/message'
 import styles from './send.module.css'
@@ -89,27 +90,50 @@ const DropdownCoins: React.FC<{
 }> = React.memo(({ accountName, active, setActive, tokenId, activeMode }) => {
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
   const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
+
   const onChangeCoin = (id) => {
     setActive(id)
     setIsComponentVisible(!isComponentVisible)
   }
+
   const onLoadImageFail = React.useCallback((e) => {
     e.target.src = 'https://picsum.photos/200'
   }, [])
+
   if (status === 'success') {
     return (
-      <div ref={ref} className="dropdown inline-block relative">
-        <input type="hidden" name="coin" value={active} />
-        <button
-          onClick={() => setIsComponentVisible(!isComponentVisible)}
-          type="button"
-          className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
-        >
-          {activeMode !== 'out-network' ? (
-            !tokenId ? (
+      <>
+        <div ref={ref} className="dropdown inline-block relative">
+          <input type="hidden" name="coin" value={active} />
+          <button
+            onClick={() => setIsComponentVisible(!isComponentVisible)}
+            type="button"
+            className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
+          >
+            {activeMode !== 'out-network' ? (
+              !tokenId ? (
+                <img
+                  className="send-icon"
+                  src={active ? tokenAccounts.find((item) => item.TokenId === active).Icon : tokenAccounts[0].Icon}
+                  alt="icon"
+                  onError={onLoadImageFail}
+                />
+              ) : (
+                <img
+                  className="send-icon"
+                  src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
+                  alt="icon"
+                  onError={onLoadImageFail}
+                />
+              )
+            ) : !tokenId ? (
               <img
                 className="send-icon"
-                src={active ? tokenAccounts.find((item) => item.TokenId === active).Icon : tokenAccounts[0].Icon}
+                src={
+                  tokenAccounts.length !== 1
+                    ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
+                    : logo
+                }
                 alt="icon"
                 onError={onLoadImageFail}
               />
@@ -117,51 +141,30 @@ const DropdownCoins: React.FC<{
               <img
                 className="send-icon"
                 src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
-                alt="icon"
                 onError={onLoadImageFail}
+                alt="icon"
               />
-            )
-          ) : !tokenId ? (
-            <img
-              className="send-icon"
-              src={
-                tokenAccounts.length !== 1
-                  ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
-                  : logo
-              }
-              alt="icon"
-              onError={onLoadImageFail}
-            />
-          ) : (
-            <img
-              className="send-icon"
-              src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
-              onError={onLoadImageFail}
-              alt="icon"
-            />
-          )}
-          {activeMode !== 'out-network' ? (
-            !tokenId ? (
-              <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.TokenId === active).Name : tokenAccounts[0].Name}</span>
+            )}
+            {activeMode !== 'out-network' ? (
+              !tokenId ? (
+                <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.TokenId === active).Name : tokenAccounts[0].Name}</span>
+              ) : (
+                <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
+              )
+            ) : !tokenId ? (
+              <span className="mr-2 ml-2">
+                {tokenAccounts.length !== 1
+                  ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                  : 'No token'}
+              </span>
             ) : (
               <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
-            )
-          ) : !tokenId ? (
-            <span className="mr-2 ml-2">
-              {tokenAccounts.length !== 1
-                ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
-                : 'No token'}
-            </span>
-          ) : (
-            <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
-          )}
-          {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
-        </button>
-        {!tokenId ? (
-          <ul
-            className={`${isComponentVisible ? 'block' : 'hidden'}
-          dropdown-menu absolute border-gray-9 border-t border-r border-l token-dropdown`}
-          >
+            )}
+            {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
+          </button>
+        </div>
+        {!tokenId && isComponentVisible ? (
+          <ul className="dropdown-menu absolute border-gray-9 border token-dropdown w-48">
             {tokenAccounts.map((item) =>
               activeMode === 'out-network' ? (
                 item.Verified ? (
@@ -169,7 +172,7 @@ const DropdownCoins: React.FC<{
                     <button
                       className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
                       type="button"
-                      onClick={() => onChangeCoin(item.TokenId)}
+                      onMouseDown={() => onChangeCoin(item.TokenId)}
                     >
                       <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
                       <span className="self-center ml-2">{item.Name}</span>
@@ -181,7 +184,7 @@ const DropdownCoins: React.FC<{
                   <button
                     className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
                     type="button"
-                    onClick={() => onChangeCoin(item.TokenId)}
+                    onMouseDown={() => onChangeCoin(item.TokenId)}
                   >
                     <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
                     <span className="self-center ml-2">{item.Name}</span>
@@ -191,7 +194,7 @@ const DropdownCoins: React.FC<{
             )}
           </ul>
         ) : null}
-      </div>
+      </>
     )
   }
   return <h1>Loading...</h1>
@@ -201,7 +204,8 @@ const DropdownCoins: React.FC<{
  * Primary UI component for user interaction
  */
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, tokenId, accountName, ...props }) => {
-  const theme = useTheme()
+  const [estimatedFee, setFee] = React.useState(0)
+  const [feeToken, setFeeToken] = React.useState(PRV_TOKEN_ID)
   const [message, setMessage] = React.useState({
     message: '',
     name: '',
@@ -224,6 +228,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   const [activeMode, setActiveMode] = React.useState('in-network')
   const [active, setActive] = useState(PRV_TOKEN_ID)
+
   const onHandleActiveMode = (mode) => {
     if (activeMode !== mode) {
       const element = document.querySelector(`.content-send .${mode}`) as HTMLElement
@@ -233,6 +238,47 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       setActiveMode(mode)
     }
   }
+
+  const handleAmountInputChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeMode === 'in-network') {
+      setPaymentInfo({ ...paymentInfo, amount: e.target.value })
+      setFee(await estimateFee(Number(e.target.value) || 0))
+    } else if (activeMode === 'out-network') {
+      setEthInfo({ ...ethInfo, burningAmount: e.target.value })
+    } else {
+      setMessage({
+        name: 'error',
+        message: 'Something went wrong!',
+      })
+    }
+  }
+
+  const handleNoteChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeMode === 'in-network') {
+      setPaymentInfo({ ...paymentInfo, message: e.target.value })
+    } else if (activeMode === 'out-network') {
+      setEthInfo({ ...ethInfo, message: e.target.value })
+    } else {
+      setMessage({
+        name: 'error',
+        message: 'Something went wrong!',
+      })
+    }
+  }
+
+  const handleReceivingAddressChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeMode === 'in-network') {
+      setPaymentInfo({ ...paymentInfo, paymentAddressStr: e.target.value })
+    } else if (activeMode === 'out-network') {
+      setEthInfo({ ...ethInfo, outchainAddress: e.target.value })
+    } else {
+      setMessage({
+        name: 'error',
+        message: 'Something went wrong!',
+      })
+    }
+  }
+
   const { data: balance, isSuccess: balanceStatus } = useGetTokenBalance(!tokenId ? active : tokenId, selectedAccount)
   React.useEffect(() => {
     setTimeout(() => {
@@ -293,18 +339,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     className="bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
                     id="receiving-account"
                     value={activeMode === 'in-network' ? paymentInfo.paymentAddressStr : ethInfo.outchainAddress}
-                    onChange={(e) => {
-                      if (activeMode === 'in-network') {
-                        setPaymentInfo({ ...paymentInfo, paymentAddressStr: e.target.value })
-                      } else if (activeMode === 'out-network') {
-                        setEthInfo({ ...ethInfo, outchainAddress: e.target.value })
-                      } else {
-                        setMessage({
-                          name: 'error',
-                          message: 'Something went wrong!',
-                        })
-                      }
-                    }}
+                    onChange={handleReceivingAddressChanged}
                     name="receiving-account"
                   />
                   <span className="icon absolute right-0 top-0 transform translate-y-6 -translate-x-2">
@@ -326,24 +361,13 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     className=" bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
                     id="receiving-account"
                     value={activeMode === 'in-network' ? paymentInfo.amount : ethInfo.burningAmount}
-                    onChange={(e) => {
-                      if (activeMode === 'in-network') {
-                        setPaymentInfo({ ...paymentInfo, amount: e.target.value })
-                      } else if (activeMode === 'out-network') {
-                        setEthInfo({ ...ethInfo, burningAmount: e.target.value })
-                      } else {
-                        setMessage({
-                          name: 'error',
-                          message: 'Something went wrong!',
-                        })
-                      }
-                    }}
+                    onChange={handleAmountInputChanged}
                     placeholder="0.0"
                     name="amount"
                   />
                 </div>
 
-                <div className="mt-6 mb-6 text-center">
+                <div className="mt-6 mb-6 text-center flex flex-col justify-center items-center">
                   <DropdownCoins
                     activeMode={activeMode}
                     tokenId={tokenId}
@@ -355,44 +379,35 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     className="mt-2 bg-white text-center outline-none w-full placeholder-gray-8:placeholder"
                     placeholder="Write note here..."
                     value={activeMode === 'in-network' ? paymentInfo.message : ethInfo.message}
-                    onChange={(e) => {
-                      if (activeMode === 'in-network') {
-                        setPaymentInfo({ ...paymentInfo, message: e.target.value })
-                      } else if (activeMode === 'out-network') {
-                        setEthInfo({ ...ethInfo, message: e.target.value })
-                      } else {
-                        setMessage({
-                          name: 'error',
-                          message: 'Something went wrong!',
-                        })
-                      }
-                    }}
+                    onChange={handleNoteChanged}
                   />
                 </div>
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
                   <div className="coin__fee flex-1 text-right">
-                    <span className="mr-1 font-medium">0.025</span>
+                    <span className="mr-1 font-medium">{(estimatedFee * 1e-9).toFixed(8)}</span>
                     <div className="field__wrapper relative inline-block">
-                      <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
+                      {/* <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
                         <option>PRV</option>
-                      </select>
-                      <Icon className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2" iconName="ChevronDown" />
+                      </select> */}
+                      PRV
+                      {/* <Icon className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2" iconName="ChevronDown" /> */}
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => {
                     const paymentInfoList = []
-                    paymentInfoList.push(paymentInfo)
+                    paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * 1e9}` })
                     if (activeMode === 'in-network') {
                       return sendToken({
                         accountName: !accountName ? selectedAccount : accountName,
                         paymentInfoList,
                         tokenId: !tokenId ? active : tokenId,
+                        nativeFee: estimatedFee,
                       })
                     }
-                    console.log(accountName)
+
                     return sendEth({
                       tokenId: !tokenId
                         ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId ||
