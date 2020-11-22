@@ -6,6 +6,7 @@ import { Logo } from '../logo/logo'
 import { RecCreate } from '../rec-create/rec-create'
 import { RecImport } from '../rec-import/rec-import'
 import { CreatePanel } from '../create/create-panel'
+import { Terms } from '../create/components/terms/terms';
 import { ImportAccountPanel } from '../connect/Connect-panel'
 
 const WelcomeContainer: React.FC<{
@@ -14,13 +15,15 @@ const WelcomeContainer: React.FC<{
   recImport: React.ReactNode
   create: React.ReactNode
   importAccount: React.ReactNode
-}> = ({ logo, recCreate, recImport, create, importAccount }) => (
+  terms: React.ReactNode
+}> = ({ logo, recCreate, recImport, create, importAccount, terms }) => (
   <div className={`flex flex-col relative justify-center items-center bg-white ${styles.welcomeContainer}`}>
     <div className={classNames('w-full h-full')}>{logo}</div>
     <div className={classNames('w-full h-full')}>{recCreate}</div>
     <div className={classNames('w-full h-full')}>{recImport}</div>
     <div className={classNames('w-full h-full')}>{create}</div>
     <div className={classNames('w-full h-full')}>{importAccount}</div>
+    <div className={classNames('w-full h-full text-center')}>{terms}</div>
   </div>
 )
 export const WelcomePage = () => {
@@ -42,6 +45,7 @@ export const WelcomePage = () => {
       recImport={<RecImport showPanel={showPanelImport} />}
       importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={onDismissImport} />}
       create={<CreatePanel isPanelOpen={isPanelOpenCreate} showPanel={showPanelCreate} dismissPanel={dismissPanelCreate} />}
+      terms={<Terms />}
     >
       <div>Rectangle will coming soon </div>
     </WelcomeContainer>
