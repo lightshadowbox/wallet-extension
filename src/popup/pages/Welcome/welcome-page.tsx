@@ -1,12 +1,13 @@
 import classNames from 'classnames'
-import React from 'react'
+import { useHistory } from 'react-router-dom'
+import React, { useState } from 'react'
 import { useBoolean } from '@uifabric/react-hooks'
 import styles from './welcome-page.module.css'
 import { Logo } from '../logo/logo'
 import { RecCreate } from '../rec-create/rec-create'
 import { RecImport } from '../rec-import/rec-import'
 import { CreatePanel } from '../create/create-panel'
-import { Terms } from '../create/components/terms/terms';
+import { Terms } from '../create/components/terms/terms'
 import { ImportAccountPanel } from '../connect/Connect-panel'
 
 const WelcomeContainer: React.FC<{
@@ -27,8 +28,11 @@ const WelcomeContainer: React.FC<{
   </div>
 )
 export const WelcomePage = () => {
+  const history = useHistory()
+  const [onNext, setOnNext] = useState<() => void>(() => {})
   const [isPanelOpenCreate, { setTrue: showPanelCreate, setFalse: dismissPanelCreate }] = useBoolean(false)
   const [isPanelOpenImport, { setTrue: showPanelImport, setFalse: dismissPanelImport }] = useBoolean(false)
+
   const onDismissImport = () => {
     const element = document.querySelector('.connect .ms-Panel') as HTMLElement
     element.style.animation = 'none'
@@ -38,13 +42,24 @@ export const WelcomePage = () => {
       dismissPanelImport()
     }, 180)
   }
+
+  const onNextCreate = () => {
+    showPanelCreate()
+    setOnNext(() => history.push.bind(null, '/'))
+  }
+
+  const onNextImport = () => {
+    showPanelCreate()
+    setOnNext(() => history.push.bind(null, '/import'))
+  }
+
   return (
     <WelcomeContainer
       logo={<Logo />}
-      recCreate={<RecCreate showPanel={showPanelCreate} />}
-      recImport={<RecImport showPanel={showPanelImport} />}
+      recCreate={<RecCreate showPanel={onNextCreate} />}
+      recImport={<RecImport showPanel={onNextImport} />}
       importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={onDismissImport} />}
-      create={<CreatePanel isPanelOpen={isPanelOpenCreate} showPanel={showPanelCreate} dismissPanel={dismissPanelCreate} />}
+      create={<CreatePanel isPanelOpen={isPanelOpenCreate} showPanel={showPanelCreate} dismissPanel={dismissPanelCreate} onNext={onNext} />}
       terms={<Terms />}
     >
       <div>Rectangle will coming soon </div>
