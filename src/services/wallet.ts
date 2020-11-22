@@ -254,5 +254,5 @@ export const estimateFee = async (paymentAmount: number, nonNativePair?: TokenIt
     return 0
   }
 
-  return MAX_DEX_FEE * i.CONSTANT.WALLET_CONSTANT.NanoUnit
+  return MAX_DEX_FEE
 }

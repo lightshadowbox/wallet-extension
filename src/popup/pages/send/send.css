@@ -34,11 +34,17 @@
   border-radius: 50%;
 }
 .dropdown-menu {
-  max-height: 100px;
+  max-height: 120px;
 
   overflow-x: hidden;
   overflow-y: scroll;
 }
+
+.dropdown-menu::-webkit-scrollbar {
+  width: 0px;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
 .content .dropdown .dropdownItem:last-child {
   color: black;
 }

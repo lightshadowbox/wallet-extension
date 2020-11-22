@@ -90,27 +90,50 @@ const DropdownCoins: React.FC<{
 }> = React.memo(({ accountName, active, setActive, tokenId, activeMode }) => {
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
   const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
+
   const onChangeCoin = (id) => {
     setActive(id)
     setIsComponentVisible(!isComponentVisible)
   }
+
   const onLoadImageFail = React.useCallback((e) => {
     e.target.src = 'https://picsum.photos/200'
   }, [])
+
   if (status === 'success') {
     return (
-      <div ref={ref} className="dropdown inline-block relative">
-        <input type="hidden" name="coin" value={active} />
-        <button
-          onClick={() => setIsComponentVisible(!isComponentVisible)}
-          type="button"
-          className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
-        >
-          {activeMode !== 'out-network' ? (
-            !tokenId ? (
+      <>
+        <div ref={ref} className="dropdown inline-block relative">
+          <input type="hidden" name="coin" value={active} />
+          <button
+            onClick={() => setIsComponentVisible(!isComponentVisible)}
+            type="button"
+            className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
+          >
+            {activeMode !== 'out-network' ? (
+              !tokenId ? (
+                <img
+                  className="send-icon"
+                  src={active ? tokenAccounts.find((item) => item.TokenId === active).Icon : tokenAccounts[0].Icon}
+                  alt="icon"
+                  onError={onLoadImageFail}
+                />
+              ) : (
+                <img
+                  className="send-icon"
+                  src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
+                  alt="icon"
+                  onError={onLoadImageFail}
+                />
+              )
+            ) : !tokenId ? (
               <img
                 className="send-icon"
-                src={active ? tokenAccounts.find((item) => item.TokenId === active).Icon : tokenAccounts[0].Icon}
+                src={
+                  tokenAccounts.length !== 1
+                    ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
+                    : logo
+                }
                 alt="icon"
                 onError={onLoadImageFail}
               />
@@ -118,51 +141,30 @@ const DropdownCoins: React.FC<{
               <img
                 className="send-icon"
                 src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
-                alt="icon"
                 onError={onLoadImageFail}
+                alt="icon"
               />
-            )
-          ) : !tokenId ? (
-            <img
-              className="send-icon"
-              src={
-                tokenAccounts.length !== 1
-                  ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
-                  : logo
-              }
-              alt="icon"
-              onError={onLoadImageFail}
-            />
-          ) : (
-            <img
-              className="send-icon"
-              src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
-              onError={onLoadImageFail}
-              alt="icon"
-            />
-          )}
-          {activeMode !== 'out-network' ? (
-            !tokenId ? (
-              <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.TokenId === active).Name : tokenAccounts[0].Name}</span>
+            )}
+            {activeMode !== 'out-network' ? (
+              !tokenId ? (
+                <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.TokenId === active).Name : tokenAccounts[0].Name}</span>
+              ) : (
+                <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
+              )
+            ) : !tokenId ? (
+              <span className="mr-2 ml-2">
+                {tokenAccounts.length !== 1
+                  ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                  : 'No token'}
+              </span>
             ) : (
               <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
-            )
-          ) : !tokenId ? (
-            <span className="mr-2 ml-2">
-              {tokenAccounts.length !== 1
-                ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
-                : 'No token'}
-            </span>
-          ) : (
-            <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
-          )}
-          {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
-        </button>
-        {/* {!tokenId ? (
-          <ul
-            className={`${isComponentVisible ? 'block' : 'hidden'}
-          dropdown-menu absolute border-gray-9 border-t border-r border-l token-dropdown`}
-          >
+            )}
+            {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
+          </button>
+        </div>
+        {!tokenId && isComponentVisible ? (
+          <ul className="dropdown-menu absolute border-gray-9 border token-dropdown w-48">
             {tokenAccounts.map((item) =>
               activeMode === 'out-network' ? (
                 item.Verified ? (
@@ -170,7 +172,7 @@ const DropdownCoins: React.FC<{
                     <button
                       className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
                       type="button"
-                      onClick={() => onChangeCoin(item.TokenId)}
+                      onMouseDown={() => onChangeCoin(item.TokenId)}
                     >
                       <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
                       <span className="self-center ml-2">{item.Name}</span>
@@ -182,7 +184,7 @@ const DropdownCoins: React.FC<{
                   <button
                     className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
                     type="button"
-                    onClick={() => onChangeCoin(item.TokenId)}
+                    onMouseDown={() => onChangeCoin(item.TokenId)}
                   >
                     <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
                     <span className="self-center ml-2">{item.Name}</span>
@@ -191,8 +193,8 @@ const DropdownCoins: React.FC<{
               ),
             )}
           </ul>
-        ) : null} */}
-      </div>
+        ) : null}
+      </>
     )
   }
   return <h1>Loading...</h1>
@@ -365,7 +367,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                   />
                 </div>
 
-                <div className="mt-6 mb-6 text-center">
+                <div className="mt-6 mb-6 text-center flex flex-col justify-center items-center">
                   <DropdownCoins
                     activeMode={activeMode}
                     tokenId={tokenId}
@@ -383,27 +385,29 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
                   <div className="coin__fee flex-1 text-right">
-                    <span className="mr-1 font-medium">{estimatedFee.toFixed(8)}</span>
+                    <span className="mr-1 font-medium">{(estimatedFee * 1e-9).toFixed(8)}</span>
                     <div className="field__wrapper relative inline-block">
-                      <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
+                      {/* <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
                         <option>PRV</option>
-                      </select>
-                      <Icon className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2" iconName="ChevronDown" />
+                      </select> */}
+                      PRV
+                      {/* <Icon className="icon text-gray-7 absolute right-0 top-0 transform -translate-x-2" iconName="ChevronDown" /> */}
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => {
                     const paymentInfoList = []
-                    paymentInfoList.push(paymentInfo)
+                    paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * 1e9}` })
                     if (activeMode === 'in-network') {
                       return sendToken({
                         accountName: !accountName ? selectedAccount : accountName,
                         paymentInfoList,
                         tokenId: !tokenId ? active : tokenId,
+                        nativeFee: estimatedFee,
                       })
                     }
-                    console.log(accountName)
+
                     return sendEth({
                       tokenId: !tokenId
                         ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId ||
