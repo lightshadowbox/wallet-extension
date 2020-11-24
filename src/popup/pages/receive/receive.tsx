@@ -69,10 +69,12 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
   const theme = useTheme()
   const mode = primary ? 'storybook-receive--primary' : 'storybook-receive--secondary'
   const { data: account } = useGetAccount()
-  const { data: depositAddress, isSuccess } = useGenerateDepositAddress(tokenId) 
+  const { data: depositAddress, isSuccess } = useGenerateDepositAddress(tokenId)
   const [active, setActive] = React.useState(defaultActive)
   const tooltipId = useId('tooltip')
   const [contentTooltip, setContentTooltip] = React.useState('Copy')
+  const tempDisableOutNetwork = true
+  defaultActive = tempDisableOutNetwork ? "in-network" : defaultActive
 
   // Event handlers
   const onActiveHandle = (value) => {
@@ -123,17 +125,26 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
             </li>
             <li
               onClick={() => {
-                onActiveHandle('out-network')
-                if (!tokenId) {
-                  showPanelShieldToken()
-                  setTimeout(() => {
-                    dismissPanel()
-                  }, 500)
+                if (!tempDisableOutNetwork) {
+                  onActiveHandle('out-network')
+                  if (!tokenId) {
+                    showPanelShieldToken()
+                    setTimeout(() => {
+                      dismissPanel()
+                    }, 500)
+                  }
                 }
               }}
               className={defaultActive === 'out-network' ? 'tab out-network flex-1 text-center active' : 'tab out-network flex-1 text-center'}
             >
-              <button type="button" className="bg-white inline-block py-2 px-4 hover:text-black hover:font-medium">
+              <button
+                type="button"
+                className={classNames(
+                  'bg-white inline-block py-2 px-4',
+                  tempDisableOutNetwork ? 'disabled:opacity-50 cursor-not-allowed' : 'hover:text-black hover:font-medium',
+                )}
+                disabled={tempDisableOutNetwork}
+              >
                 Out Network
               </button>
             </li>
