@@ -231,7 +231,7 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
 
   const { pDecimals } = tokenInstance.bridgeInfo
   const result = await tokenInstance.getAvaiableBalance()
-  return (result.toNumber() * Math.pow(10, - pDecimals)).toFixed(2)
+  return (result.toNumber() * Math.pow(10, -pDecimals)).toFixed(2)
 }
 
 export const getAccountListName = async () => {

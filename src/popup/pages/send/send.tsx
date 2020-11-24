@@ -3,9 +3,22 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useRef, useEffect } from 'react'
-import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, Persona, PersonaSize } from '@fluentui/react'
+import {
+  Icon,
+  Customizer,
+  IFocusTrapZoneProps,
+  ILayerProps,
+  LayerHost,
+  mergeStyles,
+  Panel,
+  Persona,
+  PersonaSize,
+  IPersonaSharedProps,
+  PersonaPresence,
+} from '@fluentui/react'
 import logo from 'popup/assets/lsb.png'
 import { useId } from '@uifabric/react-hooks'
+
 import { useSettingStore } from 'popup/stores/features/settings'
 import classNames from 'classnames'
 import { useSendToken, useBurningToken } from 'queries/create-account.mutation'
@@ -111,55 +124,60 @@ const DropdownCoins: React.FC<{
             className="button-select border focus:outline-none border-gray-9 bg-white py-2 px-2 inline-flex items-center"
           >
             {activeMode !== 'out-network' ? (
-              !tokenId ? (
-                <img
-                  className="send-icon"
-                  src={active ? tokenAccounts.find((item) => item.TokenId === active).Icon : tokenAccounts[0].Icon}
-                  alt="icon"
-                  onError={onLoadImageFail}
-                />
-              ) : (
-                <img
-                  className="send-icon"
-                  src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
-                  alt="icon"
-                  onError={onLoadImageFail}
-                />
-              )
-            ) : !tokenId ? (
-              <img
-                className="send-icon"
-                src={
-                  tokenAccounts.length !== 1
-                    ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
-                    : logo
+              <Persona
+                size={PersonaSize.size48}
+                imageUrl={
+                  !tokenId
+                    ? active
+                      ? tokenAccounts.find((item) => item.TokenId === active).Icon
+                      : tokenAccounts[0].Icon
+                    : active
+                      ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
+                      : tokenAccounts[0].Icon
                 }
-                alt="icon"
-                onError={onLoadImageFail}
+                imageInitials={
+                  !tokenId
+                    ? active
+                      ? tokenAccounts.find((item) => item.TokenId === active).Name
+                      : tokenAccounts[0].Name
+                    : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                }
+                text={
+                  !tokenId
+                    ? active
+                      ? tokenAccounts.find((item) => item.TokenId === active).Name
+                      : tokenAccounts[0].Name
+                    : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                }
               />
             ) : (
-              <img
-                className="send-icon"
-                src={active ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon : tokenAccounts[0].Icon}
-                onError={onLoadImageFail}
-                alt="icon"
-              />
-            )}
-            {activeMode !== 'out-network' ? (
-              !tokenId ? (
-                <span className="mr-2 ml-2">{active ? tokenAccounts.find((item) => item.TokenId === active).Name : tokenAccounts[0].Name}</span>
-              ) : (
-                <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
-              )
-            ) : !tokenId ? (
-              <span className="mr-2 ml-2">
-                {tokenAccounts.length !== 1
-                  ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
-                  : 'No token'}
-              </span>
-            ) : (
-              <span className="mr-2 ml-2">{tokenAccounts?.find((item) => item.TokenId === tokenId).Name}</span>
-            )}
+                <Persona
+                  size={PersonaSize.size48}
+                  imageUrl={
+                    !tokenId
+                      ? tokenAccounts.length !== 1
+                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
+                        : logo
+                      : active
+                        ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
+                        : tokenAccounts[0].Icon
+                  }
+                  imageInitials={
+                    !tokenId
+                      ? tokenAccounts.length !== 1
+                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                        : 'No token'
+                      : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                  }
+                  text={
+                    !tokenId
+                      ? tokenAccounts.length !== 1
+                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                        : 'No token'
+                      : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                  }
+                />
+              )}
             {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
           </button>
         </div>
@@ -180,17 +198,17 @@ const DropdownCoins: React.FC<{
                   </li>
                 ) : null
               ) : (
-                <li key={item.TokenId} className="border-b border-gray-9 bg-white">
-                  <button
-                    className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
-                    type="button"
-                    onMouseDown={() => onChangeCoin(item.TokenId)}
-                  >
-                    <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
-                    <span className="self-center ml-2">{item.Name}</span>
-                  </button>
-                </li>
-              ),
+                  <li key={item.TokenId} className="border-b border-gray-9 bg-white">
+                    <button
+                      className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
+                      type="button"
+                      onMouseDown={() => onChangeCoin(item.TokenId)}
+                    >
+                      <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
+                      <span className="self-center ml-2">{item.Name}</span>
+                    </button>
+                  </li>
+                ),
             )}
           </ul>
         ) : null}
@@ -418,7 +436,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     return sendEth({
                       tokenId: !tokenId
                         ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId ||
-                          tokenAccounts?.find((item) => item.Verified)?.TokenId
+                        tokenAccounts?.find((item) => item.Verified)?.TokenId
                         : tokenId,
                       address: ethInfo.outchainAddress,
                       accountName: selectedAccount,

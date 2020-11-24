@@ -4,13 +4,15 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useGetHistory } from 'queries/token.queries'
+import { TxHistoryModel } from 'incognito-sdk'
+import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import styles from './token-history.module.css'
 import './token-history.css'
 
 export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = ({ tokenId, accountName }) => {
   const [activeBtn, setActiveBtn] = React.useState('btn-send')
-  const { data, status } = useGetHistory(accountName, tokenId)
-
+  const { data, status } = useGetHistory(tokenId)
+  console.log(data)
   const onClickBtn = (value) => {
     const preNode = document.querySelector(`.token-history .${activeBtn}`) as HTMLElement
     preNode.classList.remove('isActive')
@@ -18,24 +20,6 @@ export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = 
     activeNode.classList.add('isActive')
     setActiveBtn(value)
   }
-  const listItem = [
-    {
-      price: 25.05,
-      day: '10:30 20 Aug 2020',
-    },
-    {
-      price: 25.05,
-      day: '10:31 20 Aug 2020',
-    },
-    {
-      price: 25.05,
-      day: '10:32 20 Aug 2020',
-    },
-    {
-      price: 25.05,
-      day: '10:33 20 Aug 2020',
-    },
-  ]
   return (
     <div>
       <div className={classNames('flex flex-row w-full token-history')}>
@@ -46,16 +30,22 @@ export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = 
           <a>Receive</a>
         </div>
       </div>
-      <ul>
-        {listItem.map((item) => {
-          return (
-            <li key={item.day} className={classNames(`flex flex-row justify-between p-4 ${styles.container}`)}>
-              <span className={styles.price}>{item.price}</span>
-              <p className={styles.day}>{item.day}</p>
-            </li>
-          )
-        })}
-      </ul>
+      {status === 'success' ? (
+        <ul>
+          {data.map((item: TxHistoryModel) => {
+            return (
+              <li key={item.lockTime} className={classNames(`flex flex-row justify-between p-4 ${styles.container}`)}>
+                <span className={styles.price}>
+                  {parseFloat(item.nativeTokenInfo.amount) * 0.000000001 + parseFloat(item.nativeTokenInfo.fee) * 0.000000001}
+                </span>
+                <p className={styles.day}>{new Date(item.lockTime * 1000).toISOString()}</p>
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+          <SpinnerWallet />
+        )}
     </div>
   )
 }

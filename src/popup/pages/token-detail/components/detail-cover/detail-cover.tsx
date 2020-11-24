@@ -4,7 +4,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useGetTokenBalance, getTokenFromTokenIds } from 'queries/token.queries'
-import { FontIcon, Label, PrimaryButton } from '@fluentui/react'
+import { Label } from '@fluentui/react'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { Button, SecondaryButton } from 'popup/components/button'
 import styles from './detail-cover.module.css'
@@ -16,7 +16,6 @@ export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => vo
 }) => {
   const { data: totalBalance, isSuccess } = useGetTokenBalance(tokenId)
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  const tokenDetail = getTokenFromTokenIds([tokenId])
 
   return (
     <div className={styles.detailCover__container}>
@@ -28,7 +27,7 @@ export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => vo
         <Label className={styles.detailCover__balanceLabel}>Balance</Label>
       </div>
       <div className={classNames('flex flex-row w-full')}>
-        <Button full className="w-1/3" onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }} >
+        <Button full className="w-1/3" onClick={showPanelReceive} iconProps={{ iconName: 'QRCode' }}>
           Receive
         </Button>
         <SecondaryButton

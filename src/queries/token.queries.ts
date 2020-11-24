@@ -139,16 +139,18 @@ export const getTokenList = async () => {
   return keyBy(concat([PRV], tokensMapped), 'TokenID')
 }
 
-export const useGetHistory = (AccountName: string, tokenId: string | null) => {
-  return useQuery(['useGetHistory.name', AccountName, tokenId], () => getHistory(AccountName, tokenId), {
-    enabled: AccountName,
+export const useGetHistory = (tokenId: string) => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useQuery(['useGetHistory.name', selectedAccount, tokenId], () => getHistory(selectedAccount, tokenId), {
+    enabled: tokenId,
   })
 }
-const getHistory = async (AccountName: string, tokenId: string | null = null) => {
+const getHistory = async (AccountName: string, tokenId: string) => {
   const account = await getAccountRuntime(AccountName)
+  await historyServices.checkCachedHistories()
   const histories = await historyServices.getTxHistoryByPublicKey(
     account.key.keySet.publicKeySerialized, // publicKeySerialized of the account
-    null,
+    tokenId === PRV_TOKEN_ID ? null : tokenId,
   )
   return histories
 }
