@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/anchor-is-valid */
@@ -31,18 +32,24 @@ export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = 
         </div>
       </div>
       {status === 'success' ? (
-        <ul>
-          {data.map((item: TxHistoryModel) => {
-            return (
-              <li key={item.lockTime} className={classNames(`flex flex-row justify-between p-4 ${styles.container}`)}>
-                <span className={styles.price}>
-                  {parseFloat(item.nativeTokenInfo.amount) * 0.000000001 + parseFloat(item.nativeTokenInfo.fee) * 0.000000001}
-                </span>
-                <p className={styles.day}>{new Date(item.lockTime * 1000).toISOString()}</p>
-              </li>
-            )
-          })}
-        </ul>
+        activeBtn === 'btn-send' ? (
+          <ul>
+            {data.map((item: TxHistoryModel) => {
+              return (
+                <li key={item.lockTime} className={classNames(`flex flex-row justify-between p-4 ${styles.container}`)}>
+                  <span className={styles.price}>
+                    {(parseFloat(item.nativeTokenInfo.amount) * 0.000000001 + parseFloat(item.nativeTokenInfo.fee) * 0.000000001).toFixed(3)}
+                  </span>
+                  <p className={styles.day}>{new Date(item.lockTime * 1000).toISOString()}</p>
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+            <ul>
+              <li className={classNames(`flex flex-row justify-between p-4 ${styles.container}`)}>Coming soon</li>
+            </ul>
+          )
       ) : (
           <SpinnerWallet />
         )}
