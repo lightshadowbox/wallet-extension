@@ -105,7 +105,7 @@ function registerAccessToken(instance: AxiosInstance) {
         })
 
         // retry mechanism
-        return retryOriginalRequest
+        return instance(originalRequest)
       }
 
       return Promise.reject(errorData)
