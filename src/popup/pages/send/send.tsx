@@ -249,7 +249,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const handleAmountInputChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (activeMode === 'in-network') {
       setPaymentInfo({ ...paymentInfo, amount: e.target.value })
-      setFee(await estimateFee(Number(e.target.value) || 0))
+      setFee(await estimateFee(Number(e.target.value) || 0, active, selectedAccount, paymentInfo.paymentAddressStr))
     } else if (activeMode === 'out-network') {
       setEthInfo({ ...ethInfo, burningAmount: e.target.value })
     } else {

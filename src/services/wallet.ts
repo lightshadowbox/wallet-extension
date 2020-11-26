@@ -3,7 +3,7 @@ import * as Mnemonic from 'bitcore-mnemonic'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk'
-import { WalletInstance } from 'incognito-sdk'
+import { WalletInstance, CONSTANT } from 'incognito-sdk'
 import { serializeAccount } from 'models/account-model'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
@@ -14,6 +14,10 @@ import { TokenItemInterface } from 'queries/token.queries'
 import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
+import { apiGetEstimateFeeFromChain, estimateUserFees, genCentralizedWithdrawAddress } from './fee'
+import { AxiosResponse } from 'axios'
+import convert from './convert'
+import { PRIVATE_TOKEN_CURRENCY_TYPE, CRYPTO_SYMBOL } from '../constants/common'
 
 export let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boolean; runtimePassword?: string }> = createDraft({
   walletRuntime: null,
@@ -239,20 +243,80 @@ export const getAccountListName = async () => {
   return wallet.masterAccount.getAccounts().map((i) => i.name)
 }
 
-export const estimateFee = async (paymentAmount: number, nonNativePair?: TokenItemInterface[]) => {
-  if (paymentAmount === 0) return 0
-  if (nonNativePair) {
-    // try {
-    //   const inputPool = pair[inputToken.id];
-    //   const outputPool = pair[outputToken.id];
-    //   const initialPool = inputPool * outputPool;
-    //   const newInputPool = inputPool + inputValue;
-    //   const newOutputPoolWithFee = _.ceil(initialPool / newInputPool);
-    //   return outputPool - newOutputPoolWithFee;
-    // } catch (error) {
-    //   console.debug('CALCULATE OUTPUT', error);
-    // }
+export const estimateFee = async (
+  paymentAmount: number,
+  tokenId: TokenItemInterface['TokenID'],
+  accountName: string,
+  walletAddress: string
+) => {
+  if (paymentAmount === 0) {
     return 0
+  }
+
+  const wallet = await getWalletInstance()
+  const account = wallet.masterAccount.getAccountByName(accountName)
+
+  if (!account) {
+    return MAX_DEX_FEE
+  }
+
+  if (tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
+    return MAX_DEX_FEE
+  } else {
+    let userFeesData: any = {}
+    let userFee: string = '0'
+    let feeEst = 0
+    const feePayload = {
+      Prv: MAX_DEX_FEE,
+      TokenID: tokenId,
+    }
+    const feeEstResponse = (await apiGetEstimateFeeFromChain(feePayload)) as AxiosResponse<any>
+    const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as i.PrivacyTokenInstance
+
+    const { bridgeInfo } = tokenInstance
+    const isErc20Token = tokenInstance.isPrivacyToken && tokenInstance.bridgeInfo.currencyType === PRIVATE_TOKEN_CURRENCY_TYPE.ERC20
+    const isETH = tokenInstance.symbol === CRYPTO_SYMBOL.ETH
+    const isDecentralized = isETH || isErc20Token
+    const originalAmount = paymentAmount
+    const requestedAmount = convert.toOriginalAmount(paymentAmount, bridgeInfo.pDecimals)
+    const paymentAddress = account.getSerializedInformations().paymentAddress
+    const currencyType = tokenInstance.bridgeInfo.currencyType
+    const tokenContractID = isETH ? '' : tokenInstance.bridgeInfo.contractID
+    const externalSymbol = tokenInstance.bridgeInfo.symbol
+
+    if (isDecentralized) {
+      const data = {
+        requestedAmount,
+        originalAmount,
+        paymentAddress,
+        walletAddress,
+        tokenContractID: tokenContractID,
+        tokenId,
+        burningTxId: '',
+        currencyType,
+        isErc20Token,
+        externalSymbol,
+        isUsedPRVFee: tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR,
+      }
+      const userFeesResponse = await estimateUserFees(data)
+      userFeesData = userFeesResponse.data
+      userFee = data.isUsedPRVFee ? userFeesData.Result.PrivacyFees.Level1 : userFeesData.Result.TokenFees.Level1
+    } else {
+      const centralizedPayload = {
+        originalAmount: paymentAmount,
+        requestedAmount: convert.toOriginalAmount(paymentAmount, bridgeInfo.pDecimals),
+        paymentAddress: account.getSerializedInformations().paymentAddress,
+        walletAddress: walletAddress,
+        tokenId: tokenId,
+        currencyType: tokenInstance.bridgeInfo.currencyType,
+      }
+      userFeesData = await genCentralizedWithdrawAddress(centralizedPayload)
+    }
+    
+    feeEst = feeEstResponse.data.Params[0].NativeTokenAmount
+    if (feeEst) {
+      return Math.max(feeEst + parseInt(userFee), MAX_DEX_FEE)
+    }
   }
 
   return MAX_DEX_FEE
