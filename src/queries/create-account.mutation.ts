@@ -23,6 +23,23 @@ export const useCreateWallet = () => {
     },
   })
 }
+export const useRemoveAccount = () => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useMutation(() => removeAccount(selectedAccount), {
+    onSuccess: () => {
+      const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[0]
+      store.dispatch(settingSlices.actions.selectAccount({ accountName: firstAccount.name }))
+    },
+    onError: (err) => {
+      console.error(err)
+    },
+  })
+}
+export const removeAccount = async (accountName: string) => {
+  runtime.walletRuntime.masterAccount.removeAccount(accountName)
+  console.log(`Removed: ${accountName}`)
+  return accountName
+}
 
 export const useAddToken = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
@@ -109,7 +126,7 @@ export const useBurningToken = (setMessage: (value: any) => void) => {
       return burningToken(variables.tokenId, variables.address, selectedAccount, variables.burningAmount)
     },
     {
-      onSuccess: async () => {},
+      onSuccess: async () => { },
       onError: (err: ErrorSendToken) => {
         setMessage({
           name: 'error',
