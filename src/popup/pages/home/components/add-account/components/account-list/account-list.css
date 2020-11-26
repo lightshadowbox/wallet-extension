@@ -1,0 +1,11 @@
+.account-edit {
+    font-size:16px;
+    padding:5px 10px;
+    margin-left: 4px;
+    transition: all .3s;
+    border-radius: 20px;
+}
+.account-edit:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+
+}

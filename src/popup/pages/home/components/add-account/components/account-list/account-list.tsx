@@ -6,8 +6,11 @@ import { useGetListAccountName, useGetAccountBasicInfo } from 'queries/account.q
 import { FontIcon, Persona, Spinner } from '@fluentui/react'
 import { Shimmer } from 'popup/components/shimmer/shimmer'
 import { store } from 'popup/stores'
+import { useBoolean } from '@uifabric/react-hooks'
 import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
+import './account-list.css'
 import styles from './account-list.module.css'
+import { ModalRenameAccount } from './modal/modal'
 
 const AccountItem: React.FC<{ name: string }> = ({ name }) => {
   const currentAccount = useSettingStore((s) => s.selectAccountName)
@@ -15,11 +18,16 @@ const AccountItem: React.FC<{ name: string }> = ({ name }) => {
   const switchAccount = (accountName: string) => {
     store.dispatch(settingSlices.actions.selectAccount({ accountName }))
   }
-
+  const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false)
+  const renameAccountHandle = () => {
+    showModal()
+    // AddAccount(walletRuntime)
+  }
   const { data: accountInfo } = useGetAccountBasicInfo(name)
 
   return (
     <li onClick={() => switchAccount(name)} key={name} className={styles.item}>
+      {isModalOpen ? <ModalRenameAccount isModalOpen={isModalOpen} showModal={showModal} hideModal={hideModal} /> : null}
       <div className={styles.container}>
         <Persona
           text={name}
@@ -33,14 +41,15 @@ const AccountItem: React.FC<{ name: string }> = ({ name }) => {
                 </div>
               </>
             ) : (
-              <Spinner />
-            )
+                <Spinner />
+              )
           }
         />
       </div>
       {currentAccount === name ? (
         <div className={styles.icon}>
           <FontIcon iconName="Accept" />
+          <FontIcon onClick={() => renameAccountHandle()} iconName="EditSolid12" className="account-edit" />
         </div>
       ) : null}
     </li>

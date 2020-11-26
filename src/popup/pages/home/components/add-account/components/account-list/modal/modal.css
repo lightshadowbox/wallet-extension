@@ -1,0 +1,15 @@
+.ms-Modal {
+  width: 360px;
+  height: 600px;
+}
+.ms-Modal input {
+  width: 100%;
+  outline: none;
+  padding: 0.5rem;
+  font-size: 14px;
+  border-bottom: 1px solid #e2e2e2;
+}
+.ms-Modal label {
+  font-size: 16px;
+  font-weight: 550;
+}

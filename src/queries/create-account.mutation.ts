@@ -5,6 +5,7 @@ import { queryCache } from 'services/query-cache'
 import { getAccountRuntime, runtime } from 'services/wallet'
 import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 import { createWalletWithPassword, followToken, importAccountFromPrivateKey, unfollowToken } from '../services/wallet'
+
 import { GET_WALLET_KEY } from './wallet.queries'
 
 const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
@@ -71,13 +72,34 @@ export const useAddAccount = (hidePanel: () => void) => {
   return useMutation((accountName: string) => addAccount(accountName), {
     onSuccess: async () => {
       await queryCache.invalidateQueries(['useGetListAccountName.name'])
-      await queryCache.invalidateQueries(['useGetListAccountName.name'])
       hidePanel()
     },
     onError: (err) => {
       console.error(err)
     },
   })
+}
+export const useRenameAccount = (accountName: string) => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  const [importAccount] = useImportAccountFromPrivateKey(() => { })
+  const [reAccount] = useRemoveAccount()
+  return useMutation((params: { accountName: string }) => renameAccount(selectedAccount, params.accountName, reAccount, importAccount), {
+    onSuccess: async () => {
+      await queryCache.invalidateQueries(['useGetListAccountName.name'])
+      await queryCache.invalidateQueries(['useGetAccount.name'])
+      await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
+    },
+    onError: async (err) => {
+      const account = await getAccountRuntime(selectedAccount)
+      await importAccountFromPrivateKey(accountName, account.key.keySet.privateKeySerialized)
+    },
+  })
+}
+const renameAccount = async (selectedAccount: string, accountName: string, reAccount: any, importAccount: any) => {
+  const account = await getAccountRuntime(selectedAccount)
+  await reAccount()
+  await importAccountFromPrivateKey(accountName, account.key.keySet.privateKeySerialized)
+  return selectedAccount
 }
 interface PaymentInfoModel {
   paymentAddressStr: string
@@ -126,7 +148,11 @@ export const useBurningToken = (setMessage: (value: any) => void) => {
       return burningToken(variables.tokenId, variables.address, selectedAccount, variables.burningAmount)
     },
     {
-      onSuccess: async () => { },
+      onSuccess: async () => {
+        await queryCache.invalidateQueries(['useGetListAccountName.name'])
+        await queryCache.invalidateQueries(['useGetAccount.name'])
+        await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
+      },
       onError: (err: ErrorSendToken) => {
         setMessage({
           name: 'error',
