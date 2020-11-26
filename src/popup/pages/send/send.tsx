@@ -3,19 +3,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useRef, useEffect } from 'react'
-import {
-  Icon,
-  Customizer,
-  IFocusTrapZoneProps,
-  ILayerProps,
-  LayerHost,
-  mergeStyles,
-  Panel,
-  Persona,
-  PersonaSize,
-  IPersonaSharedProps,
-  PersonaPresence,
-} from '@fluentui/react'
+import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, Persona, PersonaSize } from '@fluentui/react'
 import logo from 'popup/assets/lsb.png'
 import { useId } from '@uifabric/react-hooks'
 
