@@ -263,12 +263,14 @@ export const estimateFee = async (
   if (tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
     return MAX_DEX_FEE
   } else {
-    let userFeesData = {}
+    let userFeesData: any = {}
+    let userFee: string = '0'
+    let feeEst = 0
     const feePayload = {
       Prv: MAX_DEX_FEE,
       TokenID: tokenId,
     }
-    const feeEst = (await apiGetEstimateFeeFromChain(feePayload)) as AxiosResponse<number>
+    const feeEstResponse = (await apiGetEstimateFeeFromChain(feePayload)) as AxiosResponse<any>
     const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as i.PrivacyTokenInstance
 
     const { bridgeInfo } = tokenInstance
@@ -282,7 +284,7 @@ export const estimateFee = async (
     const tokenContractID = isETH ? '' : tokenInstance.bridgeInfo.contractID
     const externalSymbol = tokenInstance.bridgeInfo.symbol
 
-    if (!isDecentralized) {
+    if (isDecentralized) {
       const data = {
         requestedAmount,
         originalAmount,
@@ -296,7 +298,9 @@ export const estimateFee = async (
         externalSymbol,
         isUsedPRVFee: tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR,
       }
-      userFeesData = await estimateUserFees(data)
+      const userFeesResponse = await estimateUserFees(data)
+      userFeesData = userFeesResponse.data
+      userFee = data.isUsedPRVFee ? userFeesData.Result.PrivacyFees.Level1 : userFeesData.Result.TokenFees.Level1
     } else {
       const centralizedPayload = {
         originalAmount: paymentAmount,
@@ -308,10 +312,10 @@ export const estimateFee = async (
       }
       userFeesData = await genCentralizedWithdrawAddress(centralizedPayload)
     }
-
-    console.log(feeEst, userFeesData)
+    
+    feeEst = feeEstResponse.data.Params[0].NativeTokenAmount
     if (feeEst) {
-      return Math.max(0, MAX_DEX_FEE)
+      return Math.max(feeEst + parseInt(userFee), MAX_DEX_FEE)
     }
   }
 
