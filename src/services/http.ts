@@ -50,7 +50,6 @@ export const preApi = setup({
 
 export const setAccessToken = (token) => {
   try {
-    console.log('setting token ', token)
     currentAccessToken = token
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
   } catch {
@@ -84,8 +83,6 @@ function registerAccessToken(instance: AxiosInstance) {
 
       // Unauthorized
       if (errResponse?.status === 401) {
-        console.debug('access token is expired')
-
         if (!isRetry) {
           isRetry = true
           if (typeof login === 'function') {
@@ -93,19 +90,11 @@ function registerAccessToken(instance: AxiosInstance) {
               isRetry = false
               setAccessToken(token)
             })
+            return instance(originalRequest)
           } else {
             console.debug('Token was expired, but can not re-new it!')
           }
         }
-
-        const retryOriginalRequest = new Promise((resolve) => () => {
-          originalRequest.headers.Authorization = 'Bearer ' + currentAccessToken
-          setAccessToken(currentAccessToken)
-          resolve(instance(originalRequest))
-        })
-
-        // retry mechanism
-        return instance(originalRequest)
       }
 
       return Promise.reject(errorData)
