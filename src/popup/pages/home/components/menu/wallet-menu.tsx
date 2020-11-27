@@ -43,7 +43,9 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
     {
       icon: 'InfoSolid',
       name: 'About us',
-      showPanel: () => null,
+      showPanel: () => {
+        window.open('https://lightshadowbox.app/', '_blank')
+      },
       clickHandleName: (name) => console.log('panel'),
     },
     {

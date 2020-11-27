@@ -48,7 +48,7 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
   if (account.isSuccess) {
     return (
       <div className={classNames('relative flex flex-col items-center justify-between w-full h-full pl-4 pr-4 pb-4')}>
-        <PersonaOutline>
+        <PersonaOutline onClick={showPanel}>
           <Persona imageUrl={Avatar} size={PersonaSize.size48} imageAlt="A" hidePersonaDetails />
         </PersonaOutline>
         <TextButton onClick={showPanel} color={theme.palette.themeDarker} hoverColor={theme.palette.themeDark}>
@@ -79,6 +79,7 @@ export const WalletCover: React.FC<Props> = ({ showPanel, showPanelReceive, show
 }
 
 const PersonaOutline = styled.div`
+  cursor: pointer;
   border-radius: 50%;
   background: white;
   width: 56px;
@@ -88,7 +89,7 @@ const PersonaOutline = styled.div`
   padding: 4px;
 `
 
-const TextButton = styled(ActionButton)<{ color?: string; hoverColor?: string }>`
+const TextButton = styled(ActionButton) <{ color?: string; hoverColor?: string }>`
   height: 28px;
 
   .ms-Button-flexContainer {

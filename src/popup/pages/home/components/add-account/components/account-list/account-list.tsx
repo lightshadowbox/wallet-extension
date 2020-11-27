@@ -21,7 +21,6 @@ const AccountItem: React.FC<{ name: string }> = ({ name }) => {
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false)
   const renameAccountHandle = () => {
     showModal()
-    // AddAccount(walletRuntime)
   }
   const { data: accountInfo } = useGetAccountBasicInfo(name)
 

@@ -10,8 +10,11 @@ import { GET_WALLET_KEY } from './wallet.queries'
 
 const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const useCreateWallet = () => {
+  const [addAccount] = useAddAccount(() => { })
   return useMutation((params: { password: string; name: string }) => createWalletWithPassword(params.name, params.password), {
     onSuccess: async (data, { name }) => {
+      await addAccount(name)
+      runtime.walletRuntime.masterAccount.removeAccount('Account 0')
       console.log('created wallet name: ', name)
       await queryCache.invalidateQueries(GET_WALLET_KEY)
       const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[0]
@@ -97,7 +100,6 @@ export const useRenameAccount = (accountName: string) => {
 const renameAccount = async (selectedAccount: string, accountName: string, reAccount: any, importAccount: any) => {
   const account = await getAccountRuntime(selectedAccount)
   await reAccount()
-
   const importAcc = await importAccountFromPrivateKey(accountName, account.key.keySet.privateKeySerialized)
   return importAcc
 }
@@ -119,7 +121,6 @@ export const useSendToken = (hidePanel: () => void, setMessage: (value: any) => 
         paymentInfoList: variables.paymentInfoList,
         tokenId: variables.tokenId,
         nativeFee: variables.nativeFee,
-        privacyFee: variables.privacyFee,
       }),
     {
       onSuccess: async () => {

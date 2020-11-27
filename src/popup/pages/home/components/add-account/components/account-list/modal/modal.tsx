@@ -4,6 +4,7 @@ import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Modal, IDragOpti
 import { useId, useBoolean } from '@uifabric/react-hooks'
 import { SecondaryButton } from 'popup/components/button'
 import { useRenameAccount } from 'queries/create-account.mutation'
+import { useSettingStore } from 'popup/stores/features/settings'
 import './modal.css'
 import classNames from 'classnames'
 
@@ -21,17 +22,26 @@ const cancelIcon: IIconProps = { iconName: 'Cancel' }
 
 export const ModalRenameAccount: React.FunctionComponent<Props> = ({ showModal, hideModal, isModalOpen }) => {
   const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true)
-
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
   // Use useId() to ensure that the IDs are unique on the page.
   // (It's also okay to use plain strings and manually ensure uniqueness.)
   const titleId = useId('title')
-  const [name, setName] = React.useState('')
+  const [name, setName] = React.useState(selectedAccount)
   const [loading, setLoading] = React.useState(false)
 
   const [renameAccount] = useRenameAccount(name)
-
-  const clickRenameAccount = () => renameAccount({ accountName: name })
-
+  const [err, setErr] = React.useState(false)
+  const clickRenameAccount = () => {
+    if (name === '') {
+      return setErr(true)
+    }
+    return renameAccount({ accountName: name })
+  }
+  React.useEffect(() => {
+    if (name !== '') {
+      setErr(false)
+    }
+  }, [name])
   return (
     <div>
       <Modal
@@ -50,6 +60,7 @@ export const ModalRenameAccount: React.FunctionComponent<Props> = ({ showModal, 
           <form>
             <label htmlFor="name">Name</label>
             <input autoComplete="off" type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
+            {err ? <p className="edit-error">You must enter the field name</p> : null}
           </form>
           <div className={classNames('flex align-middle justify-center w-full mt-6')}>
             <SecondaryButton iconProps={{ iconName: 'EditSolid12' }} onClick={clickRenameAccount}>
@@ -82,6 +93,7 @@ const contentStyles = mergeStyleSets({
     },
   ],
   body: {
+    position: 'relative',
     flex: '4 4 auto',
     padding: '0 24px 24px 24px',
     overflowY: 'hidden',
