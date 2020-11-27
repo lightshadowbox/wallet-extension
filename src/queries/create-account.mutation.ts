@@ -90,16 +90,16 @@ export const useRenameAccount = (accountName: string) => {
       await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
     },
     onError: async (err) => {
-      const account = await getAccountRuntime(selectedAccount)
-      await importAccountFromPrivateKey(accountName, account.key.keySet.privateKeySerialized)
+      console.log(err)
     },
   })
 }
 const renameAccount = async (selectedAccount: string, accountName: string, reAccount: any, importAccount: any) => {
   const account = await getAccountRuntime(selectedAccount)
   await reAccount()
-  await importAccountFromPrivateKey(accountName, account.key.keySet.privateKeySerialized)
-  return selectedAccount
+
+  const importAcc = await importAccountFromPrivateKey(accountName, account.key.keySet.privateKeySerialized)
+  return importAcc
 }
 interface PaymentInfoModel {
   paymentAddressStr: string
