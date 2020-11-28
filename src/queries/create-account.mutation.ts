@@ -179,12 +179,12 @@ export interface SendInNetworkPayload {
 }
 
 const sendToken = async (payload: SendInNetworkPayload) => {
-  const { accountName, paymentInfoList, tokenId, nativeFee, privacyFee = 20 } = payload
+  const { accountName, paymentInfoList, tokenId, nativeFee, privacyFee = 0 } = payload
   const account = await getAccountRuntime(accountName)
-
+  console.log(account)
   if (tokenId !== PRV_TOKEN_ID) {
     const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
-    const history = await token.transfer(paymentInfoList, nativeFee.toString(), privacyFee.toString())
+    const history = await token.transfer(paymentInfoList, nativeFee.toString(), '0')
     console.log(history)
   } else {
     const history = await account.nativeToken.transfer(paymentInfoList, nativeFee.toString())

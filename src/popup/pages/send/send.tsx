@@ -219,12 +219,20 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const [sendEth] = useBurningToken(setMessage)
   const clickSendHandle = () => {
     const paymentInfoList = []
-    paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * 1e9}` })
+    const prv = '0000000000000000000000000000000000000000000000000000000000000004'
+    const useToken = !tokenId ? active : tokenId
+    const tokenDetail = getTokenFromTokenIds([useToken])
+
+    if (useToken === prv) {
+      paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * 1e9}` })
+    } else {
+      paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * Math.pow(10, tokenDetail[useToken].PDecimals)}` })
+    }
     if (activeMode === 'in-network') {
       return sendToken({
         accountName: !accountName ? selectedAccount : accountName,
         paymentInfoList,
-        tokenId: !tokenId ? active : tokenId,
+        tokenId: useToken,
         nativeFee: estimatedFee,
       })
     }
@@ -240,7 +248,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   }
   const [paymentInfo, setPaymentInfo] = React.useState({
     paymentAddressStr: '',
-    amount: '',
+    amount: null,
     message: '',
   })
   const [ethInfo, setEthInfo] = React.useState({
@@ -254,6 +262,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   const [activeMode, setActiveMode] = React.useState('in-network')
   const [active, setActive] = useState(PRV_TOKEN_ID)
+  const [error, setError] = useState('')
   const tempDisableOutnetwork = true
 
   const onHandleActiveMode = (mode) => {
@@ -307,6 +316,17 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   }
 
   const { data: balance, isSuccess: balanceStatus } = useGetTokenBalance(!tokenId ? active : tokenId, selectedAccount)
+  React.useEffect(() => {
+    if (paymentInfo.amount !== null) {
+      if (paymentInfo.amount === '') {
+        setError('Required')
+      } else if (paymentInfo.amount > balance) {
+        setError('Insufficient ballance')
+      } else {
+        setError('')
+      }
+    }
+  }, [paymentInfo.amount])
   React.useEffect(() => {
     setTimeout(() => {
       setMessage({
@@ -398,6 +418,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     placeholder="0.0"
                     name="amount"
                   />
+                  {error ? <p className={styles.error}>{error}</p> : null}
                 </div>
 
                 <div className="mt-6 mb-6 text-center flex flex-col justify-center items-center">
@@ -430,8 +451,10 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 </div>
                 <button
                   onClick={() => {
-                    const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 3000, leading: true, trailing: false })
-                    debounced()
+                    if (!error) {
+                      const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000, leading: true, trailing: false })
+                      debounced()
+                    }
                   }}
                   type="button"
                   className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center"

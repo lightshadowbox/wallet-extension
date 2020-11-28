@@ -21,7 +21,13 @@
 .dropdownContainer li:last-child {
   display: none;
 }
-
+.error {
+  color: red;
+  font-size:12px;
+  bottom: -15px;
+  left:5px;
+  position: absolute;
+}
 .container {
   position: absolute;
   z-index: 10000000000000;

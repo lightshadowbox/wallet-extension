@@ -7,6 +7,7 @@ import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, Ad
 import { ShieldTokenPanel } from '../shield-token/shield-token-panel'
 import { ReceivePanel } from '../receive/receive'
 import { SendPanel } from '../send/send'
+import styles from './home-page.module.css'
 
 const HomeContainer: React.FC<{
   cover: React.ReactNode
@@ -22,7 +23,7 @@ const HomeContainer: React.FC<{
 }> = ({ children, cover, menu, network, token, account, receive, send, backup, tokenDetail, shield }) => (
   <div className={classNames('flex flex-col relative w-full h-full overflow-hidden')}>
     <div className={classNames('absolute self-center mt-20 shadow-md w-11/12 h-56 z-10 bg-white')}>{cover}</div>
-    <div className={classNames('flex flex-row align-top justify-between w-full h-48 bg-blue-1 p-4')}>{menu}</div>
+    <div className={classNames(`flex flex-row align-top justify-between w-full h-48 p-4 ${styles.bgContainer}`)}>{menu}</div>
     <div className={classNames('w-full h-full mt-32')}>{children}</div>
     <div className={classNames('w-full h-full')}>{network}</div>
     <div className={classNames('w-full h-full')}>{token}</div>
