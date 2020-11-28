@@ -9,7 +9,7 @@ import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/
 
 import { createDraft, finishDraft } from 'immer'
 import { WritableDraft } from 'immer/dist/internal'
-import { MAX_DEX_FEE } from 'constants/fee.constant'
+import { MAX_DEX_FEE, DEFAULT_NANO_MULTIPLER } from 'constants/fee.constant'
 import { TokenItemInterface } from 'queries/token.queries'
 import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
@@ -243,12 +243,7 @@ export const getAccountListName = async () => {
   return wallet.masterAccount.getAccounts().map((i) => i.name)
 }
 
-export const estimateFee = async (
-  paymentAmount: number,
-  tokenId: TokenItemInterface['TokenID'],
-  accountName: string,
-  walletAddress: string
-) => {
+export const estimateFee = async (paymentAmount: number, tokenId: TokenItemInterface['TokenID'], accountName: string, walletAddress: string) => {
   if (paymentAmount === 0) {
     return 0
   }
@@ -283,6 +278,7 @@ export const estimateFee = async (
     const currencyType = tokenInstance.bridgeInfo.currencyType
     const tokenContractID = isETH ? '' : tokenInstance.bridgeInfo.contractID
     const externalSymbol = tokenInstance.bridgeInfo.symbol
+    const pDecimals = tokenInstance.bridgeInfo.pDecimals
 
     if (isDecentralized) {
       const data = {
@@ -312,10 +308,11 @@ export const estimateFee = async (
       }
       userFeesData = await genCentralizedWithdrawAddress(centralizedPayload)
     }
-    
     feeEst = feeEstResponse.data.Params[0].NativeTokenAmount
+    const totalFee = Math.floor((feeEst + parseInt(userFee)) * (Math.pow(10, pDecimals) / DEFAULT_NANO_MULTIPLER))
+    console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalFee)
     if (feeEst) {
-      return Math.max(feeEst + parseInt(userFee), MAX_DEX_FEE)
+      return Math.min(totalFee || MAX_DEX_FEE, MAX_DEX_FEE)
     }
   }
 
