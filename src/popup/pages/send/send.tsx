@@ -133,8 +133,8 @@ const DropdownCoins: React.FC<{
                       ? tokenAccounts.find((item) => item.TokenId === active).Icon
                       : tokenAccounts[0].Icon
                     : active
-                      ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
-                      : tokenAccounts[0].Icon
+                    ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
+                    : tokenAccounts[0].Icon
                 }
                 imageInitials={
                   !tokenId
@@ -152,33 +152,33 @@ const DropdownCoins: React.FC<{
                 }
               />
             ) : (
-                <Persona
-                  size={PersonaSize.size48}
-                  imageUrl={
-                    !tokenId
-                      ? tokenAccounts.length !== 1
-                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
-                        : logo
-                      : active
-                        ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
-                        : tokenAccounts[0].Icon
-                  }
-                  imageInitials={
-                    !tokenId
-                      ? tokenAccounts.length !== 1
-                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
-                        : 'No token'
-                      : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
-                  }
-                  text={
-                    !tokenId
-                      ? tokenAccounts.length !== 1
-                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
-                        : 'No token'
-                      : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
-                  }
-                />
-              )}
+              <Persona
+                size={PersonaSize.size48}
+                imageUrl={
+                  !tokenId
+                    ? tokenAccounts.length !== 1
+                      ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
+                      : logo
+                    : active
+                    ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
+                    : tokenAccounts[0].Icon
+                }
+                imageInitials={
+                  !tokenId
+                    ? tokenAccounts.length !== 1
+                      ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                      : 'No token'
+                    : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                }
+                text={
+                  !tokenId
+                    ? tokenAccounts.length !== 1
+                      ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                      : 'No token'
+                    : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                }
+              />
+            )}
             {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
           </button>
         </div>
@@ -199,17 +199,17 @@ const DropdownCoins: React.FC<{
                   </li>
                 ) : null
               ) : (
-                  <li key={item.TokenId} className="border-b border-gray-9 bg-white">
-                    <button
-                      className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
-                      type="button"
-                      onMouseDown={() => onChangeCoin(item.TokenId)}
-                    >
-                      <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
-                      <span className="self-center ml-2">{item.Name}</span>
-                    </button>
-                  </li>
-                ),
+                <li key={item.TokenId} className="border-b border-gray-9 bg-white">
+                  <button
+                    className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
+                    type="button"
+                    onMouseDown={() => onChangeCoin(item.TokenId)}
+                  >
+                    <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
+                    <span className="self-center ml-2">{item.Name}</span>
+                  </button>
+                </li>
+              ),
             )}
           </ul>
         ) : null}
@@ -293,9 +293,10 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const handleAmountInputChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (activeMode === 'in-network') {
       setPaymentInfo({ ...paymentInfo, amount: e.target.value })
-      setFee(await estimateFee(Number(e.target.value) || 0, active, selectedAccount, paymentInfo.paymentAddressStr))
+      setFee(await estimateFee(Number(e.target.value) || 0, active, selectedAccount, paymentInfo.paymentAddressStr, 'in-network'))
     } else if (activeMode === 'out-network') {
       setEthInfo({ ...ethInfo, burningAmount: e.target.value })
+      setFee(await estimateFee(Number(e.target.value) || 0, active, selectedAccount, ethInfo.outchainAddress, 'out-network'))
     } else {
       setMessage({
         name: 'error',
@@ -379,13 +380,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                   : ` ${styles.outPrint} out-network tab flex-1 text-center`
               }
             >
-              <button
-                type="button"
-                className={classNames(
-                  'bg-white inline-block py-2 px-4',
-                  'hover:text-black hover:font-medium',
-                )}
-              >
+              <button type="button" className={classNames('bg-white inline-block py-2 px-4', 'hover:text-black hover:font-medium')}>
                 Out Network
               </button>
             </li>
@@ -462,7 +457,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
                   <div className="coin__fee flex-1 text-right">
-                    <span className="mr-1 font-medium">{(estimatedFee * 1e-9).toFixed(8)}</span>
+                    <span className="mr-1 font-medium">{(estimatedFee * Math.pow(10, -tokenDetail[tokenId]?.PDecimals || -9)).toFixed(8)}</span>
                     <div className="field__wrapper relative inline-block">
                       {/* <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
                         <option>PRV</option>
@@ -489,6 +484,16 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                           const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000, leading: true, trailing: false })
                           debounced()
                         }
+
+                        return sendEth({
+                          tokenId: !tokenId
+                            ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId ||
+                              tokenAccounts?.find((item) => item.Verified)?.TokenId
+                            : tokenId,
+                          address: ethInfo.outchainAddress,
+                          accountName: selectedAccount,
+                          burningAmount: ethInfo.burningAmount,
+                        })
                       }}
                       type="button"
                       className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center"
