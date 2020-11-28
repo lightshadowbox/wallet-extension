@@ -23,13 +23,12 @@ function uidByDevice() {
  */
 export async function login() {
   try {
-    console.debug('Getting access token based on device')
     let accessToken = ''
     accessToken = uidByDevice() + new Date().getTime()
-    const tokenResponse: AxiosResponse<TokenResponse> = await preApi
-      .post<any>('/auth/new-token', { DeviceID: accessToken, DeviceToken: accessToken })
+    const tokenResponse: AxiosResponse<TokenResponse> = await preApi.post<any>('/auth/new-token', { DeviceID: accessToken, DeviceToken: accessToken })
     const { token } = Auth.parseTokenData(tokenResponse)
     setAccessToken(token)
+    console.info('[Info] Getting access token ', token)
     return token
   } catch (e) {
     throw new Error('Unable to request an access token')

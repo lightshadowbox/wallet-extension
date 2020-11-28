@@ -57,6 +57,14 @@ export const setAccessToken = (token) => {
   }
 }
 
+async function setupHttp() {
+  // Set Token
+  await login().then((token) => {
+    isRetry = false
+    setAccessToken(token)
+  })
+}
+
 function registerAccessToken(instance: AxiosInstance) {
   // Add a request interceptor
   instance.interceptors.request.use(
@@ -102,4 +110,6 @@ function registerAccessToken(instance: AxiosInstance) {
   )
 }
 
+// Start setup
+setupHttp()
 ;[api1, api2].forEach((instance) => registerAccessToken(instance))
