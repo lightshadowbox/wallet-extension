@@ -15,6 +15,10 @@ interface Props {
 }
 export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPanelAcc }) => {
   const [removeAccount] = useRemoveAccount()
+  const logOutWallet = () => {
+    localStorage.removeItem('persist:root')
+    document.location.reload()
+  }
   const listItem = [
     {
       icon: 'Contact',
@@ -51,7 +55,7 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
     {
       icon: 'Leave',
       name: 'Log out',
-      showPanel: () => removeAccount(),
+      showPanel: () => logOutWallet(),
       clickHandleName: (name) => console.log('panel'),
     },
   ]
