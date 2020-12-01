@@ -374,13 +374,13 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
     if (paymentInfo.amount !== null) {
       if (paymentInfo.amount === '') {
         setError('Required')
-      } else if (paymentInfo.amount > balance) {
+      } else if (paymentInfo.amount > balance || ethInfo.burningAmount > balance) {
         setError('Insufficient ballance')
       } else {
         setError('')
       }
     }
-  }, [paymentInfo.amount])
+  }, [paymentInfo.amount, ethInfo.burningAmount])
   React.useEffect(() => {
     setTimeout(() => {
       setMessage({
