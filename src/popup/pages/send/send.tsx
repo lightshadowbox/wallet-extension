@@ -110,6 +110,19 @@ const DropdownCoins: React.FC<{
     setIsComponentVisible(!isComponentVisible)
   }
 
+  useEffect(() => {
+    if (!tokenId) {
+      switch (activeMode) {
+        case 'in-network':
+          setActive(tokenAccounts[0].TokenId)
+          break
+        case 'out-network':
+          setActive(tokenAccounts.find((token) => token.Verified).TokenId)
+          break
+      }
+    }
+  }, [activeMode])
+
   const onLoadImageFail = React.useCallback((e) => {
     e.target.src = 'https://picsum.photos/200'
   }, [])
@@ -290,13 +303,28 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
     }
   }
 
+  const handleSetFee = async (amount?: number) => {
+    switch (activeMode) {
+      case 'in-network':
+        if (paymentInfo.paymentAddressStr && Number(paymentInfo.amount) > 0) {
+          setFee(await estimateFee(Number(amount || paymentInfo.amount) || 0, active, selectedAccount, paymentInfo.paymentAddressStr, activeMode))
+        }
+        break
+      case 'out-network':
+        if (ethInfo.outchainAddress && Number(ethInfo.burningAmount) > 0) {
+          setFee(await estimateFee(Number(amount || ethInfo.burningAmount) || 0, active, selectedAccount, ethInfo.outchainAddress, activeMode))
+        }
+        break
+    }
+  }
+
   const handleAmountInputChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (activeMode === 'in-network') {
       setPaymentInfo({ ...paymentInfo, amount: e.target.value })
-      setFee(await estimateFee(Number(e.target.value) || 0, active, selectedAccount, paymentInfo.paymentAddressStr, 'in-network'))
+      handleSetFee(Number(e.target.value) || 0)
     } else if (activeMode === 'out-network') {
       setEthInfo({ ...ethInfo, burningAmount: e.target.value })
-      setFee(await estimateFee(Number(e.target.value) || 0, active, selectedAccount, ethInfo.outchainAddress, 'out-network'))
+      handleSetFee(Number(e.target.value) || 0)
     } else {
       setMessage({
         name: 'error',
@@ -321,8 +349,10 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const handleReceivingAddressChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (activeMode === 'in-network') {
       setPaymentInfo({ ...paymentInfo, paymentAddressStr: e.target.value })
+      handleSetFee()
     } else if (activeMode === 'out-network') {
       setEthInfo({ ...ethInfo, outchainAddress: e.target.value })
+      handleSetFee()
     } else {
       setMessage({
         name: 'error',
