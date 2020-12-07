@@ -113,7 +113,7 @@ interface ErrorSendToken {
   code: string
   message: string
 }
-export const useSendToken = (hidePanel: () => void, setMessage: (value: any) => void) => {
+export const useSendToken = (setLoading: (value) => void, setMessage: (value: any) => void) => {
   return useMutation(
     (variables: { accountName: string; paymentInfoList: PaymentInfoModel[]; tokenId: string; nativeFee: number; privacyFee?: number }) =>
       sendToken({
@@ -125,6 +125,7 @@ export const useSendToken = (hidePanel: () => void, setMessage: (value: any) => 
     {
       onSuccess: async () => {
         // hidePanel()
+        setLoading(false)
         setMessage({
           name: 'Success',
           message: 'Send successfully!',

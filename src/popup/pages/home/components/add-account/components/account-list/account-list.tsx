@@ -35,8 +35,8 @@ const AccountItem: React.FC<{ name: string }> = ({ name }) => {
             accountInfo ? (
               <>
                 <div className={`flex flex-row mt-2 ${styles.balance}`}>
-                  <p>USD: {accountInfo.USD}</p>
-                  <p className="ml-2">PRV: {accountInfo.PRV}</p>
+                  {/* <p>USD: {accountInfo.USD}</p> */}
+                  <p className="">PRV: {accountInfo.PRV}</p>
                 </div>
               </>
             ) : (

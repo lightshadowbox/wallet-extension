@@ -3,7 +3,21 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useRef, useEffect } from 'react'
-import { Icon, Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, Persona, PersonaSize } from '@fluentui/react'
+import {
+  Icon,
+  Customizer,
+  IFocusTrapZoneProps,
+  ILayerProps,
+  LayerHost,
+  mergeStyles,
+  Panel,
+  Persona,
+  PersonaSize,
+  Spinner,
+  SpinnerSize,
+  IStackProps,
+  Stack,
+} from '@fluentui/react'
 import logo from 'popup/assets/lsb.png'
 import { useId } from '@uifabric/react-hooks'
 import _ from 'lodash'
@@ -210,14 +224,16 @@ const DropdownCoins: React.FC<{
  */
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, tokenId, accountName, ...props }) => {
   const [estimatedFee, setFee] = React.useState(0)
+  const [isLoadingSend, setIsLoadingSend] = React.useState(false)
   const [feeToken, setFeeToken] = React.useState(PRV_TOKEN_ID)
   const [message, setMessage] = React.useState({
     message: '',
     name: '',
   })
-  const [sendToken] = useSendToken(dismissPanel, setMessage)
+  const [sendToken] = useSendToken(setIsLoadingSend, setMessage)
   const [sendEth] = useBurningToken(setMessage)
   const clickSendHandle = () => {
+    setIsLoadingSend(true)
     const paymentInfoList = []
     const prv = '0000000000000000000000000000000000000000000000000000000000000004'
     const useToken = !tokenId ? active : tokenId
@@ -314,8 +330,16 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       })
     }
   }
-
+  const token = {
+    sectionStack: {
+      childrenGap: 10,
+    },
+    spinnerStack: {
+      childrenGap: 20,
+    },
+  }
   const { data: balance, isSuccess: balanceStatus } = useGetTokenBalance(!tokenId ? active : tokenId, selectedAccount)
+  const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
   React.useEffect(() => {
     if (paymentInfo.amount !== null) {
       if (paymentInfo.amount === '') {
@@ -449,19 +473,31 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    if (!error) {
-                      const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000, leading: true, trailing: false })
-                      debounced()
-                    }
-                  }}
-                  type="button"
-                  className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center"
-                >
-                  <Icon className="mr-2 text-white" iconName="Send" />
-                  <span className="text-white">Send</span>
-                </button>
+
+                {isLoadingSend ? (
+                  <button type="button" className="text-white opacity-50 cursor-wait bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center">
+                    <div className={classNames('mr-2 flex flex-col items-center justify-center')}>
+                      <Stack {...rowProps} tokens={token.spinnerStack}>
+                        <Spinner size={SpinnerSize.small} />
+                      </Stack>
+                    </div>
+                    <span className="text-white">Send</span>
+                  </button>
+                ) : (
+                    <button
+                      onClick={() => {
+                        if (!error) {
+                          const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000, leading: true, trailing: false })
+                          debounced()
+                        }
+                      }}
+                      type="button"
+                      className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center"
+                    >
+                      <Icon className="mr-2 text-white" iconName="Send" />
+                      <span className="text-white">Send</span>
+                    </button>
+                  )}
               </form>
             </div>
             <div className="tab-2 hidden">Content 2</div>
