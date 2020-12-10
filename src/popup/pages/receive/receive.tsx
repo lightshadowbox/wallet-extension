@@ -73,8 +73,6 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
   const [active, setActive] = React.useState(defaultActive)
   const tooltipId = useId('tooltip')
   const [contentTooltip, setContentTooltip] = React.useState('Copy')
-  const tempDisableOutNetwork = true
-  defaultActive = tempDisableOutNetwork ? "in-network" : defaultActive
 
   // Event handlers
   const onActiveHandle = (value) => {
@@ -125,26 +123,17 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
             </li>
             <li
               onClick={() => {
-                if (!tempDisableOutNetwork) {
-                  onActiveHandle('out-network')
-                  if (!tokenId) {
-                    showPanelShieldToken()
-                    setTimeout(() => {
-                      dismissPanel()
-                    }, 500)
-                  }
+                onActiveHandle('out-network')
+                if (!tokenId) {
+                  showPanelShieldToken()
+                  setTimeout(() => {
+                    dismissPanel()
+                  }, 500)
                 }
               }}
               className={defaultActive === 'out-network' ? 'tab out-network flex-1 text-center active' : 'tab out-network flex-1 text-center'}
             >
-              <button
-                type="button"
-                className={classNames(
-                  'bg-white inline-block py-2 px-4',
-                  tempDisableOutNetwork ? 'disabled:opacity-50 cursor-not-allowed' : 'hover:text-black hover:font-medium',
-                )}
-                disabled={tempDisableOutNetwork}
-              >
+              <button type="button" className={classNames('bg-white inline-block py-2 px-4', 'hover:text-black hover:font-medium')}>
                 Out Network
               </button>
             </li>

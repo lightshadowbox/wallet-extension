@@ -243,7 +243,13 @@ export const getAccountListName = async () => {
   return wallet.masterAccount.getAccounts().map((i) => i.name)
 }
 
-export const estimateFee = async (paymentAmount: number, tokenId: TokenItemInterface['TokenID'], accountName: string, walletAddress: string) => {
+export const estimateFee = async (
+  paymentAmount: number,
+  tokenId: TokenItemInterface['TokenID'],
+  accountName: string,
+  walletAddress: string,
+  network = 'in-network',
+) => {
   if (paymentAmount === 0) {
     return 0
   }
@@ -278,7 +284,7 @@ export const estimateFee = async (paymentAmount: number, tokenId: TokenItemInter
     const currencyType = tokenInstance.bridgeInfo.currencyType
     const tokenContractID = isETH ? '' : tokenInstance.bridgeInfo.contractID
     const externalSymbol = tokenInstance.bridgeInfo.symbol
-    const pDecimals = tokenInstance.bridgeInfo.pDecimals
+    const isUsedPRVFee = true // change when calculate by other token
 
     if (isDecentralized) {
       const data = {
@@ -292,11 +298,10 @@ export const estimateFee = async (paymentAmount: number, tokenId: TokenItemInter
         currencyType,
         isErc20Token,
         externalSymbol,
-        isUsedPRVFee: tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR,
+        isUsedPRVFee,
       }
       const userFeesResponse = await estimateUserFees(data)
       userFeesData = userFeesResponse.data
-      userFee = data.isUsedPRVFee ? userFeesData.Result.PrivacyFees.Level1 : userFeesData.Result.TokenFees.Level1
     } else {
       const centralizedPayload = {
         originalAmount: paymentAmount,
@@ -308,13 +313,20 @@ export const estimateFee = async (paymentAmount: number, tokenId: TokenItemInter
       }
       userFeesData = await genCentralizedWithdrawAddress(centralizedPayload)
     }
+    userFee = isUsedPRVFee ? userFeesData.Result.PrivacyFees.Level1 : userFeesData.Result.TokenFees.Level1
     feeEst = feeEstResponse.data.Params[0].NativeTokenAmount
-    const totalFee = Math.floor((feeEst + parseInt(userFee)) * (Math.pow(10, pDecimals) / DEFAULT_NANO_MULTIPLER))
-    console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalFee)
-    if (feeEst) {
-      return Math.min(totalFee || MAX_DEX_FEE, MAX_DEX_FEE)
+    switch (network) {
+      case 'in-network':
+        const totalEstInNetworkFee = Math.floor((feeEst + parseInt(userFee)))
+        const totalInNetworkFee = Math.min(totalEstInNetworkFee || MAX_DEX_FEE, MAX_DEX_FEE)
+        console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalInNetworkFee)
+        return totalInNetworkFee
+      case 'out-network':
+        const internalFee = Math.min(Math.floor(feeEst), MAX_DEX_FEE)
+        const externalFee = Math.floor(parseInt(userFee))
+        const totalOutNetworkFee = internalFee + externalFee
+        console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalOutNetworkFee)
+        return totalOutNetworkFee
     }
   }
-
-  return MAX_DEX_FEE
 }
