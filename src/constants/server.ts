@@ -1,1 +1,1 @@
-export const MAINNET_FULLNODE = 'https://fullnode.incognito.best'
+export const MAINNET_FULLNODE = 'https://community-fullnode.incognito.org/'

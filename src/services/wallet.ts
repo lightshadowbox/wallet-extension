@@ -2,20 +2,19 @@
 import * as Mnemonic from 'bitcore-mnemonic'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
-import * as i from 'incognito-sdk'
-import { WalletInstance, CONSTANT } from 'incognito-sdk'
+import * as i from 'incognito-sdk/build/web/browser'
+import { WalletInstance, CONSTANT } from 'incognito-sdk/build/web/browser'
 import { serializeAccount } from 'models/account-model'
-import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
-
 import { createDraft, finishDraft } from 'immer'
 import { WritableDraft } from 'immer/dist/internal'
 import { MAX_DEX_FEE, DEFAULT_NANO_MULTIPLER } from 'constants/fee.constant'
 import { TokenItemInterface } from 'queries/token.queries'
+import { AxiosResponse } from 'axios'
+import { IncomingHttpHeaders } from 'http'
 import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
 import { apiGetEstimateFeeFromChain, estimateUserFees, genCentralizedWithdrawAddress } from './fee'
-import { AxiosResponse } from 'axios'
 import convert from './convert'
 import { PRIVATE_TOKEN_CURRENCY_TYPE, CRYPTO_SYMBOL } from '../constants/common'
 
@@ -25,6 +24,12 @@ export let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boole
 })
 
 export const loadingWallet = async () => {
+  i.setConfig({
+    // mainnet
+    chainURL: 'https://fullnode.incognito.best',
+    mainnet: true,
+  })
+
   if (runtime.loaded) {
     return
   }
@@ -222,13 +227,13 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
   if (!account) {
     return 0
   }
-
+  console.log(tokenId)
   if (tokenId === i.CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
     return ((await account.nativeToken.getAvaiableBalance()).toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2)
   }
 
-  const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
-
+  const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as i.PrivacyTokenInstance
+  console.log(account)
   if (!tokenInstance) {
     return 0
   }
@@ -257,63 +262,62 @@ export const estimateFee = async (paymentAmount: number, tokenId: TokenItemInter
 
   if (tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
     return MAX_DEX_FEE
+  }
+  let userFeesData: any = {}
+  let userFee = '0'
+  let feeEst = 0
+  const feePayload = {
+    Prv: MAX_DEX_FEE,
+    TokenID: tokenId,
+  }
+  const feeEstResponse = (await apiGetEstimateFeeFromChain(feePayload)) as AxiosResponse<any>
+  const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as i.PrivacyTokenInstance
+
+  const { bridgeInfo } = tokenInstance
+  const isErc20Token = tokenInstance.isPrivacyToken && tokenInstance.bridgeInfo.currencyType === PRIVATE_TOKEN_CURRENCY_TYPE.ERC20
+  const isETH = tokenInstance.symbol === CRYPTO_SYMBOL.ETH
+  const isDecentralized = isETH || isErc20Token
+  const originalAmount = paymentAmount
+  const requestedAmount = convert.toOriginalAmount(paymentAmount, bridgeInfo.pDecimals)
+  const { paymentAddress } = account.getSerializedInformations()
+  const { currencyType } = tokenInstance.bridgeInfo
+  const tokenContractID = isETH ? '' : tokenInstance.bridgeInfo.contractID
+  const externalSymbol = tokenInstance.bridgeInfo.symbol
+  const { pDecimals } = tokenInstance.bridgeInfo
+
+  if (isDecentralized) {
+    const data = {
+      requestedAmount,
+      originalAmount,
+      paymentAddress,
+      walletAddress,
+      tokenContractID,
+      tokenId,
+      burningTxId: '',
+      currencyType,
+      isErc20Token,
+      externalSymbol,
+      isUsedPRVFee: tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR,
+    }
+    const userFeesResponse = await estimateUserFees(data)
+    userFeesData = userFeesResponse.data
+    userFee = data.isUsedPRVFee ? userFeesData.Result.PrivacyFees.Level1 : userFeesData.Result.TokenFees.Level1
   } else {
-    let userFeesData: any = {}
-    let userFee: string = '0'
-    let feeEst = 0
-    const feePayload = {
-      Prv: MAX_DEX_FEE,
-      TokenID: tokenId,
+    const centralizedPayload = {
+      originalAmount: paymentAmount,
+      requestedAmount: convert.toOriginalAmount(paymentAmount, bridgeInfo.pDecimals),
+      paymentAddress: account.getSerializedInformations().paymentAddress,
+      walletAddress,
+      tokenId,
+      currencyType: tokenInstance.bridgeInfo.currencyType,
     }
-    const feeEstResponse = (await apiGetEstimateFeeFromChain(feePayload)) as AxiosResponse<any>
-    const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as i.PrivacyTokenInstance
-
-    const { bridgeInfo } = tokenInstance
-    const isErc20Token = tokenInstance.isPrivacyToken && tokenInstance.bridgeInfo.currencyType === PRIVATE_TOKEN_CURRENCY_TYPE.ERC20
-    const isETH = tokenInstance.symbol === CRYPTO_SYMBOL.ETH
-    const isDecentralized = isETH || isErc20Token
-    const originalAmount = paymentAmount
-    const requestedAmount = convert.toOriginalAmount(paymentAmount, bridgeInfo.pDecimals)
-    const paymentAddress = account.getSerializedInformations().paymentAddress
-    const currencyType = tokenInstance.bridgeInfo.currencyType
-    const tokenContractID = isETH ? '' : tokenInstance.bridgeInfo.contractID
-    const externalSymbol = tokenInstance.bridgeInfo.symbol
-    const pDecimals = tokenInstance.bridgeInfo.pDecimals
-
-    if (isDecentralized) {
-      const data = {
-        requestedAmount,
-        originalAmount,
-        paymentAddress,
-        walletAddress,
-        tokenContractID: tokenContractID,
-        tokenId,
-        burningTxId: '',
-        currencyType,
-        isErc20Token,
-        externalSymbol,
-        isUsedPRVFee: tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR,
-      }
-      const userFeesResponse = await estimateUserFees(data)
-      userFeesData = userFeesResponse.data
-      userFee = data.isUsedPRVFee ? userFeesData.Result.PrivacyFees.Level1 : userFeesData.Result.TokenFees.Level1
-    } else {
-      const centralizedPayload = {
-        originalAmount: paymentAmount,
-        requestedAmount: convert.toOriginalAmount(paymentAmount, bridgeInfo.pDecimals),
-        paymentAddress: account.getSerializedInformations().paymentAddress,
-        walletAddress: walletAddress,
-        tokenId: tokenId,
-        currencyType: tokenInstance.bridgeInfo.currencyType,
-      }
-      userFeesData = await genCentralizedWithdrawAddress(centralizedPayload)
-    }
-    feeEst = feeEstResponse.data.Params[0].NativeTokenAmount
-    const totalFee = Math.floor((feeEst + parseInt(userFee)) * (Math.pow(10, pDecimals) / DEFAULT_NANO_MULTIPLER))
-    console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalFee)
-    if (feeEst) {
-      return Math.min(totalFee || MAX_DEX_FEE, MAX_DEX_FEE)
-    }
+    userFeesData = await genCentralizedWithdrawAddress(centralizedPayload)
+  }
+  feeEst = feeEstResponse.data.Params[0].NativeTokenAmount
+  const totalFee = Math.floor((feeEst + parseInt(userFee)) * (Math.pow(10, pDecimals) / DEFAULT_NANO_MULTIPLER))
+  console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalFee)
+  if (feeEst) {
+    return Math.min(totalFee || MAX_DEX_FEE, MAX_DEX_FEE)
   }
 
   return MAX_DEX_FEE

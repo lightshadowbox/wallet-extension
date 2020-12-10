@@ -5,7 +5,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useGetHistory } from 'queries/token.queries'
-import { TxHistoryModel } from 'incognito-sdk'
+import { TxHistoryModel } from 'incognito-sdk/build/web/browser'
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
 import styles from './token-history.module.css'
 import './token-history.css'

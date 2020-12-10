@@ -487,8 +487,9 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     <button
                       onClick={() => {
                         if (!error) {
-                          const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000, leading: true, trailing: false })
-                          debounced()
+                          // const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000000, leading: true, trailing: false })
+                          // debounced()
+                          clickSendHandle()
                         }
                       }}
                       type="button"

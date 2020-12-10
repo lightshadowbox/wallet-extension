@@ -1,4 +1,4 @@
-import * as i from 'incognito-sdk'
+import * as i from 'incognito-sdk/build/web/browser'
 import BN from 'bn.js'
 
 /**

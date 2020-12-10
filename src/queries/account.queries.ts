@@ -2,7 +2,7 @@ import { AccountModelType, serializeAccount } from 'models/account-model'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { useQuery } from 'react-query'
 import { getAccountListName, getAccountRuntime, getBackupAccount } from 'services/wallet'
-import * as i from 'incognito-sdk'
+import * as i from 'incognito-sdk/build/web/browser'
 
 export const useGetAccount = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)

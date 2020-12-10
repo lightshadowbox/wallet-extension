@@ -1,4 +1,4 @@
-import { AccountInstance, PrivacyTokenInstance } from 'incognito-sdk'
+import { AccountInstance, PrivacyTokenInstance } from 'incognito-sdk/build/web/browser'
 
 export type AccountModelType = {
   name?: string

@@ -1,4 +1,4 @@
-import * as incognitos from 'incognito-sdk'
+import * as incognitos from 'incognito-sdk/build/web/browser'
 
 export class SDK {
   isWASMRunned = false
@@ -18,7 +18,6 @@ export class SDK {
       removeMethod: (key: string) => window.sessionStorage.removeItem(key),
       namespace: 'WALLET',
     } as any)
-
     const output = await incognitos.goServices.implementGoMethodUseWasm()
     this.isWASMRunned = true
     return output

@@ -1,29 +1,15 @@
 import { useQuery } from 'react-query'
 import { getFromCache } from 'services/query-cache'
-import { historyServices, CONSTANT } from 'incognito-sdk'
+import { historyServices, CONSTANT } from 'incognito-sdk/build/web/browser'
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
-import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 
 import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 
 import { useSettingStore } from 'popup/stores/features/settings'
 import { createTokenSearchIndex } from 'services/fulltext'
 import { useGetWallet } from './wallet.queries'
-
-interface CustomTokenReceivedModel {
-  id: number
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date
-  tokenId: string
-  symbol: string
-  name: string
-  image: string
-  amount: string
-  verified: boolean
-}
 
 export interface TokenReceivedModel {
   id: number
@@ -218,7 +204,7 @@ export const useGenerateDepositAddress = (tokenId: string) => {
         return null
       }
       const account = await getAccountRuntime(selectedAccount)
-      const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+      const token = (await account.getFollowingPrivacyToken(tokenId)) as any
       const ethDepositAddress = await token.bridgeGenerateDepositAddress()
       return ethDepositAddress
     },

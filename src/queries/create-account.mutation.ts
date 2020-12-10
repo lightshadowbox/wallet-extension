@@ -3,7 +3,6 @@ import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
 import { useMutation } from 'react-query'
 import { queryCache } from 'services/query-cache'
 import { getAccountRuntime, runtime } from 'services/wallet'
-import { PrivacyToken } from 'incognito-sdk/build/web/module/src/walletInstance/token'
 import { createWalletWithPassword, followToken, importAccountFromPrivateKey, unfollowToken } from '../services/wallet'
 
 import { GET_WALLET_KEY } from './wallet.queries'
@@ -132,10 +131,18 @@ export const useSendToken = (setLoading: (value) => void, setMessage: (value: an
         })
       },
       onError: (err: ErrorSendToken) => {
-        setMessage({
-          name: 'error',
-          message: err.message,
-        })
+        if (err.message) {
+          setMessage({
+            name: 'error',
+            message: err.message,
+          })
+        } else {
+          setMessage({
+            name: 'error',
+            message: 'Something went wrong',
+          })
+        }
+        setLoading(false)
       },
     },
   )
@@ -166,7 +173,7 @@ export const useBurningToken = (setMessage: (value: any) => void) => {
 }
 const burningToken = async (tokenId: string, address: string, accountName: string, burningAmount: string) => {
   const account = await getAccountRuntime(accountName)
-  const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+  const token = (await account.getFollowingPrivacyToken(tokenId)) as any
   const history = await token.burning(address, burningAmount, '20', '0')
   console.log('Privacy token burned with history', history)
 }
@@ -184,7 +191,7 @@ const sendToken = async (payload: SendInNetworkPayload) => {
   const account = await getAccountRuntime(accountName)
   console.log(account)
   if (tokenId !== PRV_TOKEN_ID) {
-    const token = (await account.getFollowingPrivacyToken(tokenId)) as PrivacyToken
+    const token = (await account.getFollowingPrivacyToken(tokenId)) as any
     const history = await token.transfer(paymentInfoList, nativeFee.toString(), '0')
     console.log(history)
   } else {
