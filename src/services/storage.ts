@@ -71,25 +71,25 @@ export class ChromeStorage implements StorageAPI {
 
   public async get(key: string) {
     // const keyEncrypted = crypto.HmacSHA1(key, storageSecret).toString()
-    chrome.storage.sync.get([key], function (response) {
-      let encryptedValue;
-      try {
-        encryptedValue = response[key]
-      } catch (e) {
-        console.warn(`Can not find value of key ${key} in chrome storage`)
-        return null
-      }
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.get([key], function (response) {
+        let encryptedValue;
+        try {
+          encryptedValue = response[key]
+        } catch (e) {
+          console.warn(`Can not find value of key ${key} in chrome storage`)
+          resolve(null)
+        }
 
-      // const value = crypto.AES.decrypt(encryptedValue, storageSecret).toString()
-      try {
-        const { value } = JSON.parse(encryptedValue)
-        return value
-      } catch {
-        return encryptedValue
-      }
+        // const value = crypto.AES.decrypt(encryptedValue, storageSecret).toString()
+        try {
+          const { value } = JSON.parse(encryptedValue)
+          resolve(value)
+        } catch {
+          resolve(encryptedValue)
+        }
+      })
     })
-
-    return null
   }
 
   public del(key: string) {
