@@ -124,7 +124,7 @@ export const downloadBackupWallet = async () => {
     'PASS_PARAPHRASE: ',
     wallet.passPhrase,
     'ENTROPY: ',
-    wallet.entropy.toString(),
+    // wallet.entropy.toString(),
     'SEED: ',
     wallet.seed.toString(),
   ].join('\n')

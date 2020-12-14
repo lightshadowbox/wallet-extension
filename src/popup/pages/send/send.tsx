@@ -273,6 +273,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       address: ethInfo.outchainAddress,
       accountName: selectedAccount,
       burningAmount: ethInfo.burningAmount,
+      nativeFee: estimatedFee.toString(),
     })
   }
   const [paymentInfo, setPaymentInfo] = React.useState({
@@ -370,6 +371,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   }
   const { data: balance, isSuccess: balanceStatus } = useGetTokenBalance(!tokenId ? active : tokenId, selectedAccount)
   const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
+  console.log(activeMode)
   React.useEffect(() => {
     if (paymentInfo.amount !== null) {
       if (paymentInfo.amount === '') {
@@ -513,13 +515,14 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                         if (!error) {
                           // const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000000, leading: true, trailing: false })
                           // debounced()
+                          // clickSendHandle()
                           clickSendHandle()
                         }
 
                         // return sendEth({
                         //   tokenId: !tokenId
                         //     ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId ||
-                        //       tokenAccounts?.find((item) => item.Verified)?.TokenId
+                        //     tokenAccounts?.find((item) => item.Verified)?.TokenId
                         //     : tokenId,
                         //   address: ethInfo.outchainAddress,
                         //   accountName: selectedAccount,

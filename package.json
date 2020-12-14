@@ -23,7 +23,7 @@
     "fuse.js": "6.4.3",
     "immer": "7.0.14",
     "incognito-js": "https://github.com/incognitochain/sdk-v2.git",
-    "incognito-sdk": "https://github.com/incognitochain/sdk-v2.git",
+    "incognito-sdk": "https://github.com/incognitochain/sdk-v2#develop",
     "lodash": "4.17.20",
     "nanoid": "^3.1.16",
     "qrcode.react": "^1.0.0",

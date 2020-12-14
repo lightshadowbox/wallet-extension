@@ -150,11 +150,11 @@ export const useSendToken = (setLoading: (value) => void, setMessage: (value: an
 export const useBurningToken = (setMessage: (value: any) => void) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useMutation(
-    (variables: { tokenId: string; address: string; accountName: string | null; burningAmount: string }) => {
+    (variables: { tokenId: string; address: string; accountName: string | null; burningAmount: string; nativeFee: string }) => {
       if (variables.accountName) {
-        return burningToken(variables.tokenId, variables.address, variables.accountName, variables.burningAmount)
+        return burningToken(variables.tokenId, variables.address, variables.accountName, variables.burningAmount, variables.nativeFee)
       }
-      return burningToken(variables.tokenId, variables.address, selectedAccount, variables.burningAmount)
+      return burningToken(variables.tokenId, variables.address, selectedAccount, variables.burningAmount, variables.nativeFee)
     },
     {
       onSuccess: async () => {
@@ -171,10 +171,10 @@ export const useBurningToken = (setMessage: (value: any) => void) => {
     },
   )
 }
-const burningToken = async (tokenId: string, address: string, accountName: string, burningAmount: string) => {
+const burningToken = async (tokenId: string, address: string, accountName: string, burningAmount: string, nativeFee: string) => {
   const account = await getAccountRuntime(accountName)
   const token = (await account.getFollowingPrivacyToken(tokenId)) as any
-  const history = await token.burning(address, burningAmount, '20', '0')
+  const history = await token.burning(address, burningAmount, nativeFee, '0')
   console.log('Privacy token burned with history', history)
 }
 
@@ -192,7 +192,7 @@ const sendToken = async (payload: SendInNetworkPayload) => {
   console.log(account)
   if (tokenId !== PRV_TOKEN_ID) {
     const token = (await account.getFollowingPrivacyToken(tokenId)) as any
-    const history = await token.transfer(paymentInfoList, nativeFee.toString(), '0')
+    const history = await token.transfer(paymentInfoList, nativeFee.toString(), privacyFee.toString())
     console.log(history)
   } else {
     const history = await account.nativeToken.transfer(paymentInfoList, nativeFee.toString())
