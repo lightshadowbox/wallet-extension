@@ -1,6 +1,6 @@
 {
-  "name": "LSB Wallet",
-  "version": "0.0.1",
+  "name": "Light Shadow Box",
+  "version": "0.0.2",
   "manifest_version": 2,
   "description": "Light Shadow Box - Wallet Extension",
   "icons": {
@@ -13,8 +13,7 @@
     "videoCapture",
     "nativeMessaging",
     "idle",
-    "system.network",
-    "browser"
+    "system.network"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {

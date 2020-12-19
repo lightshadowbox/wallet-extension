@@ -16,8 +16,14 @@ export const useCreateWallet = () => {
       runtime.walletRuntime.masterAccount.removeAccount('Account 0')
       console.log('created wallet name: ', name)
       await queryCache.invalidateQueries(GET_WALLET_KEY)
-      const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[0]
+      const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[1]
       console.log('Set default first account: ', name)
+      const tokensRecord = localStorage.getItem('tokens')
+      if (tokensRecord) {
+        const tokens = JSON.parse(tokensRecord)
+        tokens.map((token) => followToken(name, token))
+      }
+      console.log(tokensRecord)
       store.dispatch(settingSlices.actions.setWalletName({ walletName: runtime.walletRuntime.name }))
       store.dispatch(settingSlices.actions.selectAccount({ accountName: firstAccount.name }))
     },
@@ -54,6 +60,15 @@ export const useAddToken = () => {
     onError: (err) => {
       console.error(err)
     },
+  })
+}
+export const useRecordTokens = () => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useMutation(async () => {
+    const account = await getAccountRuntime(selectedAccount)
+    const tokens = [...account.privacyTokenIds]
+    localStorage.setItem('tokens', JSON.stringify(tokens))
+    return tokens
   })
 }
 export const useRemoveToken = () => {
@@ -147,7 +162,7 @@ export const useSendToken = (setLoading: (value) => void, setMessage: (value: an
     },
   )
 }
-export const useBurningToken = (setMessage: (value: any) => void) => {
+export const useBurningToken = (setMessage: (value: any) => void, setLoading: (value: any) => void) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useMutation(
     (variables: { tokenId: string; address: string; accountName: string | null; burningAmount: string; nativeFee: string }) => {
@@ -161,8 +176,10 @@ export const useBurningToken = (setMessage: (value: any) => void) => {
         await queryCache.invalidateQueries(['useGetListAccountName.name'])
         await queryCache.invalidateQueries(['useGetAccount.name'])
         await queryCache.invalidateQueries(['useGetTokenForAccount.name'])
+        setLoading(false)
       },
       onError: (err: ErrorSendToken) => {
+        setLoading(false)
         setMessage({
           name: 'error',
           message: err.message,

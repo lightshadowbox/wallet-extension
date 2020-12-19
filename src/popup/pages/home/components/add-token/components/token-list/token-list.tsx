@@ -6,17 +6,13 @@ import classNames from 'classnames'
 import {
   FocusZone,
   FocusZoneDirection,
-  FontIcon,
   getFocusStyle,
   getTheme,
-  Image,
-  ImageFit,
   ITheme,
   List,
   mergeStyleSets,
   IPersonaSharedProps,
   Persona,
-  PersonaSize,
   PersonaPresence,
 } from '@fluentui/react'
 
@@ -118,15 +114,15 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
             Remove
           </button>
         ) : (
-          <button
-            onClick={() => {
-              addToken(item.TokenID)
-            }}
-            className={styles.btnAdd}
-          >
-            Add
-          </button>
-        )}
+            <button
+              onClick={() => {
+                addToken(item.TokenID)
+              }}
+              className={styles.btnAdd}
+            >
+              Add
+            </button>
+          )}
       </div>
     </div>
   )

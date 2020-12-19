@@ -52,6 +52,10 @@
   position: relative;
   padding-left: 10px;
 }
+.send-container {
+  max-height:600px;
+  overflow: hidden;
+}
 
 .text-with-mini-cube .mini-cube {
   position: absolute;

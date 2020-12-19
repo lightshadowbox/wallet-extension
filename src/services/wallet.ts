@@ -7,10 +7,9 @@ import { WalletInstance, CONSTANT } from 'incognito-sdk/build/web/browser'
 import { serializeAccount } from 'models/account-model'
 import { createDraft, finishDraft } from 'immer'
 import { WritableDraft } from 'immer/dist/internal'
-import { MAX_DEX_FEE, DEFAULT_NANO_MULTIPLER } from 'constants/fee.constant'
+import { MAX_DEX_FEE } from 'constants/fee.constant'
 import { TokenItemInterface } from 'queries/token.queries'
 import { AxiosResponse } from 'axios'
-import { IncomingHttpHeaders } from 'http'
 import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
@@ -26,8 +25,10 @@ export let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boole
 export const loadingWallet = async () => {
   i.setConfig({
     // mainnet
-    chainURL: 'https://fullnode.incognito.best',
+    chainURL: 'https://lb-fullnode.incognito.org/fullnode',
+    apiURL: 'https://api-service.incognito.org',
     mainnet: true,
+    wasmPath: '../../privacy.wasm',
   })
 
   if (runtime.loaded) {
@@ -254,19 +255,21 @@ export const estimateFee = async (
   accountName: string,
   walletAddress: string,
   network = 'in-network',
+  setIsLoading = (value) => { },
 ) => {
   if (paymentAmount === 0) {
     return 0
   }
-
   const wallet = await getWalletInstance()
   const account = wallet.masterAccount.getAccountByName(accountName)
 
   if (!account) {
+    setIsLoading(false)
     return MAX_DEX_FEE
   }
 
   if (tokenId === CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
+    setIsLoading(false)
     return MAX_DEX_FEE
   }
   let userFeesData: any = {}
@@ -276,9 +279,9 @@ export const estimateFee = async (
     Prv: MAX_DEX_FEE,
     TokenID: tokenId,
   }
+
   const feeEstResponse = (await apiGetEstimateFeeFromChain(feePayload)) as AxiosResponse<any>
   const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as i.PrivacyTokenInstance
-
   const { bridgeInfo } = tokenInstance
   const isErc20Token = tokenInstance.isPrivacyToken && tokenInstance.bridgeInfo.currencyType === PRIVATE_TOKEN_CURRENCY_TYPE.ERC20
   const isETH = tokenInstance.symbol === CRYPTO_SYMBOL.ETH
@@ -322,15 +325,18 @@ export const estimateFee = async (
   feeEst = feeEstResponse.data.Params[0].NativeTokenAmount
   switch (network) {
     case 'in-network':
+      console.log('in-net')
       const totalEstInNetworkFee = Math.floor(feeEst + parseInt(userFee))
       const totalInNetworkFee = Math.min(totalEstInNetworkFee || MAX_DEX_FEE, MAX_DEX_FEE)
       console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalInNetworkFee)
+      setIsLoading(false)
       return totalInNetworkFee
     case 'out-network':
       const internalFee = Math.min(Math.floor(feeEst), MAX_DEX_FEE)
       const externalFee = Math.floor(parseInt(userFee))
       const totalOutNetworkFee = internalFee + externalFee
       console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalOutNetworkFee)
+      setIsLoading(false)
       return totalOutNetworkFee
   }
 }

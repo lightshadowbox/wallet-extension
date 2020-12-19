@@ -104,6 +104,7 @@ const DropdownCoins: React.FC<{
 }> = React.memo(({ accountName, active, setActive, tokenId, activeMode }) => {
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
   const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
+  console.log(tokenAccounts)
 
   const onChangeCoin = (id) => {
     setActive(id)
@@ -117,7 +118,7 @@ const DropdownCoins: React.FC<{
           setActive(tokenAccounts[0].TokenId)
           break
         case 'out-network':
-          setActive(tokenAccounts.find((token) => token.Verified).TokenId)
+          setActive(tokenAccounts.find((token) => token.Verified)?.TokenId || PRV_TOKEN_ID)
           break
       }
     }
@@ -238,26 +239,36 @@ const DropdownCoins: React.FC<{
 export const SendContainer: React.FC<SendProps> = ({ primary = false, backgroundColor, label, dismissPanel, tokenId, accountName, ...props }) => {
   const [estimatedFee, setFee] = React.useState(0)
   const [isLoadingSend, setIsLoadingSend] = React.useState(false)
-  const [feeToken, setFeeToken] = React.useState(PRV_TOKEN_ID)
   const [message, setMessage] = React.useState({
     message: '',
     name: '',
   })
   const [sendToken] = useSendToken(setIsLoadingSend, setMessage)
-  const [sendEth] = useBurningToken(setMessage)
+  const [sendEth] = useBurningToken(setMessage, setIsLoadingSend)
   const clickSendHandle = () => {
-    setIsLoadingSend(true)
     const paymentInfoList = []
     const prv = '0000000000000000000000000000000000000000000000000000000000000004'
     const useToken = !tokenId ? active : tokenId
     const tokenDetail = getTokenFromTokenIds([useToken])
+    let tempError = error
 
     if (useToken === prv) {
       paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * 1e9}` })
     } else {
       paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * Math.pow(10, tokenDetail[useToken].PDecimals)}` })
     }
+    setError(tempError)
+    console.log(tempError)
     if (activeMode === 'in-network') {
+      if (!paymentInfo.amount) {
+        tempError = 'Required'
+      } else if (paymentInfo.amount > balance) {
+        tempError = 'Insufficient ballance'
+      }
+      if (tempError) {
+        return setError(tempError)
+      }
+      setIsLoadingSend(true)
       return sendToken({
         accountName: !accountName ? selectedAccount : accountName,
         paymentInfoList,
@@ -265,16 +276,26 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
         nativeFee: estimatedFee,
       })
     }
-
-    return sendEth({
-      tokenId: !tokenId
-        ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId || tokenAccounts?.find((item) => item.Verified)?.TokenId
-        : tokenId,
-      address: ethInfo.outchainAddress,
-      accountName: selectedAccount,
-      burningAmount: ethInfo.burningAmount,
-      nativeFee: estimatedFee.toString(),
-    })
+    if (activeMode === 'out-network' && !tempError) {
+      if (!ethInfo.burningAmount) {
+        tempError = 'Required'
+      } else if (ethInfo.burningAmount > balance) {
+        tempError = 'Insufficient ballance'
+      }
+      if (tempError) {
+        return setError(tempError)
+      }
+      setIsLoadingSend(true)
+      return sendEth({
+        tokenId: !tokenId
+          ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId || tokenAccounts?.find((item) => item.Verified)?.TokenId
+          : tokenId,
+        address: ethInfo.outchainAddress,
+        accountName: selectedAccount,
+        burningAmount: `${(Number(ethInfo.burningAmount) || 0) * Math.pow(10, tokenDetail[useToken].PDecimals)}`,
+        nativeFee: estimatedFee.toString(),
+      })
+    }
   }
   const [paymentInfo, setPaymentInfo] = React.useState({
     paymentAddressStr: '',
@@ -283,7 +304,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   })
   const [ethInfo, setEthInfo] = React.useState({
     outchainAddress: '',
-    burningAmount: '',
+    burningAmount: null,
     message: '',
   })
   const tokenDetail = getTokenFromTokenIds([tokenId])
@@ -296,6 +317,18 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
 
   const onHandleActiveMode = (mode) => {
     if (activeMode !== mode) {
+      setEthInfo({
+        outchainAddress: '',
+        burningAmount: null,
+        message: '',
+      })
+
+      setPaymentInfo({
+        paymentAddressStr: '',
+        amount: null,
+        message: '',
+      })
+      setError('')
       const element = document.querySelector(`.content-send .${mode}`) as HTMLElement
       const preElement = document.querySelector(`.content-send .${activeMode}`) as HTMLElement
       element.classList.add('active')
@@ -305,16 +338,19 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   }
 
   const handleSetFee = async (amount?: number) => {
+    setIsLoadingSend(true)
     switch (activeMode) {
       case 'in-network':
-        if (paymentInfo.paymentAddressStr && Number(paymentInfo.amount) > 0) {
-          setFee(await estimateFee(Number(amount || paymentInfo.amount) || 0, active, selectedAccount, paymentInfo.paymentAddressStr, activeMode))
-        }
+        // if (paymentInfo.paymentAddressStr && Number(paymentInfo.amount) > 0) {
+        setFee(
+          await estimateFee(Number(amount || paymentInfo.amount) || 0, active, selectedAccount, paymentInfo.paymentAddressStr, activeMode, setIsLoadingSend),
+        )
+        // }
         break
       case 'out-network':
-        if (ethInfo.outchainAddress && Number(ethInfo.burningAmount) > 0) {
-          setFee(await estimateFee(Number(amount || ethInfo.burningAmount) || 0, active, selectedAccount, ethInfo.outchainAddress, activeMode))
-        }
+        // if (ethInfo.outchainAddress && Number(ethInfo.burningAmount) > 0) {
+        setFee(await estimateFee(Number(amount || ethInfo.burningAmount) || 0, active, selectedAccount, ethInfo.outchainAddress, activeMode, setIsLoadingSend))
+        // }
         break
     }
   }
@@ -373,13 +409,25 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
   console.log(activeMode)
   React.useEffect(() => {
-    if (paymentInfo.amount !== null) {
-      if (paymentInfo.amount === '') {
-        setError('Required')
-      } else if (paymentInfo.amount > balance || ethInfo.burningAmount > balance) {
-        setError('Insufficient ballance')
-      } else {
-        setError('')
+    if (activeMode === 'in-network') {
+      if (paymentInfo.amount !== null) {
+        if (paymentInfo.amount === '') {
+          setError('Required')
+        } else if (paymentInfo.amount > balance) {
+          setError('Insufficient ballance')
+        } else {
+          setError('')
+        }
+      }
+    } else if (activeMode === 'out-network') {
+      if (ethInfo.burningAmount !== null) {
+        if (ethInfo.burningAmount === '') {
+          setError('Required')
+        } else if (ethInfo.burningAmount > balance) {
+          setError('Insufficient ballance')
+        } else {
+          setError('')
+        }
       }
     }
   }, [paymentInfo.amount, ethInfo.burningAmount])
@@ -393,7 +441,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   }, [message.message])
 
   return (
-    <div className={['storybook-send', mode, 'relative'].join(' ')} style={{ backgroundColor }} {...props}>
+    <div className={['storybook-send', mode, 'relative', 'send-container'].join(' ')} style={{ backgroundColor }} {...props}>
       {message.message !== '' ? <Message message={message.message} name={message.name} /> : null}
       <Header title="Send" icon="ChromeBack" dismissPanel={dismissPanel} />
       <div className="content content-send mt-2">
@@ -463,7 +511,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     type="text"
                     className=" bg-white outline-none w-full border-b border-gray-9 pt-3 pb-3 pl-1 pr-8"
                     id="receiving-account"
-                    value={activeMode === 'in-network' ? paymentInfo.amount : ethInfo.burningAmount}
+                    value={activeMode === 'in-network' ? (paymentInfo.amount ? paymentInfo.amount : '') : ethInfo.burningAmount ? ethInfo.burningAmount : ''}
                     onChange={handleAmountInputChanged}
                     placeholder="0.0"
                     name="amount"
