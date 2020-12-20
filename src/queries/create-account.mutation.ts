@@ -14,16 +14,18 @@ export const useCreateWallet = () => {
     onSuccess: async (data, { name }) => {
       await addAccount(name)
       runtime.walletRuntime.masterAccount.removeAccount('Account 0')
-      console.log('created wallet name: ', name)
       await queryCache.invalidateQueries(GET_WALLET_KEY)
       const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[1]
-      console.log('Set default first account: ', name)
-      const tokensRecord = localStorage.getItem('tokens')
-      if (tokensRecord) {
-        const tokens = JSON.parse(tokensRecord)
-        tokens.map((token) => followToken(name, token))
+      const accountRecord = localStorage.getItem('accountRecords')
+      if (accountRecord) {
+        const account = JSON.parse(accountRecord)
+        console.log(account, account.accountName)
+        if (account.accountName) {
+          console.log(account.accountName)
+          await importAccountFromPrivateKey(account.accountName, account.privateKey)
+          account.tokens.map((token) => followToken(account.accountName, token))
+        }
       }
-      console.log(tokensRecord)
       store.dispatch(settingSlices.actions.setWalletName({ walletName: runtime.walletRuntime.name }))
       store.dispatch(settingSlices.actions.selectAccount({ accountName: firstAccount.name }))
     },
@@ -67,7 +69,12 @@ export const useRecordTokens = () => {
   return useMutation(async () => {
     const account = await getAccountRuntime(selectedAccount)
     const tokens = [...account.privacyTokenIds]
-    localStorage.setItem('tokens', JSON.stringify(tokens))
+    const accountRecord = {
+      accountName: selectedAccount,
+      privateKey: account.key.keySet.privateKeySerialized,
+      tokens,
+    }
+    localStorage.setItem('accountRecords', JSON.stringify(accountRecord))
     return tokens
   })
 }
