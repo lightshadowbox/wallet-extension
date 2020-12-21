@@ -17,24 +17,25 @@
   height: 100%;
 }
 .account .ms-Panel {
+  top:0;
+  left:0;
   animation: moveInBottom 0.3s;
   animation-fill-mode: forwards;
   transition: all 1s !important;
 }
 .ms-Panel-contentInner {
-  transform: translate(-2px);
 }
 @keyframes moveOutBottom {
   from {
     transform: translateY(0);
   }
   to {
-    transform: translateY(400px);
+    transform: translateY(500px);
   }
 }
 @keyframes moveInBottom {
   from {
-    transform: translateY(400px);
+    transform: translateY(500px);
   }
   to {
     transform: translateY(0rem);

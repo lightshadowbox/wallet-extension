@@ -5,6 +5,8 @@ import { useRecordTokens } from 'queries/create-account.mutation'
 import { useTheme } from 'popup/services'
 import { fade } from 'popup/services/utils'
 import React from 'react'
+import { store } from 'popup/stores'
+import { settingSlices } from 'popup/stores/features/settings'
 import { DropdownMenu } from 'popup/pages/home/components/dropdown-menu/dropdown-menu'
 import styles from './wallet-menu.module.css'
 
@@ -16,9 +18,9 @@ interface Props {
 export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPanelAcc }) => {
   const [recordTokens] = useRecordTokens()
   const logOutWallet = () => {
-    recordTokens()
     localStorage.removeItem('persist:root')
-    document.location.reload()
+    recordTokens()
+    store.dispatch(settingSlices.actions.removeWallet())
   }
   const listItem = [
     {

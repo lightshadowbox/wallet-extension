@@ -19,6 +19,9 @@ export const settingSlices = createSlice({
     setWalletName: (state, action: PayloadAction<{ walletName: string }>) => {
       state.walletName = action.payload?.walletName
     },
+    removeWallet: (state) => {
+      state.selectAccountName = ''
+    },
   },
 })
 

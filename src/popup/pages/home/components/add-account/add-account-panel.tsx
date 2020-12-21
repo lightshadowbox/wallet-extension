@@ -3,7 +3,6 @@ import React from 'react'
 import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
 import { useId, useBoolean } from '@uifabric/react-hooks'
 import { Header } from 'popup/components/header/header'
-import { ImportAccountPanel } from 'popup/pages/connect/Connect-panel'
 import { AccountList, BtnAdd } from './components'
 import styles from './add-account-panel.module.css'
 
@@ -18,29 +17,16 @@ const AddAccountContainer: React.FC<{
   header: React.ReactNode
   button: React.ReactNode
   account: React.ReactNode
-  importAccount: React.ReactNode
-}> = ({ header, button, account, importAccount }) => (
+}> = ({ header, button, account }) => (
   <div className={classNames('flex flex-col w-full h-full relative bg-white')}>
     <div className={classNames('w-full')}>{header}</div>
     <div className={classNames('w-full')}>{button}</div>
     <div className={classNames('w-full h-full')}>{account}</div>
-    <div className={classNames('w-full h-full')}>{importAccount}</div>
   </div>
 )
 
 export const AddAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel }) => {
   const layerHostId = useId('layerHost')
-  const [isPanelOpenImport, { setTrue: showPanelImport, setFalse: dismissPanelImport }] = useBoolean(false)
-  const onDismissImport = () => {
-    const element = document.querySelector('.connect .ms-Panel') as HTMLElement
-    element.style.animation = 'none'
-    element.style.animation = 'moveOutBottomImport 0.3s'
-    setTimeout(() => {
-      element.style.animation = 'moveInBottomImport 0.3s'
-      dismissPanelImport()
-    }, 180)
-  }
-
   const scopedSettings = useLayerSettings(true, layerHostId)
   return (
     isPanelOpen && (
@@ -49,9 +35,8 @@ export const AddAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismi
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <AddAccountContainer
               header={<Header title="Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
-              button={<BtnAdd onImportClick={showPanelImport} />}
+              button={<BtnAdd onImportClick={showPanel} />}
               account={<AccountList />}
-              importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={onDismissImport} />}
             />
           </Panel>
         </Customizer>

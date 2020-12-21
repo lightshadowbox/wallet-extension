@@ -8,50 +8,39 @@
 .connect .ms-Panel-content {
   padding: 0 !important;
 }
-
+.ms-Panel-scrollableContent {
+  width: 100%;
+  height: 100%;
+}
+.ms-Panel-content {
+  width: 100%;
+  height: 100%;
+}
 .connect .ms-Panel {
-  animation: moveInBottomImport 0.3s;
-}
-.connect {
-  top: 0;
-  left: 0;
-}
-.add-account .connect .ms-Panel {
-  animation: moveInImport 0.3s;
+  top:0;
+  left:0;
+  animation: moveInBottom 0.3s;
+  animation-fill-mode: forwards;
+  transition: all 1s !important;
 }
 .ms-Panel-contentInner {
-  transform: translateX(-2px);
 }
-.connect .ms-Panel-scrollableContent {
-  @apply h-full;
-}
-.connect .ms-Panel-content {
-  @apply h-full;
-}
-@keyframes moveInImport {
+@keyframes moveOutBottom {
   from {
-    transform: translateY(200px);
+    transform: translateY(0);
   }
   to {
-    transform: translateY(0px);
+    transform: translateY(500px);
   }
 }
-@keyframes moveOutBottomImport {
+@keyframes moveInBottom {
   from {
-    transform: translateY(0px);
+    transform: translateY(500px);
   }
   to {
-    transform: translateY(250px);
+    transform: translateY(0rem);
   }
 }
-@keyframes moveInBottomImport {
-  from {
-    transform: translateY(250px);
-  }
-  to {
-    transform: translateY(0px);
-  }
-}
-.connect .ms-LayerHost {
+.account .ms-LayerHost {
   overflow: hidden;
 }
