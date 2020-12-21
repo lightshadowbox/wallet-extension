@@ -17,15 +17,12 @@
   height: 100%;
 }
 .connect .ms-Panel {
-  top:0;
-  left:0;
-  animation: moveInBottom 0.3s;
+  animation: moveInBottomImport .3s ease-out;
   animation-fill-mode: forwards;
-  transition: all 1s !important;
 }
 .ms-Panel-contentInner {
 }
-@keyframes moveOutBottom {
+@keyframes moveOutBottomImport {
   from {
     transform: translateY(0);
   }
@@ -33,14 +30,16 @@
     transform: translateY(500px);
   }
 }
-@keyframes moveInBottom {
+@keyframes moveInBottomImport {
   from {
-    transform: translateY(500px);
+    opacity: 0;
+    transform: translateY(240px);
   }
   to {
-    transform: translateY(0rem);
+    opacity: 1;
+    transform: translateY(0px);
   }
 }
-.account .ms-LayerHost {
+.connect .ms-LayerHost {
   overflow: hidden;
 }

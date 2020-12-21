@@ -1,9 +1,4 @@
 .container {
   z-index: 10000000;
   background-color: transparent;
-  position: absolute;
-  top:0;
-  left:0;
-  width:360px;
-  height:600px;
 }

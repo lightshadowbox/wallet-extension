@@ -27,10 +27,11 @@ const HomeContainer: React.FC<{
     <div className={classNames('absolute self-center mt-20 shadow-md w-11/12 h-56 z-10 bg-white')}>{cover}</div>
     <div className={classNames(`flex flex-row align-top justify-between w-full h-48 p-4 ${styles.bgContainer}`)}>{menu}</div>
     <div className={classNames('w-full h-full mt-32')}>{children}</div>
+    <div className={classNames('w-full h-full')}>{importAccount}</div>
     <div className={classNames('w-full h-full')}>{network}</div>
     <div className={classNames('w-full h-full')}>{token}</div>
     <div className={classNames('w-full h-full')}>{account}</div>
-    <div className={classNames('w-full h-full')}>{importAccount}</div>
+
     <div className={classNames('w-full h-full')}>{shield}</div>
     <div className={classNames('w-full h-full')}>{receive}</div>
     <div className={classNames('w-full h-full')}>{send}</div>
@@ -65,6 +66,7 @@ export const HomePage = () => {
     const element = document.querySelector(`.${panel} .ms-Panel`) as HTMLElement
     element.style.animation = 'none'
     element.style.animation = 'moveOutRight 0.3s'
+
     setTimeout(() => {
       element.style.animation = 'moveInRight 0.3s'
       if (panel === 'send') {
@@ -74,6 +76,15 @@ export const HomePage = () => {
         dismissPanelReceive()
       }
     }, 290)
+  }
+  const dismissPanelBottomImport = () => {
+    const element = document.querySelector('.connect .ms-Panel') as HTMLElement
+    element.style.animation = 'none'
+    element.style.animation = 'moveOutBottomImport 0.3s'
+    setTimeout(() => {
+      element.style.animation = 'moveInBottomImport 0.3s'
+      dismissPanelImport()
+    }, 200)
   }
   const dismissPanelBottom = (panel) => {
     const element = document.querySelector(`.${panel} .ms-Panel`) as HTMLElement
@@ -92,14 +103,12 @@ export const HomePage = () => {
         dismissPanelBackup()
       } else if (panel === 'shield-token') {
         dismissPanelShieldToken()
-      } else if (panel === 'connect') {
-        dismissPanelImport()
       }
     }, 200)
   }
   return (
     <HomeContainer
-      importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={() => dismissPanelBottom('connect')} />}
+      importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={dismissPanelBottomImport} />}
       tokenDetail={
         <TokenDetailPanel
           showPanelReceive={showPanelReceive}

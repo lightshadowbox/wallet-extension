@@ -30,32 +30,28 @@ export const ImportAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
   const [privateKey, setPrivateKey] = React.useState('')
   const [accountName, setAccountName] = React.useState('')
   const scopedSettings = useLayerSettings(true, layerHostId)
-  const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  return (
-    isPanelOpen &&
-    selectedAccount && (
-      <div className={`connect ${styles.container}`}>
-        <Customizer scopedSettings={scopedSettings}>
-          <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
-            <ConnectContainer
-              header={<Header title="Add Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
-              qrCam={<QRCam onHaveValue={(value) => setPrivateKey(value)} />}
-              account={
-                <Account
-                  privateKey={privateKey}
-                  accountName={accountName}
-                  setPrivateKey={setPrivateKey}
-                  setAccountName={setAccountName}
-                  closePopup={dismissPanel}
-                />
-              }
-            />
-          </Panel>
-        </Customizer>
-        <LayerHost id={layerHostId} className={layerHostClass} />
-      </div>
-    )
-  )
+  return isPanelOpen ? (
+    <div className={`absolute connect inset-0  ${styles.container}`}>
+      <Customizer scopedSettings={scopedSettings}>
+        <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
+          <ConnectContainer
+            header={<Header title="Import Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
+            qrCam={<QRCam onHaveValue={(value) => setPrivateKey(value)} />}
+            account={
+              <Account
+                privateKey={privateKey}
+                accountName={accountName}
+                setPrivateKey={setPrivateKey}
+                setAccountName={setAccountName}
+                closePopup={dismissPanel}
+              />
+            }
+          />
+        </Panel>
+      </Customizer>
+      <LayerHost id={layerHostId} className={layerHostClass} />
+    </div>
+  ) : null
 }
 const layerHostClass = mergeStyles({
   position: 'relative',
