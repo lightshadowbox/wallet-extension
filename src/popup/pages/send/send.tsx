@@ -456,11 +456,11 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
               onClick={() => onHandleActiveMode('out-network')}
               className={
                 tokenDetail[tokenId]?.Verified || tokenId === null
-                  ? 'out-network tab flex-1 text-center'
-                  : ` ${styles.outPrint} out-network tab flex-1 text-center`
+                  ? 'out-network tab flex-1 text-center pointer-events-none cursor-not-allowed'
+                  : ` ${styles.outPrint} cursor-not-allowed out-network tab flex-1 text-center pointer-events-none`
               }
             >
-              <button type="button" className={classNames('bg-white inline-block py-2 px-4', 'hover:text-black hover:font-medium')}>
+              <button disabled type="button" className={classNames('bg-white inline-block py-2 px-4', 'hover:font-medium')}>
                 Out Network
               </button>
             </li>

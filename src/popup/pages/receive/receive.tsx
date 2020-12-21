@@ -131,9 +131,13 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
                   }, 500)
                 }
               }}
-              className={defaultActive === 'out-network' ? 'tab out-network flex-1 text-center active' : 'tab out-network flex-1 text-center'}
+              className={
+                defaultActive === 'out-network'
+                  ? 'tab out-network flex-1 text-center cursor-not-allowed active pointer-events-none'
+                  : 'tab out-network flex-1 text-center cursor-not-allowed pointer-events-none'
+              }
             >
-              <button type="button" className={classNames('bg-white inline-block py-2 px-4', 'hover:text-black hover:font-medium')}>
+              <button type="button" className={classNames('bg-white inline-block py-2 px-4', ' hover:font-medium')}>
                 Out Network
               </button>
             </li>
@@ -147,8 +151,8 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
                   {!depositAddress || active === 'in-network' ? (
                     <QRCodeWallet keyAddress={account.paymentAddress} />
                   ) : (
-                    <QRCodeWallet keyAddress={depositAddress} />
-                  )}
+                      <QRCodeWallet keyAddress={depositAddress} />
+                    )}
                 </div>
                 <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
                   <div
@@ -165,10 +169,10 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
                 </button>
               </div>
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <SpinnerWallet />
-              </div>
-            )}
+                <div className="w-full h-full flex items-center justify-center">
+                  <SpinnerWallet />
+                </div>
+              )}
             <div className="hidden">Tab #2</div>
           </div>
         </div>
