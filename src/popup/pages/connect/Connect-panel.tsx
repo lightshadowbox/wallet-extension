@@ -6,7 +6,6 @@ import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Custom
 import { Header, QRCam, Account } from './components/index'
 import './Connect-panel.css'
 import styles from './Connect-panel.module.css'
-import { useSettingStore } from 'popup/stores/features/settings'
 
 interface Props {
   isPanelOpen: boolean
