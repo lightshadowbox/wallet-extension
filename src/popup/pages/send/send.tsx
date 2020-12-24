@@ -312,7 +312,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const { data: tokenAccounts, status } = useGetTokenForAccount(selectedAccount)
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   const [activeMode, setActiveMode] = React.useState('in-network')
-  const [active, setActive] = useState(PRV_TOKEN_ID)
+  const [active, setActive] = useState(tokenId || PRV_TOKEN_ID)
   const [error, setError] = useState('')
 
   const onHandleActiveMode = (mode) => {
@@ -341,6 +341,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
     setIsLoadingSend(true)
     switch (activeMode) {
       case 'in-network':
+        console.log(active)
         // if (paymentInfo.paymentAddressStr && Number(paymentInfo.amount) > 0) {
         setFee(
           await estimateFee(Number(amount || paymentInfo.amount) || 0, active, selectedAccount, paymentInfo.paymentAddressStr, activeMode, setIsLoadingSend),
@@ -537,7 +538,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                 <div className="flex">
                   <div className="font-medium self-center">Fee:</div>
                   <div className="coin__fee flex-1 text-right">
-                    <span className="mr-1 font-medium">{(estimatedFee * Math.pow(10, -tokenDetail[tokenId]?.PDecimals || -9)).toFixed(8)}</span>
+                    <span className="mr-1 font-medium">{(estimatedFee * Math.pow(10, -9)).toFixed(8)}</span>
                     <div className="field__wrapper relative inline-block">
                       {/* <select id="coin__fee-type" className="appearance-none bg-white outline-none pr-8">
                         <option>PRV</option>

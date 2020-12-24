@@ -36,18 +36,6 @@ export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPa
       clickHandleName: (name) => console.log('panel'),
     },
     {
-      icon: 'Lock',
-      name: 'Lock',
-      showPanel: null,
-      clickHandleName: (name) => console.log('panel'),
-    },
-    {
-      icon: 'ChromeFullScreen',
-      name: 'Full Screen',
-      showPanel: null,
-      clickHandleName: (name) => console.log('panel'),
-    },
-    {
       icon: 'InfoSolid',
       name: 'About us',
       showPanel: () => {
