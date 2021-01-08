@@ -1,13 +1,12 @@
 import { AxiosResponse } from 'axios'
 
-export interface TokenResponse {
-  Result: Token | null
-  Error: null | any
-}
-
 export interface Token {
   Token: string
   Expired: string
+}
+export interface TokenResponse {
+  Result: Token | null
+  Error: null | any
 }
 
 class Auth {

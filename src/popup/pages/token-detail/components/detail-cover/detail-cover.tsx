@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import classNames from 'classnames'
-import { useGetTokenBalance, getTokenFromTokenIds } from 'queries/token.queries'
+import { useGetTokenBalance } from 'queries/token.queries'
 import { Label } from '@fluentui/react'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { Button, SecondaryButton } from 'popup/components/button'

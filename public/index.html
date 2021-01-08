@@ -2,9 +2,46 @@
 <html lang="en">
 
 <head>
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+base-uri;
+connect-src *;
+default-src * 'unsafe-inline' 'unsafe-eval' data: gap: https://ssl.gstatic.com;
+font-src * data:;
+form-action;
+img-src * data:;
+manifest-src *;
+media-src;
+object-src *;
+report-to;
+script-src * 'unsafe-inline' 'unsafe-eval';
+script-src-attr * 'unsafe-inline' 'unsafe-eval';
+script-src-elem * 'unsafe-inline' 'unsafe-eval';
+style-src * data: 'unsafe-inline';
+style-src-attr * data: 'unsafe-inline';
+style-src-elem * data: 'unsafe-inline';
+    ">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&amp;display=swap"
     rel="stylesheet" />
-  <script crossorigin src="..."></script>
+  <script crossorigin src="...">
+  </script>
+  <script>
+    function init() {
+      navigator.webkitGetUserMedia({audio:false, video:true},
+                                  onGetStream,
+                                  onGetStreamFailed);
+    }
+
+    function onGetStream(stream) {
+      console.log('Got stream', stream);
+    }
+
+    function onGetStreamFailed(e) {
+      console.log('Failed to get stream', e);
+    }
+    init()
+  </script>
   <title>Light Shadow Box - Web Trading</title>
   <style>
     body {
@@ -45,5 +82,4 @@
     -->
   <!-- Global site tag (gtag.js) - Google Analytics -->
 </body>
-
 </html>

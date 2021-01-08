@@ -12,11 +12,14 @@ import './account-list.css'
 import styles from './account-list.module.css'
 import { ModalRenameAccount } from './modal/modal'
 
-const AccountItem: React.FC<{ name: string }> = ({ name }) => {
+const AccountItem: React.FC<{ name: string; dismissPanel: () => void }> = ({ name, dismissPanel }) => {
   const currentAccount = useSettingStore((s) => s.selectAccountName)
 
   const switchAccount = (accountName: string) => {
     store.dispatch(settingSlices.actions.selectAccount({ accountName }))
+    setTimeout(() => {
+      dismissPanel()
+    }, 500)
   }
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false)
   const renameAccountHandle = () => {
@@ -40,8 +43,8 @@ const AccountItem: React.FC<{ name: string }> = ({ name }) => {
                 </div>
               </>
             ) : (
-                <Spinner />
-              )
+              <Spinner />
+            )
           }
         />
       </div>
@@ -55,9 +58,8 @@ const AccountItem: React.FC<{ name: string }> = ({ name }) => {
   )
 }
 
-export const AccountList = () => {
+export const AccountList: React.FC<{ dismissPanel: () => void }> = ({ dismissPanel }) => {
   const { data: accountListName, isLoading } = useGetListAccountName()
-
   if (isLoading || !accountListName) {
     return (
       <div className={classNames('mt-4 p-4')}>
@@ -68,7 +70,7 @@ export const AccountList = () => {
   return (
     <ul className={classNames('mt-4 p-4')}>
       {accountListName.map((name) => {
-        return <AccountItem key={name} name={name} />
+        return <AccountItem dismissPanel={dismissPanel} key={name} name={name} />
       })}
     </ul>
   )

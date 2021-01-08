@@ -3,31 +3,51 @@ import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
 import { useMutation } from 'react-query'
 import { queryCache } from 'services/query-cache'
 import { getAccountRuntime, runtime } from 'services/wallet'
+import { storageService } from 'services/storage'
+import { passwordSecret } from 'constants/crypto'
+import crypto from 'crypto-js'
+import * as CONSTANTS from '../constants/app'
 import { createWalletWithPassword, followToken, importAccountFromPrivateKey, unfollowToken } from '../services/wallet'
 
 import { GET_WALLET_KEY } from './wallet.queries'
 
 const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
+export const useUnlockWallet = (setError: (value) => void) => {
+  return useMutation(
+    async (password: string) => {
+      const passwordWallet = await storageService.get(CONSTANTS.PASS_KEY)
+      const passwordEncrypt = crypto.SHA256(password, passwordSecret).toString()
+      if (passwordWallet === passwordEncrypt) {
+        return () => {}
+      }
+      setError('Please enter valid password!')
+      throw new Error('Please enter valid password!')
+    },
+    {
+      onSuccess: () => {
+        const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[0]
+        store.dispatch(settingSlices.actions.setWalletName({ walletName: runtime.walletRuntime.name }))
+        store.dispatch(settingSlices.actions.selectAccount({ accountName: firstAccount.name }))
+        localStorage.removeItem('isLogout')
+      },
+      onError: (err) => {
+        console.log(err)
+      },
+    },
+  )
+}
 export const useCreateWallet = () => {
-  const [addAccount] = useAddAccount(() => { })
+  const [addAccount] = useAddAccount(() => {})
   return useMutation((params: { password: string; name: string }) => createWalletWithPassword(params.name, params.password), {
     onSuccess: async (data, { name }) => {
       await addAccount(name)
-      runtime.walletRuntime.masterAccount.removeAccount('Account 0')
+      await runtime.walletRuntime.masterAccount.removeAccount('Anon')
       await queryCache.invalidateQueries(GET_WALLET_KEY)
-      const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[1]
-      const accountRecord = localStorage.getItem('accountRecords')
-      if (accountRecord) {
-        const account = JSON.parse(accountRecord)
-        console.log(account, account.accountName)
-        if (account.accountName) {
-          console.log(account.accountName)
-          await importAccountFromPrivateKey(account.accountName, account.privateKey)
-          account.tokens.map((token) => followToken(account.accountName, token))
-        }
-      }
+      const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[0]
       store.dispatch(settingSlices.actions.setWalletName({ walletName: runtime.walletRuntime.name }))
       store.dispatch(settingSlices.actions.selectAccount({ accountName: firstAccount.name }))
+      console.log(runtime.walletRuntime)
+      console.log(firstAccount)
     },
     onError: (err) => {
       console.error(err)
@@ -105,7 +125,7 @@ export const useAddAccount = (hidePanel: () => void) => {
 }
 export const useRenameAccount = (accountName: string) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  const [importAccount] = useImportAccountFromPrivateKey(() => { })
+  const [importAccount] = useImportAccountFromPrivateKey(() => {})
   const [reAccount] = useRemoveAccount()
   return useMutation((params: { accountName: string }) => renameAccount(selectedAccount, params.accountName, reAccount, importAccount), {
     onSuccess: async () => {
@@ -219,6 +239,7 @@ const sendToken = async (payload: SendInNetworkPayload) => {
     const history = await token.transfer(paymentInfoList, nativeFee.toString(), privacyFee.toString())
     console.log(history)
   } else {
+    console.log(account.key.keySet)
     const history = await account.nativeToken.transfer(paymentInfoList, nativeFee.toString())
     console.log(history)
   }

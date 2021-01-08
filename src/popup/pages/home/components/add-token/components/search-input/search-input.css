@@ -4,6 +4,9 @@
     font-size: 18px;
     color: #AFAFAF;
 }
+.search input {
+    padding-right:100px;
+}
 .search input::placeholder{
     color: #AFAFAF;
 }

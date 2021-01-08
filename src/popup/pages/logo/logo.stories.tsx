@@ -7,7 +7,7 @@ export default {
   component: Logo,
 } as Meta
 
-const Template: Story = () => <Logo />
+const Template: Story = () => <Logo welcomeBack={false} />
 
 export const Primary = Template.bind({})
 Primary.args = {

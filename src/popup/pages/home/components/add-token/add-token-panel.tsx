@@ -41,7 +41,7 @@ export const AddTokenPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismiss
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <AddTokenContainer
               header={<Header title="Add Token" icon="ChromeClose" dismissPanel={dismissPanel} />}
-              searchInput={<SearchInput setShowCustom={setShowCustom} placeholder="Choose token..." setValueInput={setValueInput} />}
+              searchInput={<SearchInput valueInput={valueInput} setShowCustom={setShowCustom} placeholder="Choose token..." setValueInput={setValueInput} />}
               list={<ListGhostingExample showCustom={showCustom} valueInput={valueInput} />}
             >
               <div>Body will coming soon </div>

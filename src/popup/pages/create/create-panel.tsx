@@ -33,11 +33,13 @@ const CreateContainer: React.FC<{
   confirmPassword: string
   showPanel?: () => void
   onNext?: () => void
-}> = ({ header, password, confirmRender, btn, name, nameWallet, passwordWallet, confirmPassword, showPanel, onNext }) => {
+}> = ({ header, password, confirmRender, btn, name, nameWallet, passwordWallet, confirmPassword, onNext }) => {
   const [createWallet, status] = useCreateWallet()
   const [isError, setIsError] = React.useState(false)
   const history = useHistory()
   const onCreateBtnClick = async () => {
+    console.log(`Name is: ${name}`)
+    console.log(`NameWallet is: ${nameWallet}`)
     if (passwordWallet === confirmPassword) {
       createWallet({ name: nameWallet, password: passwordWallet })
     } else {
@@ -54,7 +56,7 @@ const CreateContainer: React.FC<{
         history.push('/')
       }
     }
-  }, [status.isSuccess, history])
+  }, [status.isSuccess, history, onNext])
 
   return (
     <div className={classNames(`flex flex-col w-full justify-between relative ${styles.createContainer}`)}>
@@ -76,12 +78,9 @@ export const CreatePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPa
   const [nameWallet, setNameWallet] = useState('')
   const [passwordWallet, setPasswordWallet] = useState('')
   const [confirmPassword, setConfirmPass] = useState('')
-  const renderConfirmPassword = React.useCallback(
-    (errMsg: string) => {
-      return <ConfirmPassword setConfirmPass={setConfirmPass} errMsg={errMsg} />
-    },
-    [confirmPassword],
-  )
+  const renderConfirmPassword = React.useCallback((errMsg: string) => {
+    return <ConfirmPassword setConfirmPass={setConfirmPass} errMsg={errMsg} />
+  }, [])
   return (
     isPanelOpen && (
       <div className={`absolute inset-0 create ${styles.container}`}>
@@ -91,7 +90,7 @@ export const CreatePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPa
               nameWallet={nameWallet}
               passwordWallet={passwordWallet}
               header={<Header dismissPanel={dismissPanel} />}
-              password={<Password setPasswordWallet={setPasswordWallet} />}
+              password={<Password isHasLabel setPasswordWallet={setPasswordWallet} />}
               confirmRender={renderConfirmPassword}
               confirmPassword={confirmPassword}
               btn={<Button full>Next</Button>}

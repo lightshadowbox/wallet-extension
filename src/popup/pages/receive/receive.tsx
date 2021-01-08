@@ -151,8 +151,8 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
                   {!depositAddress || active === 'in-network' ? (
                     <QRCodeWallet keyAddress={account.paymentAddress} />
                   ) : (
-                      <QRCodeWallet keyAddress={depositAddress} />
-                    )}
+                    <QRCodeWallet keyAddress={depositAddress} />
+                  )}
                 </div>
                 <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
                   <div
@@ -163,16 +163,16 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
                     <Icon className="text-blue-5 inline" iconName="Copy" />
                   </div>
                 </TooltipHost>
-                <button type="button" className="mt-5 bg-blue-6 text-blue-5 py-4 px-4 rounded flex flex-row items-center w-full justify-center">
+                {/* <button type="button" className="mt-5 bg-blue-6 text-blue-5 py-4 px-4 rounded flex flex-row items-center w-full justify-center">
                   <Icon className="text-blue-5 mr-2" iconName="ShareiOS" />
                   <span>Share</span>
-                </button>
+                </button> */}
               </div>
             ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <SpinnerWallet />
-                </div>
-              )}
+              <div className="w-full h-full flex items-center justify-center">
+                <SpinnerWallet />
+              </div>
+            )}
             <div className="hidden">Tab #2</div>
           </div>
         </div>

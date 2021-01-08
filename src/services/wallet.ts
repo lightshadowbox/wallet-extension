@@ -1,5 +1,6 @@
 /* eslint-disable import/no-mutable-exports */
 import * as Mnemonic from 'bitcore-mnemonic'
+import { cloneDeep } from 'lodash'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk/build/web/browser'
@@ -7,7 +8,7 @@ import { WalletInstance, CONSTANT } from 'incognito-sdk/build/web/browser'
 import { serializeAccount } from 'models/account-model'
 import { createDraft, finishDraft } from 'immer'
 import { WritableDraft } from 'immer/dist/internal'
-import { MAX_DEX_FEE } from 'constants/fee.constant'
+import { MAX_DEX_FEE, PRV_ID } from 'constants/fee.constant'
 import { TokenItemInterface } from 'queries/token.queries'
 import { AxiosResponse } from 'axios'
 import * as CONSTANTS from '../constants/app'
@@ -24,11 +25,15 @@ export let runtime: WritableDraft<{ walletRuntime: WalletInstance; loaded: boole
 
 export const loadingWallet = async () => {
   i.setConfig({
-    // mainnet
     chainURL: 'https://lb-fullnode.incognito.org/fullnode',
-    apiURL: 'https://api-service.incognito.org',
+    apiURL: 'https://api.incognito.org',
     mainnet: true,
     wasmPath: '../../privacy.wasm',
+    deviceId: '1234',
+    deviceToken: '1234',
+    logMethod: (mess) => {
+      console.log(mess)
+    },
   })
 
   if (runtime.loaded) {
@@ -46,6 +51,7 @@ export const loadingWallet = async () => {
     return runtime.walletRuntime
   }
 }
+
 export const removeAccount = async (accountName: string) => {
   const wallet = await getWalletInstance()
   wallet.masterAccount.removeAccount(accountName)
@@ -74,11 +80,12 @@ export const createWalletWithPassword = async (name: string, password: string) =
   runtimeDraft.runtimePassword = crypto.SHA256(password, passwordSecret).toString()
   const code = new Mnemonic(Mnemonic.Words.ENGLISH)
   const instance = new i.WalletInstance()
-  runtimeDraft.walletRuntime = await instance.init(code.toString() + password, name)
+  runtimeDraft.walletRuntime = await instance.init(name)
   storageService.set(CONSTANTS.PASS_KEY, runtimeDraft.runtimePassword)
   storageService.set(CONSTANTS.PARA_KEY, code.toString())
   runtimeDraft.loaded = true
   runtime = finishDraft(runtimeDraft)
+  localStorage.setItem('isCreatedWallet', 'true')
   await backupWallet()
 }
 
@@ -94,7 +101,6 @@ export const isHaveBackupWallet = async () => {
 export const unlockWallet = async () => {
   const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
   const password = await storageService.get(CONSTANTS.PASS_KEY)
-
   if (!backup) {
     throw new Error('Create wallet before!')
   }
@@ -123,7 +129,7 @@ export const downloadBackupWallet = async () => {
     'MNEMONIC: ',
     wallet.mnemonic,
     'PASS_PARAPHRASE: ',
-    wallet.passPhrase,
+    // wallet.passPhrase,
     'ENTROPY: ',
     // wallet.entropy.toString(),
     'SEED: ',
@@ -162,8 +168,8 @@ export type SendInNetWorkPayload = {
   fromAccountName: string
   targetAccountAddress: string
   token: string
-  nanoOfAmount: i.BN
-  estimatedFee: i.BN
+  nanoOfAmount: any
+  estimatedFee: any
   message?: string
 }
 
@@ -185,7 +191,7 @@ export const sendInNetwork = async (payload: SendInNetWorkPayload) => {
       message: payload.message,
     })
 
-    return account.nativeToken.transfer([payment], i.CONSTANT.DEFAULT_NATIVE_FEE)
+    return account.nativeToken.transfer([payment], '0')
   }
 
   throw new Error('Not supported yet!')
@@ -228,13 +234,11 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
   if (!account) {
     return 0
   }
-  console.log(tokenId)
   if (tokenId === i.CONSTANT.WALLET_CONSTANT.PRVIDSTR) {
     return ((await account.nativeToken.getAvaiableBalance()).toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2)
   }
 
   const tokenInstance = (await account.getFollowingPrivacyToken(tokenId)) as i.PrivacyTokenInstance
-  console.log(account)
   if (!tokenInstance) {
     return 0
   }
@@ -255,7 +259,7 @@ export const estimateFee = async (
   accountName: string,
   walletAddress: string,
   network = 'in-network',
-  setIsLoading = (value) => { },
+  setIsLoading = (value) => {},
 ) => {
   if (paymentAmount === 0) {
     return 0
@@ -338,5 +342,45 @@ export const estimateFee = async (
       console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalOutNetworkFee)
       setIsLoading(false)
       return totalOutNetworkFee
+  }
+}
+export const NETWORK_FEE_PRV = {
+  fee: 4 * MAX_DEX_FEE,
+  feeToken: {
+    id: '0000000000000000000000000000000000000000000000000000000000000004',
+    name: 'Privacy',
+    displayName: 'Privacy',
+    symbol: 'PRV',
+    pDecimals: 9,
+    hasIcon: true,
+    originalSymbol: 'PRV',
+    isVerified: true,
+  },
+}
+export const initFee = {
+  fee: NETWORK_FEE_PRV.fee,
+  feeToken: NETWORK_FEE_PRV.feeToken,
+
+  originalFee: NETWORK_FEE_PRV.fee,
+  originalFeeToken: NETWORK_FEE_PRV.feeToken,
+
+  canChooseFee: false,
+}
+
+export const caculatorFee = (payload) => {
+  const { inputToken, outputToken } = payload
+  // const prvFee = MAX_DEX_FEE
+  // const prvFeeToken = {
+  //   id: '0000000000000000000000000000000000000000000000000000000000000004',
+  //   name: 'Privacy',
+  //   displayName: 'Privacy',
+  //   symbol: 'PRV',
+  //   pDecimals: 9,
+  //   hasIcon: true,
+  //   originalSymbol: 'PRV',
+  //   isVerified: true,
+  // }
+  if (inputToken?.id === PRV_ID || outputToken?.id !== PRV_ID) {
+    return cloneDeep(initFee)
   }
 }

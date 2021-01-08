@@ -1,7 +1,6 @@
 import React from 'react'
-import classNames from 'classnames'
 import { FaButton } from 'popup/components/button'
-import { Label, VerticalDivider } from '@fluentui/react'
+import { Label } from '@fluentui/react'
 import styled from './header.module.css'
 
 type Props = {

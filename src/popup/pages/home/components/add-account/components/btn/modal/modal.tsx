@@ -20,7 +20,7 @@ const dragOptions: IDragOptions = {
 const cancelIcon: IIconProps = { iconName: 'Cancel' }
 
 export const ModalAddAccount: React.FunctionComponent<Props> = ({ showModal, hideModal, isModalOpen }) => {
-  const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true)
+  const [isDraggable] = useBoolean(true)
 
   // Use useId() to ensure that the IDs are unique on the page.
   // (It's also okay to use plain strings and manually ensure uniqueness.)
@@ -106,7 +106,6 @@ const contentStyles = mergeStyleSets({
     },
   },
 })
-const toggleStyles = { root: { marginBottom: '20px' } }
 const iconButtonStyles = {
   root: {
     color: theme.palette.neutralPrimary,

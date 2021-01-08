@@ -1,7 +1,6 @@
 /* eslint-disable import/no-cycle */
 import classNames from 'classnames'
 import { FaButton, SecondaryButton } from 'popup/components/button'
-import { useRecordTokens } from 'queries/create-account.mutation'
 import { useTheme } from 'popup/services'
 import { fade } from 'popup/services/utils'
 import React from 'react'
@@ -16,10 +15,9 @@ interface Props {
   showPanelAcc: () => void
 }
 export const WalletMenu: React.FC<Props> = ({ showPanel, showPanelBackup, showPanelAcc }) => {
-  const [recordTokens] = useRecordTokens()
   const logOutWallet = () => {
     localStorage.removeItem('persist:root')
-    recordTokens()
+    localStorage.setItem('isLogout', 'true')
     store.dispatch(settingSlices.actions.removeWallet())
   }
   const listItem = [

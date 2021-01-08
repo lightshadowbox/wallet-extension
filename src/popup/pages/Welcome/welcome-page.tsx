@@ -55,7 +55,7 @@ export const WelcomePage = () => {
 
   return (
     <WelcomeContainer
-      logo={<Logo />}
+      logo={<Logo welcomeBack={false} />}
       recCreate={<RecCreate showPanel={onNextCreate} />}
       recImport={<RecImport showPanel={onNextImport} />}
       importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={onDismissImport} />}

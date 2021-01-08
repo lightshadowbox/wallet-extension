@@ -21,13 +21,13 @@ const dragOptions: IDragOptions = {
 const cancelIcon: IIconProps = { iconName: 'Cancel' }
 
 export const ModalRenameAccount: React.FunctionComponent<Props> = ({ showModal, hideModal, isModalOpen }) => {
-  const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true)
+  const [isDraggable] = useBoolean(true)
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   // Use useId() to ensure that the IDs are unique on the page.
   // (It's also okay to use plain strings and manually ensure uniqueness.)
   const titleId = useId('title')
   const [name, setName] = React.useState(selectedAccount)
-  const [loading, setLoading] = React.useState(false)
+  const [loading] = React.useState(false)
 
   const [renameAccount] = useRenameAccount(name)
   const [err, setErr] = React.useState(false)
@@ -104,7 +104,6 @@ const contentStyles = mergeStyleSets({
     },
   },
 })
-const toggleStyles = { root: { marginBottom: '20px' } }
 const iconButtonStyles = {
   root: {
     color: theme.palette.neutralPrimary,

@@ -20,7 +20,6 @@ import {
 } from '@fluentui/react'
 import logo from 'popup/assets/lsb.png'
 import { useId } from '@uifabric/react-hooks'
-import _ from 'lodash'
 
 import { useSettingStore } from 'popup/stores/features/settings'
 import classNames from 'classnames'
@@ -90,6 +89,7 @@ const useComponentVisible = (initialIsVisible) => {
       document.removeEventListener('keydown', handleHideDropdown, true)
       document.removeEventListener('click', handleClickOutside, true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   })
 
   return { ref, isComponentVisible, setIsComponentVisible }
@@ -122,6 +122,7 @@ const DropdownCoins: React.FC<{
           break
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMode])
 
   const onLoadImageFail = React.useCallback((e) => {
@@ -147,8 +148,8 @@ const DropdownCoins: React.FC<{
                       ? tokenAccounts.find((item) => item.TokenId === active).Icon
                       : tokenAccounts[0].Icon
                     : active
-                      ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
-                      : tokenAccounts[0].Icon
+                    ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
+                    : tokenAccounts[0].Icon
                 }
                 imageInitials={
                   !tokenId
@@ -166,33 +167,33 @@ const DropdownCoins: React.FC<{
                 }
               />
             ) : (
-                <Persona
-                  size={PersonaSize.size48}
-                  imageUrl={
-                    !tokenId
-                      ? tokenAccounts.length !== 1
-                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
-                        : logo
-                      : active
-                        ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
-                        : tokenAccounts[0].Icon
-                  }
-                  imageInitials={
-                    !tokenId
-                      ? tokenAccounts.length !== 1
-                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
-                        : 'No token'
-                      : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
-                  }
-                  text={
-                    !tokenId
-                      ? tokenAccounts.length !== 1
-                        ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
-                        : 'No token'
-                      : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
-                  }
-                />
-              )}
+              <Persona
+                size={PersonaSize.size48}
+                imageUrl={
+                  !tokenId
+                    ? tokenAccounts.length !== 1
+                      ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Icon
+                      : logo
+                    : active
+                    ? tokenAccounts.find((item) => item.TokenId === tokenId).Icon
+                    : tokenAccounts[0].Icon
+                }
+                imageInitials={
+                  !tokenId
+                    ? tokenAccounts.length !== 1
+                      ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                      : 'No token'
+                    : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                }
+                text={
+                  !tokenId
+                    ? tokenAccounts.length !== 1
+                      ? tokenAccounts.find((item) => item.TokenId === active && item.Verified)?.Name || tokenAccounts.find((item) => item.Verified)?.Name
+                      : 'No token'
+                    : tokenAccounts?.find((item) => item.TokenId === tokenId).Name
+                }
+              />
+            )}
             {!tokenId ? <Icon className="text-gray-7" iconName="ChevronDown" /> : null}
           </button>
         </div>
@@ -213,17 +214,17 @@ const DropdownCoins: React.FC<{
                   </li>
                 ) : null
               ) : (
-                  <li key={item.TokenId} className="border-b border-gray-9 bg-white">
-                    <button
-                      className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
-                      type="button"
-                      onMouseDown={() => onChangeCoin(item.TokenId)}
-                    >
-                      <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
-                      <span className="self-center ml-2">{item.Name}</span>
-                    </button>
-                  </li>
-                ),
+                <li key={item.TokenId} className="border-b border-gray-9 bg-white">
+                  <button
+                    className="rounded-t focus:outline-none w-full flex bg-white hover:bg-gray-9 py-2 px-4 block whitespace-no-wrap"
+                    type="button"
+                    onMouseDown={() => onChangeCoin(item.TokenId)}
+                  >
+                    <img onError={onLoadImageFail} className="send-icon" src={item.Icon} alt="icon" />
+                    <span className="self-center ml-2">{item.Name}</span>
+                  </button>
+                </li>
+              ),
             )}
           </ul>
         ) : null}
@@ -258,11 +259,11 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       paymentInfoList.push({ ...paymentInfo, amount: `${(Number(paymentInfo.amount) || 0) * Math.pow(10, tokenDetail[useToken].PDecimals)}` })
     }
     setError(tempError)
-    console.log(tempError)
+    const estimatedFeeDecimal = useToken === PRV_TOKEN_ID ? estimatedFee * 1e-9 : estimatedFee * Math.pow(10, -tokenDetail[useToken].PDecimals)
     if (activeMode === 'in-network') {
       if (!paymentInfo.amount) {
         tempError = 'Required'
-      } else if (paymentInfo.amount > balance) {
+      } else if (parseFloat(paymentInfo.amount) + estimatedFeeDecimal > parseFloat(balance.toString().replace(',', '.'))) {
         tempError = 'Insufficient ballance'
       }
       if (tempError) {
@@ -309,7 +310,7 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   })
   const tokenDetail = getTokenFromTokenIds([tokenId])
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  const { data: tokenAccounts, status } = useGetTokenForAccount(selectedAccount)
+  const { data: tokenAccounts } = useGetTokenForAccount(selectedAccount)
   const mode = primary ? 'storybook-send--primary' : 'storybook-send--secondary'
   const [activeMode, setActiveMode] = React.useState('in-network')
   const [active, setActive] = useState(tokenId || PRV_TOKEN_ID)
@@ -410,11 +411,14 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
   console.log(activeMode)
   React.useEffect(() => {
+    const useToken = !tokenId ? active : tokenId
+    const tokenDetail = getTokenFromTokenIds([useToken])
+    const estimatedFeeDecimal = useToken === PRV_TOKEN_ID ? estimatedFee * 1e-9 : estimatedFee * Math.pow(10, -tokenDetail[useToken].PDecimals)
     if (activeMode === 'in-network') {
       if (paymentInfo.amount !== null) {
         if (paymentInfo.amount === '') {
           setError('Required')
-        } else if (paymentInfo.amount > balance) {
+        } else if (parseFloat(paymentInfo.amount) + estimatedFeeDecimal > parseFloat(balance.toString().replace(',', '.'))) {
           setError('Insufficient ballance')
         } else {
           setError('')
@@ -424,13 +428,14 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
       if (ethInfo.burningAmount !== null) {
         if (ethInfo.burningAmount === '') {
           setError('Required')
-        } else if (ethInfo.burningAmount > balance) {
+        } else if (parseFloat(ethInfo.burningAmount) + estimatedFeeDecimal > parseFloat(balance.toString().replace(',', '.'))) {
           setError('Insufficient ballance')
         } else {
           setError('')
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paymentInfo.amount, ethInfo.burningAmount])
   React.useEffect(() => {
     setTimeout(() => {
@@ -559,32 +564,32 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
                     <span className="text-white">Send</span>
                   </button>
                 ) : (
-                    <button
-                      onClick={() => {
-                        if (!error) {
-                          // const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000000, leading: true, trailing: false })
-                          // debounced()
-                          // clickSendHandle()
-                          clickSendHandle()
-                        }
+                  <button
+                    onClick={() => {
+                      if (!error) {
+                        // const debounced = _.debounce(clickSendHandle, 1000, { maxWait: 10000000, leading: true, trailing: false })
+                        // debounced()
+                        // clickSendHandle()
+                        clickSendHandle()
+                      }
 
-                        // return sendEth({
-                        //   tokenId: !tokenId
-                        //     ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId ||
-                        //     tokenAccounts?.find((item) => item.Verified)?.TokenId
-                        //     : tokenId,
-                        //   address: ethInfo.outchainAddress,
-                        //   accountName: selectedAccount,
-                        //   burningAmount: ethInfo.burningAmount,
-                        // })
-                      }}
-                      type="button"
-                      className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center"
-                    >
-                      <Icon className="mr-2 text-white" iconName="Send" />
-                      <span className="text-white">Send</span>
-                    </button>
-                  )}
+                      // return sendEth({
+                      //   tokenId: !tokenId
+                      //     ? tokenAccounts?.find((item) => item.TokenId === active && item.Verified)?.TokenId ||
+                      //     tokenAccounts?.find((item) => item.Verified)?.TokenId
+                      //     : tokenId,
+                      //   address: ethInfo.outchainAddress,
+                      //   accountName: selectedAccount,
+                      //   burningAmount: ethInfo.burningAmount,
+                      // })
+                    }}
+                    type="button"
+                    className="text-white bg-blue-5 mt-5 py-4 px-4 rounded flex items-center w-full justify-center"
+                  >
+                    <Icon className="mr-2 text-white" iconName="Send" />
+                    <span className="text-white">Send</span>
+                  </button>
+                )}
               </form>
             </div>
             <div className="tab-2 hidden">Content 2</div>

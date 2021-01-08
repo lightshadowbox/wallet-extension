@@ -7,7 +7,7 @@ export default {
   component: Password,
 } as Meta
 
-const Template: Story = () => <Password setPasswordWallet={(a) => console.log(a)} />
+const Template: Story = () => <Password isHasLabel setPasswordWallet={(a) => console.log(a)} />
 
 export const Primary = Template.bind({})
 Primary.args = {

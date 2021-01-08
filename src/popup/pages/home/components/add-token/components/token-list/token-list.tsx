@@ -81,8 +81,8 @@ const classNamesList = mergeStyleSets({
 })
 
 export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
-  const [addToken, addTokenStatus] = useAddToken()
-  const [removeToken, removeTokenStatus] = useRemoveToken()
+  const [addToken] = useAddToken()
+  const [removeToken] = useRemoveToken()
   const {
     data: { followingTokens },
   } = useGetAccount()
@@ -114,15 +114,15 @@ export const TokenCell: React.FC<{ item: TokenItemInterface }> = ({ item }) => {
             Remove
           </button>
         ) : (
-            <button
-              onClick={() => {
-                addToken(item.TokenID)
-              }}
-              className={styles.btnAdd}
-            >
-              Add
-            </button>
-          )}
+          <button
+            onClick={() => {
+              addToken(item.TokenID)
+            }}
+            className={styles.btnAdd}
+          >
+            Add
+          </button>
+        )}
       </div>
     </div>
   )
@@ -134,8 +134,8 @@ interface Item {
 export const ListGhostingExample: React.FunctionComponent<Props> = ({ valueInput, showCustom }) => {
   const { data: allTokens } = useFetchToken()
   const { data: account } = useGetAccount()
-  const { data: searchIndex } = useSearchableTokenList('Symbol', 'PSymbol', 'Name')
-  const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('Symbol', 'PSymbol', 'Name')
+  const { data: searchIndex } = useSearchableTokenList('Symbol', 'PSymbol', 'Name', 'TokenID')
+  const { data: searchOnlyVerifiedIndex } = useSearchableOnlyVerifiedToken('Symbol', 'PSymbol', 'Name', 'TokenID')
   const sortArrayByFollowing = (tokenList: any[]) => {
     const listFollowing = []
     const listWithoutFollowing = []

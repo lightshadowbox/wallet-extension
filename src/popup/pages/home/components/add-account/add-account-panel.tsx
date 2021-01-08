@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 import { LayerHost, ILayerProps, Panel, IFocusTrapZoneProps, mergeStyles, Customizer } from '@fluentui/react'
-import { useId, useBoolean } from '@uifabric/react-hooks'
+import { useId } from '@uifabric/react-hooks'
 import { Header } from 'popup/components/header/header'
 import { AccountList, BtnAdd } from './components'
 import styles from './add-account-panel.module.css'
@@ -36,7 +36,7 @@ export const AddAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismi
             <AddAccountContainer
               header={<Header title="Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
               button={<BtnAdd onImportClick={showPanel} />}
-              account={<AccountList />}
+              account={<AccountList dismissPanel={dismissPanel} />}
             />
           </Panel>
         </Customizer>

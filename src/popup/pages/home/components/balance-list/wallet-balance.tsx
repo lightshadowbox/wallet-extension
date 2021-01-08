@@ -45,7 +45,6 @@ export const BalanceListCell: React.FC<{
 export const WalletBalance: React.FC<Props> = ({ showPanel, showPanelTokenDetail }) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const { data: tokenListData, status } = useGetTokenForAccount(selectedAccount)
-  console.log(tokenListData, status)
 
   const cellRender = React.useCallback(
     (_, index: number, showPanelTokenDetail: (value) => void): JSX.Element => {
@@ -69,8 +68,8 @@ export const WalletBalance: React.FC<Props> = ({ showPanel, showPanelTokenDetail
         {status === 'success' ? (
           <List items={tokenListData || []} onRenderCell={(_, index: number) => cellRender(_, index, showPanelTokenDetail)} />
         ) : (
-            <SpinnerWallet />
-          )}
+          <SpinnerWallet />
+        )}
       </div>
     </div>
   )

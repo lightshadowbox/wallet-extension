@@ -1,0 +1,12 @@
+.login {
+  max-width: 360px;
+  max-height: 600px;
+  padding: 16px;
+  overflow: hidden;
+	position: relative;
+	display: none;
+}
+.error {
+  color:red;
+  font-size:12px;
+}
