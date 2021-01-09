@@ -4,6 +4,7 @@ import { historyServices, CONSTANT } from 'incognito-sdk/build/web/browser'
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
+import { getUsdEvolution } from 'services/usd-revolution'
 
 import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 
@@ -125,6 +126,9 @@ export const getTokenList = async () => {
   return keyBy(concat([PRV], tokensMapped), 'TokenID')
 }
 
+export const useGetUSDEvolution = (tokenID: string, agg: any) => {
+  return useQuery(['useGetUSDEvolution.name', tokenID, agg], () => getUsdEvolution(tokenID, agg))
+}
 export const useGetHistory = (tokenId: string) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useQuery(['useGetHistory.name', selectedAccount, tokenId], () => getHistory(selectedAccount, tokenId), {
@@ -138,6 +142,7 @@ const getHistory = async (AccountName: string, tokenId: string) => {
     account.key.keySet.publicKeySerialized, // publicKeySerialized of the account
     tokenId === PRV_TOKEN_ID ? null : tokenId,
   )
+  console.log(histories)
   return histories
 }
 
@@ -229,3 +234,4 @@ export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVI
     },
   )
 }
+

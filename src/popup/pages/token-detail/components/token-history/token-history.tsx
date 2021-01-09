@@ -7,13 +7,13 @@ import classNames from 'classnames'
 import { useGetHistory } from 'queries/token.queries'
 import { TxHistoryModel } from 'incognito-sdk/build/web/browser'
 import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
+
 import styles from './token-history.module.css'
 import './token-history.css'
 
 export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = ({ tokenId, accountName }) => {
   const [activeBtn, setActiveBtn] = React.useState('btn-send')
   const { data, status } = useGetHistory(tokenId)
-  console.log(data)
   const onClickBtn = (value) => {
     const preNode = document.querySelector(`.token-history .${activeBtn}`) as HTMLElement
     preNode.classList.remove('isActive')
@@ -46,13 +46,13 @@ export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = 
             })}
           </ul>
         ) : (
-            <ul>
-              <li className={classNames(`flex flex-row justify-between p-4 ${styles.container}`)}>Coming soon</li>
-            </ul>
-          )
+          <ul>
+            <li className={classNames(`flex flex-row justify-between p-4 ${styles.container}`)}>Coming soon</li>
+          </ul>
+        )
       ) : (
-          <SpinnerWallet />
-        )}
+        <SpinnerWallet />
+      )}
     </div>
   )
 }

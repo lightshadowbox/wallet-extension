@@ -11,8 +11,8 @@ import { getTokenFromTokenIds } from 'queries/token.queries'
 import { ReceivePanel } from 'popup/pages/receive/receive'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { Header } from 'popup/components/header/header'
+import { usePriceEstimate } from 'services/trading/use-price-estimate'
 import { DetailCover, TokenHistory } from './components'
-
 import styles from './token-detail.module.css'
 import './token-detail.css'
 
@@ -49,6 +49,11 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
   const tokenInfos = getTokenFromTokenIds([tokenId])
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
+  const { estimateResult, setPaidNum } = usePriceEstimate()
+  console.log(estimateResult)
+  React.useEffect(() => {
+    setPaidNum(0.15)
+  }, [tokenId])
   /**
    * Event Handlers
    */
