@@ -9,9 +9,16 @@
 }
 .token-detail .ms-Panel-content {
   padding: 0 !important;
+  overflow: hidden;
+}
+.token-detail .ms-Panel-contentInner {
+  overflow: hidden;
 }
 .token-detail {
+  width:360px;
+  height:600px;
   animation: moveInRight 0.3s;
+  overflow: hidden;
 }
 @keyframes moveOutRightReceive {
   from {
