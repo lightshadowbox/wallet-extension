@@ -12,6 +12,7 @@ import { ReceivePanel } from 'popup/pages/receive/receive'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { Header } from 'popup/components/header/header'
 import { getKyberTokens, getKyberQuote } from 'services/trading/kyber'
+import { caculateOutputWithAPI } from 'services/trading/'
 import { DetailCover, TokenHistory } from './components'
 import styles from './token-detail.module.css'
 import './token-detail.css'
@@ -51,10 +52,12 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
   const scopedSettings = useLayerSettings(true, layerHostId)
   const test = async () => {
     console.log('test: ' + JSON.stringify(await getKyberTokens()))
-    await getKyberQuote({
-      sellToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', 
-      sellAmount: 1, 
-      buyToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+    caculateOutputWithAPI({
+      inputToken: {
+        address:'0xdAC17F958D2ee523a2206206994597C13D831ec7'
+      }, 
+      inputValue: 1, 
+      outputToken: {address:'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'}
     })
     
   }
