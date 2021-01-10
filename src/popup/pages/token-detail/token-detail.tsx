@@ -43,20 +43,18 @@ const TokenDetailContainer: React.FC<{
   )
 }
 export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelSend }) => {
-  // States
   const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const tokenInfos = getTokenFromTokenIds([tokenId])
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
   const test = async () => {
-    console.log('test: ' + JSON.stringify(await getKyberTokens()))
+    console.log(`test: ${JSON.stringify(await getKyberTokens())}`)
     await getKyberQuote({
-      sellToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', 
-      sellAmount: 1, 
-      buyToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+      sellToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+      sellAmount: '2932',
+      buyToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     })
-    
   }
   React.useEffect(() => {
     test()
