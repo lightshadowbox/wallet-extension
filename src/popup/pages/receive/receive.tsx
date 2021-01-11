@@ -151,15 +151,15 @@ export const ReceiveContainer: React.FC<ReceiveProps> = ({
                   {!depositAddress || active === 'in-network' ? (
                     <QRCodeWallet keyAddress={account.paymentAddress} />
                   ) : (
-                    <QRCodeWallet keyAddress={depositAddress} />
+                    <QRCodeWallet keyAddress={depositAddress?.address} />
                   )}
                 </div>
                 <TooltipHost content={contentTooltip} id={tooltipId} calloutProps={calloutProps} styles={hostStyles}>
                   <div
-                    onClick={() => onClickCopy(!depositAddress || active === 'in-network' ? account.paymentAddress : depositAddress)}
+                    onClick={() => onClickCopy(!depositAddress || active === 'in-network' ? account.paymentAddress : depositAddress?.address)}
                     className="flex flex-row items-center justify-center code text-xl break-all cursor-pointer"
                   >
-                    <p className={styles.keyText}>{!depositAddress || active === 'in-network' ? account.paymentAddress : depositAddress}</p>
+                    <p className={styles.keyText}>{!depositAddress || active === 'in-network' ? account.paymentAddress : depositAddress?.address}</p>
                     <Icon className="text-blue-5 inline" iconName="Copy" />
                   </div>
                 </TooltipHost>
