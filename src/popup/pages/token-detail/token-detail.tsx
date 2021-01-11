@@ -12,6 +12,7 @@ import { ReceivePanel } from 'popup/pages/receive/receive'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { Header } from 'popup/components/header/header'
 import { getKyberTokens, getKyberQuote } from 'services/trading/kyber'
+import { withCalculateOutput } from 'services/trading'
 import { DetailCover, TokenHistory } from './components'
 import styles from './token-detail.module.css'
 import './token-detail.css'
@@ -42,7 +43,7 @@ const TokenDetailContainer: React.FC<{
     </div>
   )
 }
-export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelSend }) => {
+const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelSend }) => {
   const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const tokenInfos = getTokenFromTokenIds([tokenId])
@@ -50,11 +51,6 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
   const scopedSettings = useLayerSettings(true, layerHostId)
   const test = async () => {
     console.log(`test: ${JSON.stringify(await getKyberTokens())}`)
-    await getKyberQuote({
-      sellToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-      sellAmount: '2932',
-      buyToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    })
   }
   React.useEffect(() => {
     test()
@@ -113,6 +109,7 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
     )
   )
 }
+export default withCalculateOutput(TokenDetailPanel)
 const layerHostClass = mergeStyles({
   position: 'relative',
   height: 600,

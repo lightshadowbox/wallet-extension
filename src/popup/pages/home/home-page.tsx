@@ -2,7 +2,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
-import { TokenDetailPanel } from 'popup/pages/token-detail/token-detail'
+import TokenDetailPanel from 'popup/pages/token-detail/token-detail'
 import { ImportAccountPanel } from 'popup/pages/connect/Connect-panel'
 import { useAddToken } from 'queries/create-account.mutation'
 import { useSettingStore, settingSlices } from 'popup/stores/features/settings'
@@ -138,11 +138,22 @@ export const HomePage = () => {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  const inputToken = {
+    address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    PDecimals: 6,
+  }
+  const outputToken = {
+    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    PDecimals: 6,
+  }
   return (
     <HomeContainer
       importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={dismissPanelBottomImport} />}
       tokenDetail={
         <TokenDetailPanel
+          inputToken={inputToken}
+          inputValue={998480}
+          outputToken={outputToken}
           showPanelReceive={showPanelReceive}
           showPanelSend={onShowPanelSend}
           tokenId={preTokenId}
