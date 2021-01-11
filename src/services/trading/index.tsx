@@ -11,7 +11,6 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
   const [gettingQuote, setGettingQuote] = React.useState(false)
   const [quote, setQuote] = React.useState(null)
   const { inputToken, inputValue, outputToken } = props
-  let currentDebounceId
   const getQuote = async (inputToken, outputToken, value, id) => {
     try {
       setGettingQuote(true)
@@ -46,7 +45,6 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
       if (inputToken.address && outputToken.address) {
         const debounceId = v4()
         setGettingQuote(true)
-        currentDebounceId = debounceId
         debouncedGetQuote(inputToken, outputToken, inputValue, debounceId)
       }
     }
@@ -54,7 +52,6 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
     if (inputToken && outputToken && !inputValue) {
       debouncedGetQuote.cancel()
       setGettingQuote(false)
-      currentDebounceId = v4()
     }
 
     if (!inputValue) {
@@ -66,6 +63,7 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
     console.log('quote: ')
     console.log(quote)
     console.log((outputValue * (100 - (0.22 * 100) / 100)) / 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputToken, inputValue, outputToken])
   return (
     <WrappedComp

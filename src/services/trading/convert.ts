@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import BigNumber from 'bignumber.js'
 
 const checkAmount = (amount) => {
   if (!Number.isFinite(amount)) throw new Error('Can not format invalid amount')
