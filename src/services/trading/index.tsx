@@ -60,9 +60,9 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
       setMinimumAmount(0)
       setQuote(null)
     }
-    console.log('quote: ')
-    console.log(quote)
-    console.log((outputValue * (100 - (0.22 * 100) / 100)) / 100)
+    // console.log('quote: ')
+    // console.log(quote)
+    // console.log((outputValue * (100 - (0.22 * 100) / 100)) / 100)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputToken, inputValue, outputToken])
   return (
