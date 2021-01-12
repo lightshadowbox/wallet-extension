@@ -11,7 +11,7 @@ import { getTokenFromTokenIds } from 'queries/token.queries'
 import { ReceivePanel } from 'popup/pages/receive/receive'
 import { useSettingStore } from 'popup/stores/features/settings'
 import { Header } from 'popup/components/header/header'
-import { getKyberTokens } from 'services/trading/kyber'
+// import { getKyberTokens } from 'services/trading/kyber'
 import { withCalculateOutput } from 'services/trading'
 import { DetailCover, TokenHistory } from './components'
 import styles from './token-detail.module.css'
@@ -49,12 +49,6 @@ const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPane
   const tokenInfos = getTokenFromTokenIds([tokenId])
   const layerHostId = useId('layerHost')
   const scopedSettings = useLayerSettings(true, layerHostId)
-  const test = async () => {
-    console.log(`test: ${JSON.stringify(await getKyberTokens())}`)
-  }
-  React.useEffect(() => {
-    test()
-  }, [tokenId])
   /**
    * Event Handlers
    */

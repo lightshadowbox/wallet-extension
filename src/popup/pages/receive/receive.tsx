@@ -189,9 +189,9 @@ export const ReceivePanel: React.FC<Props> = ({ isPanelOpen, dismissPanel, token
         <Customizer scopedSettings={scopedSettings}>
           <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
             <ReceiveContainer
-              defaultActive={defaultActive}
+              defaultActive="in-network"
               showPanelShieldToken={showPanelShieldToken}
-              tokenId={tokenId}
+              tokenId={null}
               label="Receive"
               dismissPanel={dismissPanel}
             />
