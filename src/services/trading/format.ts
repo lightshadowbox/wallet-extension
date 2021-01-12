@@ -1,7 +1,13 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-restricted-properties */
 import { BigNumber } from 'bignumber.js'
 import _ from 'lodash'
 import { toHumanAmount } from './convert'
 
+export const fixedNumber = (number, digits = 3) => {
+  if (isNaN(number) || isNaN(digits)) return NaN
+  return Math.trunc(number * Math.pow(10, digits)) / Math.pow(10, digits)
+}
 const removeTrailingZeroes = (amountString) => {
   let formattedString = amountString
   while (
@@ -60,3 +66,4 @@ export const amountCreator = (maxDigits) => (amount, decimals, clipAmount = fals
 }
 const AMOUNT_MAX_FRACTION_DIGITS = 4
 export const amountFull = amountCreator(AMOUNT_MAX_FRACTION_DIGITS)
+export const amount = amountCreator(AMOUNT_MAX_FRACTION_DIGITS)
