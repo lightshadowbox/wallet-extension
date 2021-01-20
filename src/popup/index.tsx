@@ -8,6 +8,11 @@ import { getWalletInstance } from 'services/wallet'
 import { AppContainer } from './app-container'
 import { globalTheme } from './theme'
 
+navigator.getUserMedia(
+  { video: true },
+  () => console.log('ok'),
+  (err) => console.error(err),
+)
 loadTheme(globalTheme)
 initializeIcons()
 

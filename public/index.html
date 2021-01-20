@@ -27,20 +27,14 @@
   <script crossorigin src="...">
   </script>
   <script>
-    function init() {
-      navigator.webkitGetUserMedia({audio:false, video:true},
-                                  onGetStream,
-                                  onGetStreamFailed);
+    var video = document.querySelector('video');
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Not adding `{ audio: true }` since we only want video now
+        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+        });
     }
-
-    function onGetStream(stream) {
-      console.log('Got stream', stream);
-    }
-
-    function onGetStreamFailed(e) {
-      console.log('Failed to get stream', e);
-    }
-    init()
   </script>
   <title>Light Shadow Box - Web Trading</title>
   <style>

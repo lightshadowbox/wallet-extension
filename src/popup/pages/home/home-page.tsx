@@ -111,7 +111,6 @@ export const HomePage = () => {
     }, 200)
   }
   const logOutWallet = () => {
-    localStorage.removeItem('persist:root')
     localStorage.setItem('isLogout', 'true')
     store.dispatch(settingSlices.actions.removeWallet())
   }
@@ -124,10 +123,11 @@ export const HomePage = () => {
       if (dateExpiration <= date.getTime()) {
         if (!isLogout && selectedAccount) {
           logOutWallet()
+          localStorage.setItem('de', JSON.stringify(date.getTime() + 30000))
         }
       }
     } else {
-      localStorage.setItem('de', JSON.stringify(date.getTime() + 172800000))
+      localStorage.setItem('de', JSON.stringify(date.getTime() + 30000))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

@@ -31,3 +31,7 @@ export const toHumanAmount = (originAmount, decimals) => {
     return originAmount
   }
 }
+export const toRealTokenValue = (tokens, tokenId, value) => {
+  const token = tokens.find((item) => item.id === tokenId)
+  return value / Math.pow(10, token?.pDecimals || 0)
+}

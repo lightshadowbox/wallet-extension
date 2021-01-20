@@ -1,13 +1,31 @@
 import axios from 'axios'
-
+import _, { sortBy } from 'lodash'
 import { API_BASE_URL } from 'constants/api'
 import BigNumber from 'bignumber.js'
-import { sortBy } from 'lodash'
+
+const PROTOCOLS = {
+  OX: '0x',
+  KYBER: 'Kyber',
+  UNISWAP: 'Uniswap',
+}
 
 export async function getKyberTokens() {
   const url = `${API_BASE_URL}/uniswap/tokens`
   const data = await axios.get(url)
-  return data
+  console.log(
+    data.data.Result.map((item) => {
+      return {
+        ...item,
+        protocol: PROTOCOLS.KYBER,
+      }
+    }),
+  )
+  return data.data.Result.map((item) => {
+    return {
+      ...item,
+      protocol: PROTOCOLS.KYBER,
+    }
+  })
 }
 const CRYPTO_SYMBOL = {
   ETH: 'ETH',
@@ -70,4 +88,35 @@ export async function getKyberQuote({ sellToken, sellAmount, buyToken }) {
   console.debug('RESPONSE GETTING QUOTE ERC20 BEST RATE: ', bestRate)
   console.debug('RESPONSE GETTING QUOTE ERC20 DATA: ', data)
   return data
+}
+export async function getAllTradingTokens() {
+  const allArrays = await Promise.all([getKyberTokens()])
+  let tokens = _.flatten(allArrays)
+
+  tokens = _(tokens)
+    .map((item) =>
+      _.mergeWith(
+        item,
+        tokens.find((anotherToken) => anotherToken !== item && anotherToken.id === item.id),
+      ),
+    )
+    .uniqBy((item) => item.id)
+    .map((item) => ({
+      ...item,
+      protocol: _.castArray(item.protocol),
+    }))
+    .orderBy((item) => _.toLower(item.symbol))
+    .value()
+
+  return [
+    {
+      id: 'ffd8d42dc40a8d166ea4848baf8b5f6e912ad79875f4373070b59392b1756c8f',
+      address: '0x0000000000000000000000000000000000000000',
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18,
+      pDecimals: 9,
+      protocol: [PROTOCOLS.OX, PROTOCOLS.KYBER],
+    },
+  ].concat(tokens)
 }
