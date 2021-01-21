@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { useQuery } from 'react-query'
 import { getAllTradingTokens } from '../kyber'
 import { toRealTokenValue } from '../convert'
 
@@ -87,6 +88,15 @@ export const getPDEState = () => {
     .then((result) => result.Result)
     .catch((err) => console.log(err))
 }
+export const USDT = {
+  id: '716fd1009e2a1669caacc36891e707bfdf02590f96ebd897548e8963c95ebac0',
+  name: 'Tether USD',
+  displayName: 'Tether USD',
+  PDecimals: 6,
+  hasIcon: true,
+  originalSymbol: 'USDT',
+  isVerified: true,
+}
 export const PRV = {
   id: '0000000000000000000000000000000000000000000000000000000000000004',
   name: 'Privacy',
@@ -139,7 +149,6 @@ export const getPairsData = async () => {
     const [pTokens, chainTokens, chainPairs, erc20Tokens] = await Promise.all([getTokenList(), getPrivacyTokens(), getPDEState(), getAllTradingTokens()])
     const tokens = mergeTokens(chainTokens, pTokens)
     const end = Date.now()
-    console.log(chainPairs)
     console.debug('LOAD PAIRS IN: ', end - now)
     const pairs = _(chainPairs.PDEPoolPairs)
       .map((pair) => ({
@@ -176,8 +185,6 @@ export const getPairsData = async () => {
       })
       .orderBy(['priority', 'hasIcon', 'verified'], ['asc', 'desc', 'desc'])
       .value()
-    console.log('pairs', pairs)
-    console.log('pairs Token', pairTokens)
     return {
       pairs,
       pairTokens,
@@ -188,4 +195,7 @@ export const getPairsData = async () => {
   } catch (err) {
     console.log(err)
   }
+}
+export const useGetPairsData = () => {
+  return useQuery('useGetPairsData.name', () => getPairsData())
 }
