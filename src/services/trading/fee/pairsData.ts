@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import { useQuery } from 'react-query'
-import { getAllTradingTokens } from '../kyber'
 import { toRealTokenValue } from '../convert'
 
 export const BIG_COINS = {
@@ -97,6 +96,15 @@ export const USDT = {
   originalSymbol: 'USDT',
   isVerified: true,
 }
+export const BTC = {
+  id: 'b832e5d3b1f01a4f0623f7fe91d6673461e1f5d37d91fe78c5c2e6183ff39696',
+  name: 'Bitcoin',
+  displayName: 'Bitcoin',
+  PDecimals: 9,
+  hasIcon: true,
+  originalSymbol: 'pBTC',
+  isVerified: true,
+}
 export const PRV = {
   id: '0000000000000000000000000000000000000000000000000000000000000004',
   name: 'Privacy',
@@ -146,7 +154,7 @@ export const mergeTokens = (chainTokens, pTokens) => {
 export const getPairsData = async () => {
   try {
     const now = Date.now()
-    const [pTokens, chainTokens, chainPairs, erc20Tokens] = await Promise.all([getTokenList(), getPrivacyTokens(), getPDEState(), getAllTradingTokens()])
+    const [pTokens, chainTokens, chainPairs] = await Promise.all([getTokenList(), getPrivacyTokens(), getPDEState()])
     const tokens = mergeTokens(chainTokens, pTokens)
     const end = Date.now()
     console.debug('LOAD PAIRS IN: ', end - now)
@@ -167,30 +175,10 @@ export const getPairsData = async () => {
         delete shares[key]
       }
     })
-    let pairTokens = tokens.filter((token) => token && pairs.find((pair) => pair.keys.includes(token.id)))
-
-    pairTokens = pairTokens.concat(erc20Tokens.filter((token) => !pairTokens.find((item) => item.id === token.id)))
-    pairTokens = _(pairTokens)
-      .map((token) => {
-        const erc20Token = erc20Tokens.find((item) => item.id === token.id)
-        let priority = PRIORITY_LIST.indexOf(token?.id)
-        priority = priority > -1 ? priority : erc20Token ? PRIORITY_LIST.length : PRIORITY_LIST.length + 1
-
-        return {
-          ...token,
-          address: erc20Token?.address,
-          priority,
-          verified: token.verified,
-        }
-      })
-      .orderBy(['priority', 'hasIcon', 'verified'], ['asc', 'desc', 'desc'])
-      .value()
     return {
       pairs,
-      pairTokens,
       tokens,
       shares,
-      erc20Tokens,
     }
   } catch (err) {
     console.log(err)

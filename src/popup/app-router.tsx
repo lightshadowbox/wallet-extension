@@ -22,6 +22,7 @@ export const AppRouter = () => {
       })
       console.log('fee', fee)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
   if (!selectedAccount && isLogout) {
     return (

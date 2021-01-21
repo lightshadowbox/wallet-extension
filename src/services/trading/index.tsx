@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
-import { v4 } from 'uuid'
+import { useGetPairsData } from 'services/trading/fee/pairsData'
+import { calculateOutputValueCrossPool } from './utils'
 import { getKyberQuote } from './kyber'
 import { amountFull } from './format'
 
@@ -11,6 +12,30 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
   const [gettingQuote, setGettingQuote] = React.useState(false)
   const [quote, setQuote] = React.useState(null)
   const { inputToken, inputValue, outputToken } = props
+  const { data, isSuccess } = useGetPairsData()
+  const [pair, setPairs] = React.useState([])
+  React.useEffect(() => {
+    if (isSuccess) {
+      setPairs(data.pairs)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess])
+  const calculateOutputValue = (pair) => {
+    const outputValue = calculateOutputValueCrossPool(pair, inputToken, inputValue, outputToken)
+    setOutputValue(outputValue)
+
+    const minimumAmount = _.floor(outputValue * 0.99)
+    setMinimumAmount(minimumAmount)
+
+    let outputText = amountFull(minimumAmount, outputToken.pDecimals)
+
+    if (outputValue === 0 || minimumAmount === 0 || _.isNaN(minimumAmount)) {
+      outputText = 0
+    }
+
+    setQuote(null)
+    setOutputText(outputText.toString())
+  }
   const getQuote = async (inputToken, outputToken, value, id) => {
     try {
       setGettingQuote(true)
@@ -41,30 +66,28 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
   }
   const debouncedGetQuote = React.useCallback(_.debounce(getQuote, 1000), [])
   React.useEffect(() => {
-    if (inputToken && outputToken && inputValue) {
-      if (inputToken.address && outputToken.address) {
-        const debounceId = v4()
-        setGettingQuote(true)
-        debouncedGetQuote(inputToken, outputToken, inputValue, debounceId)
+    if (pair.length !== 0) {
+      if (inputToken && outputToken && inputValue) {
+        calculateOutputValue(pair)
       }
-    }
 
-    if (inputToken && outputToken && !inputValue) {
-      debouncedGetQuote.cancel()
-      setGettingQuote(false)
-    }
+      if (inputToken && outputToken && !inputValue) {
+        debouncedGetQuote.cancel()
+        setGettingQuote(false)
+      }
 
-    if (!inputValue) {
-      setOutputValue(0)
-      setOutputText('0')
-      setMinimumAmount(0)
-      setQuote(null)
+      if (!inputValue) {
+        setOutputValue(0)
+        setOutputText('0')
+        setMinimumAmount(0)
+        setQuote(null)
+      }
+      console.log('quote: ')
+      console.log(quote)
+      console.log(minimumAmount)
     }
-    // console.log('quote: ')
-    // console.log(quote)
-    // console.log(minimumAmount)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputToken, inputValue, outputToken])
+  }, [inputToken, inputValue, outputToken, pair])
   return (
     <WrappedComp
       {...{
