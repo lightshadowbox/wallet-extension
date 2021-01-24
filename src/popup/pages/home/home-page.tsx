@@ -3,7 +3,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
 import TokenDetailPanel from 'popup/pages/token-detail/token-detail'
-import { USDT, PRV, BTC } from 'services/trading/fee/pairsData'
+import { USDT, PRV } from 'services/trading/fee/pairsData'
 import { ImportAccountPanel } from 'popup/pages/connect/Connect-panel'
 import { useAddToken } from 'queries/create-account.mutation'
 import { useSettingStore, settingSlices } from 'popup/stores/features/settings'
@@ -124,11 +124,11 @@ export const HomePage = () => {
       if (dateExpiration <= date.getTime()) {
         if (!isLogout && selectedAccount) {
           logOutWallet()
-          localStorage.setItem('de', JSON.stringify(date.getTime() + 30000))
+          localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
         }
       }
     } else {
-      localStorage.setItem('de', JSON.stringify(date.getTime() + 30000))
+      localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -144,7 +144,7 @@ export const HomePage = () => {
       return addToken(tokenId)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [selectedAccount])
   return (
     <HomeContainer
       importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={dismissPanelBottomImport} />}
