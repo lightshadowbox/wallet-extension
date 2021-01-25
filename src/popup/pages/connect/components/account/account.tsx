@@ -22,13 +22,17 @@ export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKe
 
   const onImportClick = () => {
     setError('')
-    if (privateKey.trim() !== '' && privateKey.trim() !== '') {
+    if ((privateKey.trim() !== '' && privateKey.trim() !== '') || (accountName.trim() !== '' && accountName.trim() !== '')) {
       importPrivateKey({ accountName, privateKey })
     } else {
       setError('Please enter private key and account name')
     }
   }
-
+  const onHandleKeydown = (e) => {
+    if (e.key === 'Enter') {
+      onImportClick()
+    }
+  }
   React.useEffect(() => {
     if (status.isError) {
       setError((status.error as Error).message)
@@ -38,7 +42,7 @@ export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKe
   }, [status.isError, status.error])
 
   return (
-    <div className={classNames('w-full h-full flex flex-col justify-between')}>
+    <div onKeyDown={onHandleKeydown} className={classNames('w-full h-full flex flex-col justify-between')}>
       <div className={classNames(`flex flex-col ${styles.input}`)}>
         <label htmlFor="private-key">Private Key</label>
         <input id="private-key" type="text" value={privateKey} onChange={(e) => setPrivateKey(e.target.value)} />

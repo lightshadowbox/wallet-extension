@@ -87,6 +87,9 @@ export const createWalletWithPassword = async (name: string, password: string) =
   runtime = finishDraft(runtimeDraft)
   localStorage.setItem('isCreatedWallet', 'true')
   await backupWallet()
+  if (name && password) {
+    downloadBackupWallet(password)
+  }
 }
 
 export const isHaveBackupWallet = async () => {
@@ -118,23 +121,12 @@ export const backupWallet = async () => {
   storageService.set(CONSTANTS.WALLET_BACKUP_KEY, backupStr)
 }
 
-export const downloadBackupWallet = async () => {
+export const downloadBackupWallet = async (password) => {
   const wallet = await getWalletInstance()
-
-  const text = [
-    'NAME:',
-    wallet.name,
-    'WALLET: ',
-    wallet.seed,
-    'MNEMONIC: ',
-    wallet.mnemonic,
-    'PASS_PARAPHRASE: ',
-    // wallet.passPhrase,
-    'ENTROPY: ',
-    // wallet.entropy.toString(),
-    'SEED: ',
-    wallet.seed.toString(),
-  ].join('\n')
+  console.log('wallet', wallet)
+  const text = ['NAME:', wallet.name, 'WALLET: ', wallet.seed, 'MNEMONIC: ', wallet.mnemonic, 'PASSWORD: ', password, 'SEED: ', wallet.seed.toString()].join(
+    '\n',
+  )
   const element = document.createElement('a')
   element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`)
   element.setAttribute('download', `backup-${wallet.name}-${new Date().toISOString()}.txt`)
@@ -145,6 +137,7 @@ export const downloadBackupWallet = async () => {
 export const downloadAccountBackup = async (accountName: string) => {
   const wallet = await getWalletInstance()
   const account = wallet.masterAccount.getAccountByName(accountName)
+  const password = await storageService.get(CONSTANTS.PASS_KEY)
   const text = [
     'ADDRESS: ',
     account.key.keySet.paymentAddressKeySerialized,
@@ -156,6 +149,8 @@ export const downloadAccountBackup = async (accountName: string) => {
     account.key.keySet.viewingKeySerialized,
     'MINING_SEED_KEY: ',
     account.key.keySet.miningSeedKey.join(' '),
+    'PASSWORD: ',
+    password,
   ].join('\n')
   const element = document.createElement('a')
   element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`)

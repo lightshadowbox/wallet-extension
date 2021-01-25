@@ -6,10 +6,17 @@ type Props = {
   title: string
   icon: string
   dismissPanel: () => void
+  removeInfor: () => void
 }
-export const Header: React.FC<Props> = ({ title, icon, dismissPanel }) => (
+export const Header: React.FC<Props> = ({ title, icon, dismissPanel, removeInfor }) => (
   <div className={styles.header}>
-    <div onClick={dismissPanel} className={`absolute ${styles.headerIcon} `}>
+    <div
+      onClick={() => {
+        dismissPanel()
+        removeInfor()
+      }}
+      className={`absolute ${styles.headerIcon} `}
+    >
       <FontIcon iconName={icon} />
     </div>
     <h3 className={styles.headerText}>{title}</h3>

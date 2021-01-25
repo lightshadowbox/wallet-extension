@@ -40,6 +40,12 @@ export const ModalAddAccount: React.FunctionComponent<Props> = ({ showModal, hid
     }
     return addAccount(name)
   }
+  const onHandleKeydown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      clickAddAccount()
+    }
+  }
   React.useEffect(() => {
     if (name !== '') {
       setErr(false)
@@ -62,7 +68,7 @@ export const ModalAddAccount: React.FunctionComponent<Props> = ({ showModal, hid
         <div className={contentStyles.body}>
           <form>
             <label htmlFor="name">Name</label>
-            <input autoComplete="off" type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
+            <input onKeyDown={onHandleKeydown} autoComplete="off" type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
             {err ? <p className="edit-error">You must enter the field name</p> : null}
           </form>
           <div className={classNames('flex align-middle justify-center w-full mt-6')}>

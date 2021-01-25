@@ -29,12 +29,16 @@ export const ImportAccountPanel: React.FC<Props> = ({ isPanelOpen, showPanel, di
   const [privateKey, setPrivateKey] = React.useState('')
   const [accountName, setAccountName] = React.useState('')
   const scopedSettings = useLayerSettings(true, layerHostId)
+  const onRemoveInfor = () => {
+    setPrivateKey('')
+    setAccountName('')
+  }
   return isPanelOpen ? (
     <div className={`absolute connect inset-0  ${styles.container}`}>
       <Customizer scopedSettings={scopedSettings}>
         <Panel isOpen focusTrapZoneProps={focusTrapZoneProps}>
           <ConnectContainer
-            header={<Header title="Import Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
+            header={<Header removeInfor={onRemoveInfor} title="Import Account" icon="ChromeClose" dismissPanel={dismissPanel} />}
             qrCam={<QRCam onHaveValue={(value) => setPrivateKey(value)} />}
             account={
               <Account

@@ -38,15 +38,21 @@ const CreateContainer: React.FC<{
   const [isError, setIsError] = React.useState(false)
   const history = useHistory()
   const onCreateBtnClick = async () => {
-    console.log(`Name is: ${name}`)
-    console.log(`NameWallet is: ${nameWallet}`)
-    if (passwordWallet === confirmPassword) {
-      createWallet({ name: nameWallet, password: passwordWallet })
+    if (nameWallet || passwordWallet) {
+      if (passwordWallet === confirmPassword) {
+        createWallet({ name: nameWallet, password: passwordWallet })
+      } else {
+        setIsError(true)
+      }
     } else {
       setIsError(true)
     }
   }
-
+  const onHandleKeydown = (e) => {
+    if (e.key === 'Enter') {
+      onCreateBtnClick()
+    }
+  }
   React.useEffect(() => {
     if (status.isSuccess) {
       try {
@@ -59,12 +65,12 @@ const CreateContainer: React.FC<{
   }, [status.isSuccess, history, onNext])
 
   return (
-    <div className={classNames(`flex flex-col w-full justify-between relative ${styles.createContainer}`)}>
+    <div onKeyDown={onHandleKeydown} className={classNames(`flex flex-col w-full justify-between relative ${styles.createContainer}`)}>
       <div className={classNames('flex flex-col')}>
         <div className={classNames('w-full')}>{header}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{name}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{password}</div>
-        <div className={classNames(`w-full ${styles.item}`)}>{confirmRender(isError ? 'The passwords do not match. Please check & try again.' : '')}</div>
+        <div className={classNames(`w-full ${styles.item}`)}>{confirmRender(isError ? 'Enter valid all inputs!' : '')}</div>
       </div>
       <div onClick={onCreateBtnClick} className={classNames(`w-full flex ${styles.itemBtn}`)}>
         {btn}
