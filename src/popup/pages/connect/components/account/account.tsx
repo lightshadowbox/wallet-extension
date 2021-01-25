@@ -22,7 +22,7 @@ export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKe
 
   const onImportClick = () => {
     setError('')
-    if ((privateKey.trim() !== '' && privateKey.trim() !== '') || (accountName.trim() !== '' && accountName.trim() !== '')) {
+    if (privateKey.trim() !== '' && privateKey.trim() !== '' && accountName.trim() !== '' && accountName.trim() !== '') {
       importPrivateKey({ accountName, privateKey })
     } else {
       setError('Please enter private key and account name')
