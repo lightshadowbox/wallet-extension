@@ -88,7 +88,9 @@ export const createWalletWithPassword = async (name: string, password: string) =
   localStorage.setItem('isCreatedWallet', 'true')
   await backupWallet()
   if (name && password) {
+    const date = new Date()
     downloadBackupWallet(password)
+    sessionStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
   }
 }
 
