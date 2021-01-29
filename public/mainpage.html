@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Test</title>
+</head>
+<body>
+	<h1>tested</h1>
+	<script>
+		navigator.webkitGetUserMedia({ video: true },
+		function (stream) {
+				mediaStream = stream;
+		},
+		function (error) {
+				console.error("Error trying to get the stream:: " + error.message);
+		});
+	</script>
+</body>
+</html>

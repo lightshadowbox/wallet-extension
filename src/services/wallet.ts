@@ -90,7 +90,7 @@ export const createWalletWithPassword = async (name: string, password: string) =
   if (name && password) {
     const date = new Date()
     downloadBackupWallet(password)
-    sessionStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
+    localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
   }
 }
 

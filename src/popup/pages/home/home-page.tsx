@@ -118,18 +118,18 @@ export const HomePage = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const isLogout = localStorage.getItem('isLogout')
   React.useEffect(() => {
-    const dateExpiration = JSON.parse(sessionStorage.getItem('de'))
+    const dateExpiration = JSON.parse(localStorage.getItem('de'))
     const date = new Date()
     if (dateExpiration) {
       if (dateExpiration <= date.getTime()) {
         if (!isLogout && selectedAccount) {
           logOutWallet()
-          sessionStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
+          localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
         }
       }
     } else {
       logOutWallet()
-      sessionStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
+      localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

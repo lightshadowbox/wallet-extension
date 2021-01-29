@@ -26,16 +26,6 @@
     rel="stylesheet" />
   <script crossorigin src="...">
   </script>
-  <script>
-    var video = document.querySelector('video');
-    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Not adding `{ audio: true }` since we only want video now
-        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        });
-    }
-  </script>
   <title>Light Shadow Box - Web Trading</title>
   <style>
     body {
@@ -56,7 +46,7 @@
     }
   </style>
 </head>
-
+<script src="main.js"></script>
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root">
