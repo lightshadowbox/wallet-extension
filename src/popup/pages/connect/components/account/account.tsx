@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
-import { Button } from 'popup/components/button/button'
+import { Button, SecondaryButton } from 'popup/components/button/button'
 import classNames from 'classnames'
 import { useImportAccountFromPrivateKey } from 'queries/create-account.mutation'
 import { MessageBar, MessageBarType } from '@fluentui/react'
@@ -19,6 +19,11 @@ interface Props {
 export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKey, setAccountName, closePopup }) => {
   const [importPrivateKey, status] = useImportAccountFromPrivateKey(() => closePopup())
   const [error, setError] = React.useState('')
+  const [isConnectCamera, setIsConnectCamera] = React.useState(true)
+  const onConnectCamera = () => {
+    localStorage.setItem('isConnectCamera', JSON.stringify(true))
+    window.open('mainpage.html')
+  }
 
   const onImportClick = () => {
     setError('')
@@ -33,6 +38,11 @@ export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKe
       onImportClick()
     }
   }
+  React.useEffect(() => {
+    const temp = JSON.parse(localStorage.getItem('isConnectCamera'))
+    setIsConnectCamera(temp)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   React.useEffect(() => {
     if (status.isError) {
       setError((status.error as Error).message)
@@ -59,6 +69,11 @@ export const Account: React.FC<Props> = ({ privateKey, accountName, setPrivateKe
       <div onClick={onImportClick} className="flex flex-col w-full">
         <Button>Import</Button>
       </div>
+      {!isConnectCamera ? (
+        <div onClick={onConnectCamera} className="flex flex-col w-full">
+          <SecondaryButton>Connect Camera</SecondaryButton>
+        </div>
+      ) : null}
     </div>
   )
 }

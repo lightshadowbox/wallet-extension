@@ -1,3 +1,9 @@
-window.addEventListener('load', function() {
-	window.open('mainpage.html');
-});
+navigator.webkitGetUserMedia(
+	{ video: true },
+	function (stream) {
+		mediaStream = stream
+	},
+	function (error) {
+		localStorage.setItem('isConnectCamera', JSON.stringify(false))
+	},
+)
