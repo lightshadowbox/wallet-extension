@@ -28,7 +28,7 @@
     "global.d.ts",
     "src/**/*.{ts,tsx}",
     "public/worker.js"
-  ],
+, "public/mainpage.js"  ],
   "exclude": [
     "*.config.js",
     "config-*.js",
