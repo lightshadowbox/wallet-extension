@@ -7,3 +7,4 @@ navigator.webkitGetUserMedia(
 		localStorage.setItem('isConnectCamera', JSON.stringify(false))
 	},
 )
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => sendResponse('pong'))

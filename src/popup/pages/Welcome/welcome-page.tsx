@@ -50,7 +50,7 @@ export const WelcomePage = () => {
 
   const onNextImport = () => {
     showPanelCreate()
-    setOnNext(() => history.push.bind(null, '/import'))
+    setOnNext(() => history.push.bind(null, '/'))
   }
 
   return (

@@ -1,4 +1,5 @@
 {
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4ciaXElQAR9w53pTAcc7MZQgA7AXZPA7Thi843KQIM9uUFIIksmNjAwPTAFUPUu91HRP8WP/CIG7QIYZAxVLs3A12FDe3y/fQcdOGerWDmus4+55IdGZgHh8pF1umZ2suS6oP2TjSJrQ8DSOseC7YYSt2+x6wFYqSdWDTG6pCOtjM/KYyGDw6OSgS8Y2/U8RG0R7I3Vh2GQ4WemdwB1oyBVF1/DqZUkJGX6KF3B0Cgu3ZQyoeWr2reTKekdkwBgTD0Z4vCbowbmmWfRy1bqo6BsSVpkKRWMDvslNGySsiCtgJJEABPOc8Z0dNGJWCwOuT5bFO6S1rsOVJXtmZoo+XQIDAQAB",
   "name": "Light Shadow Box",
   "version": "0.0.3",
   "manifest_version": 2,
@@ -6,8 +7,14 @@
   "icons": {
     "128": "logo.png"
   },
+  "externally_connectable": {
+    "ids": ["*"],
+    "matches": ["<all_urls>"],
+    "accepts_tls_channel_id": false
+  },
   "permissions": [
     "<all_urls>",
+    "contextMenus",
     "storage",
     "videoCapture",
     "nativeMessaging"

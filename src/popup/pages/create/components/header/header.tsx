@@ -8,7 +8,13 @@ interface Props {
 export const Header: React.FC<Props> = ({ dismissPanel }) => (
   <div className={styles.header}>
     <div className={`absolute ${styles.headerIcon} `}>
-      <FontIcon onClick={dismissPanel} iconName="ChromeBack" />
+      <FontIcon
+        onClick={() => {
+          dismissPanel()
+          localStorage.removeItem('import-account')
+        }}
+        iconName="ChromeBack"
+      />
     </div>
     <h3 className={styles.headerText}>Create New Wallet</h3>
   </div>

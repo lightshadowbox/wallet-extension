@@ -5,11 +5,11 @@ import './create-panel.css'
 import React, { useState } from 'react'
 
 import classNames from 'classnames'
-
-import { Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel } from '@fluentui/react'
+import { useTheme } from 'popup/services'
+import { FaButton, Button } from 'popup/components/button'
+import { Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, MessageBar, MessageBarType } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
 
-import { Button } from 'popup/components/button'
 import { useCreateWallet } from 'queries/create-account.mutation'
 import { useHistory } from 'react-router-dom'
 import { ConfirmPassword, Header, Password, WalletName } from './components'
@@ -21,7 +21,18 @@ interface Props {
   dismissPanel: () => void
   onNext?: () => void
 }
-
+const Guide = (p: any) => {
+  const theme = useTheme()
+  return (
+    <MessageBar onDismiss={p.resetChoice} dismissButtonAriaLabel="Close" messageBarType={MessageBarType.warning}>
+      <b>Guide</b>{' '}
+      <p>
+        If you already have an account, click on <FaButton iconProps={{ iconName: 'MoreVertical' }} iconColor={theme.palette.black} />
+        -&gt; Go to Account -&gt; Import to import your existing wallet.
+      </p>
+    </MessageBar>
+  )
+}
 const CreateContainer: React.FC<{
   header: React.ReactNode
   password: React.ReactNode
@@ -38,9 +49,14 @@ const CreateContainer: React.FC<{
   const [isError, setIsError] = React.useState(false)
   const history = useHistory()
   const onCreateBtnClick = async () => {
-    if (nameWallet || passwordWallet) {
-      if (passwordWallet === confirmPassword) {
-        createWallet({ name: nameWallet, password: passwordWallet })
+    if (nameWallet && passwordWallet) {
+      if (passwordWallet.length >= 6) {
+        if (passwordWallet === confirmPassword) {
+          createWallet({ name: nameWallet, password: passwordWallet })
+          localStorage.removeItem('import-account')
+        } else {
+          setIsError(true)
+        }
       } else {
         setIsError(true)
       }
@@ -72,7 +88,12 @@ const CreateContainer: React.FC<{
         <div className={classNames(`w-full ${styles.item}`)}>{password}</div>
         <div className={classNames(`w-full ${styles.item}`)}>{confirmRender(isError ? 'Enter valid all inputs!' : '')}</div>
       </div>
-      <div onClick={onCreateBtnClick} className={classNames(`w-full flex ${styles.itemBtn}`)}>
+      <div onClick={onCreateBtnClick} className={classNames(`w-full flex flex-col ${styles.itemBtn}`)}>
+        {localStorage.getItem('import-account') ? (
+          <div className="mb-4">
+            <Guide />
+          </div>
+        ) : null}
         {btn}
       </div>
     </div>

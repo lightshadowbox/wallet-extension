@@ -24,8 +24,14 @@ export const RecImport: React.FC<{ showPanel: () => void }> = ({ showPanel }) =>
       <FontIcon iconName="Import" className={classNamesIcon.deepBlue} />
       <p className={styles.paragraph}>Already a crypto enthusiast?</p>
     </div>
-    <div onClick={showPanel} className={`flex w-full ${styles.btn}`}>
-      <SecondaryButton full>Import</SecondaryButton>
+    <div
+      onClick={() => {
+        localStorage.setItem('import-account', JSON.stringify(true))
+        showPanel()
+      }}
+      className={`flex w-full ${styles.btn}`}
+    >
+      <SecondaryButton full>Create</SecondaryButton>
     </div>
   </div>
 )
