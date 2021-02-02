@@ -8,13 +8,10 @@
     "128": "logo.png"
   },
   "externally_connectable": {
-    "ids": ["*"],
-    "matches": ["<all_urls>"],
-    "accepts_tls_channel_id": false
+    "matches": ["http://localhost/*","http://*/*"]
   },
   "permissions": [
     "<all_urls>",
-    "contextMenus",
     "storage",
     "videoCapture",
     "nativeMessaging"
