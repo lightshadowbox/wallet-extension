@@ -234,4 +234,3 @@ export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVI
     },
   )
 }
-

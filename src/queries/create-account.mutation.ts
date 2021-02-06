@@ -2,8 +2,9 @@ import { store } from 'popup/stores'
 import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
 import { useMutation } from 'react-query'
 import { queryCache } from 'services/query-cache'
-import { getAccountRuntime, runtime } from 'services/wallet'
+import { getAccountRuntime, runtime, requestTrade } from 'services/wallet'
 import { storageService } from 'services/storage'
+
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as CONSTANTS from '../constants/app'
@@ -189,6 +190,7 @@ export const useSendToken = (setLoading: (value) => void, setMessage: (value: an
     },
   )
 }
+
 export const useBurningToken = (setMessage: (value: any) => void, setLoading: (value: any) => void) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useMutation(
@@ -265,4 +267,30 @@ export const useImportAccountFromPrivateKey = (onSuccess?: CallableFunction) => 
       console.error(err)
     },
   })
+}
+export const useRequestTrade = () => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useMutation(
+    (variables: {
+      tokenIdSell: string
+      tokenIdBuy: string
+      sellAmount: string
+      minimumAcceptableAmount: string
+      nativeFee: string
+      privacyFee: string
+      tradingFee: string
+    }) => {
+      console.log(variables)
+      return requestTrade(
+        selectedAccount,
+        variables.tokenIdSell,
+        variables.tokenIdBuy,
+        variables.sellAmount,
+        variables.minimumAcceptableAmount,
+        variables.nativeFee,
+        variables.privacyFee,
+        variables.tradingFee,
+      )
+    },
+  )
 }

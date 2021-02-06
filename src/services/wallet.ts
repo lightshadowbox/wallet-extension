@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
 import * as i from 'incognito-sdk/build/web/browser'
-import { WalletInstance, CONSTANT } from 'incognito-sdk/build/web/browser'
+import { WalletInstance, CONSTANT, PrivacyTokenInstance } from 'incognito-sdk/build/web/browser'
 import { serializeAccount } from 'models/account-model'
 import { createDraft, finishDraft } from 'immer'
 import { WritableDraft } from 'immer/dist/internal'
@@ -380,4 +380,23 @@ export const caculatorFee = (payload) => {
   if (inputToken?.id === PRV_ID || outputToken?.id !== PRV_ID) {
     return cloneDeep(initFee)
   }
+}
+export const requestTrade = async (
+  selectedAccount: string,
+  tokenIdSell: string,
+  tokenIdBuy: string,
+  sellAmount: string,
+  minimumAcceptableAmount: string,
+  nativeFee: string,
+  privacyFee: string,
+  tradingFee: string,
+) => {
+  const account = await getAccountRuntime(selectedAccount)
+  if (tokenIdSell !== PRV_ID) {
+    const token = (await account.getFollowingPrivacyToken(tokenIdSell)) as PrivacyTokenInstance
+    const history = await token.requestTrade(tokenIdBuy, sellAmount, minimumAcceptableAmount, nativeFee, privacyFee, tradingFee)
+    return history
+  }
+  const history = await account.nativeToken.requestTrade(tokenIdBuy, sellAmount, minimumAcceptableAmount, nativeFee, tradingFee)
+  return history
 }

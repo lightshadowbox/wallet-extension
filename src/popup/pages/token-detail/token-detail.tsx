@@ -43,7 +43,7 @@ const TokenDetailContainer: React.FC<{
     </div>
   )
 }
-const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelSend }) => {
+export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPanel, tokenId, showPanelSend }) => {
   const [isPanelOpenReceive, { setTrue: showPanelReceive, setFalse: dismissPanelReceive }] = useBoolean(false)
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const tokenInfos = getTokenFromTokenIds([tokenId])
