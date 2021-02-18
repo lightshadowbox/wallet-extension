@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 import { MessageBar, MessageBarType } from '@fluentui/react'
-import { Button } from 'popup/components/button'
+import { Button } from 'popup/components'
 import { Password } from 'popup/pages/create/components/password/password'
 import { useUnlockWallet } from 'queries/create-account.mutation'
 import { Logo } from '../logo/logo'

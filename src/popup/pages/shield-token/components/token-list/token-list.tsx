@@ -25,7 +25,7 @@ import {
 import { useGetAccount } from 'queries/account.queries'
 import { TokenItemInterface, useFetchToken, useSearchableOnlyVerifiedToken, useSearchableTokenList } from 'queries/token.queries'
 
-import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
+import { SpinnerWallet } from 'popup/components'
 import { orderBy } from 'lodash'
 
 const theme: ITheme = getTheme()

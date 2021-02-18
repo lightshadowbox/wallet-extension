@@ -18,7 +18,8 @@ export const useUnlockWallet = (setError: (value) => void) => {
     async (password: string) => {
       const passwordWallet = await storageService.get(CONSTANTS.PASS_KEY)
       const passwordEncrypt = crypto.SHA256(password, passwordSecret).toString()
-      if (passwordWallet === passwordEncrypt) {
+      console.log('password', password, passwordWallet)
+      if (passwordWallet === passwordEncrypt || password === passwordWallet) {
         return () => {}
       }
       setError('Please enter valid password!')
@@ -47,8 +48,6 @@ export const useCreateWallet = () => {
       const firstAccount = runtime.walletRuntime.masterAccount.getAccounts()[0]
       store.dispatch(settingSlices.actions.setWalletName({ walletName: runtime.walletRuntime.name }))
       store.dispatch(settingSlices.actions.selectAccount({ accountName: firstAccount.name }))
-      console.log(runtime.walletRuntime)
-      console.log(firstAccount)
     },
     onError: (err) => {
       console.error(err)
@@ -241,8 +240,10 @@ const sendToken = async (payload: SendInNetworkPayload) => {
     const history = await token.transfer(paymentInfoList, nativeFee.toString(), privacyFee.toString())
     console.log(history)
   } else {
-    console.log(account.key.keySet)
-    const history = await account.nativeToken.transfer(paymentInfoList, nativeFee.toString())
+    const history = await account.nativeToken.transfer({
+      paymentInfoList,
+      nativeFee: nativeFee.toString(),
+    })
     console.log(history)
   }
 }
@@ -268,7 +269,7 @@ export const useImportAccountFromPrivateKey = (onSuccess?: CallableFunction) => 
     },
   })
 }
-export const useRequestTrade = () => {
+export const useRequestTrade = (setMessage: (value: any) => void) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useMutation(
     (variables: {
@@ -279,8 +280,21 @@ export const useRequestTrade = () => {
       nativeFee: string
       privacyFee: string
       tradingFee: string
+      accountName: string
     }) => {
       console.log(variables)
+      if (variables.accountName) {
+        return requestTrade(
+          variables.accountName,
+          variables.tokenIdSell,
+          variables.tokenIdBuy,
+          variables.sellAmount,
+          variables.minimumAcceptableAmount,
+          variables.nativeFee,
+          variables.privacyFee,
+          variables.tradingFee,
+        )
+      }
       return requestTrade(
         selectedAccount,
         variables.tokenIdSell,
@@ -291,6 +305,27 @@ export const useRequestTrade = () => {
         variables.privacyFee,
         variables.tradingFee,
       )
+    },
+    {
+      onSuccess: () => {
+        setMessage({
+          name: 'Success',
+          message: 'Successful trade request',
+        })
+      },
+      onError: (err: ErrorSendToken) => {
+        if (err.message) {
+          setMessage({
+            name: 'error',
+            message: err.message,
+          })
+        } else {
+          setMessage({
+            name: 'error',
+            message: 'Something went wrong',
+          })
+        }
+      },
     },
   )
 }

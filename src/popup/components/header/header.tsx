@@ -1,6 +1,6 @@
 import React from 'react'
-import { FaButton } from 'popup/components/button'
 import { Label } from '@fluentui/react'
+import { FaButton } from 'popup/components'
 import styled from './header.module.css'
 
 type Props = {

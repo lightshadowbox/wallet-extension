@@ -30,7 +30,9 @@
   "plugins": [
     "@typescript-eslint",
     "jest",
-    "unicorn"
+    "unicorn",
+    "react", 
+    "react-hooks"
   ],
   "extends": [
     "airbnb-typescript",

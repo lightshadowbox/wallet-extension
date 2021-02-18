@@ -2,7 +2,7 @@
 import React from 'react'
 import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Modal, IDragOptions, IconButton, IIconProps, Spinner } from '@fluentui/react'
 import { useId, useBoolean } from '@uifabric/react-hooks'
-import { SecondaryButton } from 'popup/components/button'
+import { SecondaryButton } from 'popup/components'
 import { useAddAccount } from 'queries/create-account.mutation'
 import './modal.css'
 import classNames from 'classnames'

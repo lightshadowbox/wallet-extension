@@ -2,7 +2,7 @@
 import React from 'react'
 import { getTheme, mergeStyleSets, FontWeights, ContextualMenu, Modal, IDragOptions, IconButton, IIconProps, Spinner } from '@fluentui/react'
 import { useId, useBoolean } from '@uifabric/react-hooks'
-import { SecondaryButton } from 'popup/components/button'
+import { SecondaryButton } from 'popup/components'
 import { useRenameAccount } from 'queries/create-account.mutation'
 import { useSettingStore } from 'popup/stores/features/settings'
 import './modal.css'
@@ -43,7 +43,7 @@ export const ModalRenameAccount: React.FunctionComponent<Props> = ({ showModal, 
     }
   }, [name])
   return (
-    <div>
+    <div className="account-list">
       <Modal
         titleAriaId={titleId}
         isOpen={isModalOpen}

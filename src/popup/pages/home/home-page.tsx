@@ -2,12 +2,14 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
-import TokenDetailPanel from 'popup/pages/token-detail/token-detail'
-import { USDT, PRV } from 'services/trading/fee/pairsData'
-import { ImportAccountPanel } from 'popup/pages/connect/Connect-panel'
+import { TokenDetailPanel } from 'popup/pages/token-detail/token-detail'
+import { Loading, Message } from 'popup/components'
+import { SeedPhrase } from 'popup/pages/seed-phrase/seed-phrase'
+import { ImportAccountPanel } from 'popup/pages/import-account/Connect-panel'
 import { useAddToken } from 'queries/create-account.mutation'
 import { useSettingStore, settingSlices } from 'popup/stores/features/settings'
 import { store } from 'popup/stores'
+import { ModalConnectTrade } from './components/trade-connect-modal/trade-connect-modal'
 import { WalletBalance, WalletCover, WalletMenu, NetworkPanel, AddTokenPanel, AddAccountPanel, BackupAccountPanel } from './components/index'
 import { ShieldTokenPanel } from '../shield-token/shield-token-panel'
 import { ReceivePanel } from '../receive/receive'
@@ -26,16 +28,48 @@ const HomeContainer: React.FC<{
   tokenDetail: React.ReactNode
   shield: React.ReactNode
   importAccount: React.ReactNode
-}> = ({ children, cover, menu, network, token, account, receive, send, backup, tokenDetail, shield, importAccount }) => (
+  modalConnect: React.ReactNode
+  isModalConnectOpen: boolean
+  message: React.ReactNode
+  messageText: string
+  loading: React.ReactNode
+  isLoadingTrade: boolean
+  seedPhrase: React.ReactNode
+  isSeedPhraseOpen: boolean
+}> = ({
+  children,
+  cover,
+  menu,
+  network,
+  token,
+  account,
+  receive,
+  send,
+  backup,
+  tokenDetail,
+  shield,
+  importAccount,
+  modalConnect,
+  isModalConnectOpen,
+  message,
+  messageText,
+  loading,
+  isLoadingTrade,
+  seedPhrase,
+  isSeedPhraseOpen,
+}) => (
   <div className={classNames('flex flex-col relative w-full h-full overflow-hidden')}>
+    {isSeedPhraseOpen ? <div className="w-full absolute inset-0">{seedPhrase}</div> : null}
     <div className={classNames('absolute self-center mt-20 shadow-md w-11/12 h-56 z-10 bg-white')}>{cover}</div>
     <div className={classNames(`flex flex-row align-top justify-between w-full h-48 p-4 ${styles.bgContainer}`)}>{menu}</div>
+    {isLoadingTrade ? <div className="w-full h-full absolute">{loading}</div> : null}
+    {messageText !== '' ? <div className="absolute inset-0">{message}</div> : null}
     <div className={classNames('w-full h-full mt-32')}>{children}</div>
     <div className={classNames('w-full h-full')}>{importAccount}</div>
     <div className={classNames('w-full h-full')}>{network}</div>
     <div className={classNames('w-full h-full')}>{token}</div>
     <div className={classNames('w-full h-full')}>{account}</div>
-
+    {isModalConnectOpen ? <div className="w-full h-full absolute inset-0">{modalConnect}</div> : null}
     <div className={classNames('w-full h-full')}>{shield}</div>
     <div className={classNames('w-full h-full')}>{receive}</div>
     <div className={classNames('w-full h-full')}>{send}</div>
@@ -44,7 +78,16 @@ const HomeContainer: React.FC<{
   </div>
 )
 
-export const HomePage = () => {
+export const HomePage: React.FC<{
+  isModalConnectOpen: boolean
+  setIsModalConnectOpen: (value) => void
+  setIsAcceptConnect: (value) => void
+  message: any
+  setMessage: (value) => void
+  onDismissModal: () => void
+  setAccountTrade: (value) => void
+  isLoadingTrade: boolean
+}> = ({ isModalConnectOpen, setIsModalConnectOpen, setIsAcceptConnect, message, setMessage, onDismissModal, setAccountTrade, isLoadingTrade }) => {
   const [addToken] = useAddToken()
   const [preTokenId, setTokenPreId] = React.useState('')
   const [isPanelOpenNetwork, { setTrue: showPanelNetwork, setFalse: dismissPanelNetwork }] = useBoolean(false)
@@ -58,6 +101,7 @@ export const HomePage = () => {
   const [tokenId, setTokenId] = React.useState(null)
   const [isPanelOpenImport, { setTrue: showPanelImport, setFalse: dismissPanelImport }] = useBoolean(false)
   const [accountName, setAccountName] = React.useState(null)
+  const [isSeedPhraseOpen, setIsSeedPhraseOpen] = React.useState(false)
   const onShowPanelSend = (event = null, tokenId = null, accountName = null) => {
     showPanelSend()
     setTokenId(tokenId)
@@ -117,6 +161,15 @@ export const HomePage = () => {
   }
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
   const isLogout = localStorage.getItem('isLogout')
+  const onDismissSeedPhrase = (panel) => {
+    const element = document.querySelector('.seed-phrase') as HTMLElement
+    element.style.animation = 'none'
+    element.style.animationDelay = 'none'
+    element.style.animation = 'moveOutBottom 0.3s'
+    setTimeout(() => {
+      setIsSeedPhraseOpen(false)
+    }, 180)
+  }
   React.useEffect(() => {
     const dateExpiration = JSON.parse(localStorage.getItem('de'))
     const date = new Date()
@@ -131,8 +184,23 @@ export const HomePage = () => {
       logOutWallet()
       localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
     }
+    if (!JSON.parse(localStorage.getItem('isDownloadBackup'))) {
+      setIsSeedPhraseOpen(true)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  React.useEffect(() => {
+    if (message.message !== '') {
+      setTimeout(() => {
+        setMessage({
+          message: '',
+          name: '',
+        })
+      }, 3000)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message.message])
+
   React.useEffect(() => {
     const temp = [
       'b832e5d3b1f01a4f0623f7fe91d6673461e1f5d37d91fe78c5c2e6183ff39696',
@@ -148,12 +216,32 @@ export const HomePage = () => {
   }, [selectedAccount])
   return (
     <HomeContainer
+      isSeedPhraseOpen={isSeedPhraseOpen}
+      seedPhrase={<SeedPhrase dismissPanel={onDismissSeedPhrase} />}
+      isLoadingTrade={isLoadingTrade}
+      loading={<Loading />}
+      messageText={message.message}
+      isModalConnectOpen={isModalConnectOpen}
+      message={<Message message={message.message} name={message.name} />}
+      modalConnect={
+        <ModalConnectTrade
+          isModalOpen={isModalConnectOpen}
+          showModal={() => setIsModalConnectOpen(true)}
+          hideModal={() => setIsModalConnectOpen(false)}
+          setAccountTrade={setAccountTrade}
+          onConnect={() => {
+            setIsAcceptConnect(true)
+            onDismissModal()
+          }}
+          onDismissConnect={() => {
+            setIsAcceptConnect(false)
+            onDismissModal()
+          }}
+        />
+      }
       importAccount={<ImportAccountPanel isPanelOpen={isPanelOpenImport} showPanel={showPanelImport} dismissPanel={dismissPanelBottomImport} />}
       tokenDetail={
         <TokenDetailPanel
-          inputToken={USDT}
-          inputValue={0.15 * 1e6}
-          outputToken={PRV}
           showPanelReceive={showPanelReceive}
           showPanelSend={onShowPanelSend}
           tokenId={preTokenId}

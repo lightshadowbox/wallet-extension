@@ -1,0 +1,83 @@
+.trading-connect-modal {
+    background-color: white;
+    @apply w-full;
+    @apply h-full;
+    position: absolute;
+    top:0;
+    left:0;
+    z-index: 100000;
+    padding: 15px;
+    animation: moveInBottom .3s;
+    animation-fill-mode: forwards;
+}
+.trading-connect-modal .trading-heading {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height:40%;
+}
+.trading-connect-modal .trading-heading .img-container {
+    position:relative;
+}
+.trading-connect-modal .trading-heading .img-container .logo-trading-bold {
+    position: absolute;
+    top: 0;
+    left:0;
+}
+.trading-connect-modal .trading-heading .txt-frame .main-p{
+    font-size: 16px;
+    font-family: 'Google Sans';
+}
+.trading-connect-modal .trading-heading .txt-frame .part-p {
+    text-align: center;
+    font-family: 'Google Sans';
+    line-height: 20px;
+    color: #757575;
+    margin-top: 5px;
+    font-size: 14px;
+}
+.trading-connect-modal .list-account{ 
+    width:100%;
+    height:47%;
+    border:1px dashed #E2E2E2;
+    overflow: hidden;
+    padding: 30px;
+}
+.trading-connect-modal .list-account ul {
+    list-style: none;
+}
+.trading-connect-modal .list-account ul li {
+    font-family: "Google Sans";
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    color:#757575;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+.trading-connect-modal .list-account ul li span {
+    font-family: "Google Sans";
+}
+.trading-connect-modal .list-account ul li .name {
+    margin:0;
+    padding:0;
+    line-height: 15px;
+}
+.trading-connect-modal .list-account ul li .name .payment-address {
+    margin-left: 5px;
+}
+.trading-connect-modal .list-account ul li label {
+    margin-left:15px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+.trading-connect-modal .btn-container {
+    margin-top:15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}

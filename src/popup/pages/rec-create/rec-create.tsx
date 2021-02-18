@@ -2,7 +2,7 @@
 import classNames from 'classnames'
 import React from 'react'
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react'
-import { Button } from 'popup/components/button'
+import { Button } from 'popup/components'
 import styles from './rec-create.module.css'
 
 interface Props {

@@ -4,8 +4,7 @@
 import { Icon, Label, List, Persona, PersonaSize, Spinner, SpinnerSize } from '@fluentui/react'
 import classNames from 'classnames'
 import React from 'react'
-import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
-import { SecondaryButton } from 'popup/components/button'
+import { SpinnerWallet, SecondaryButton } from 'popup/components'
 
 import { useSettingStore } from 'popup/stores/features/settings'
 import { useGetTokenBalance, useGetTokenForAccount } from 'queries/token.queries'

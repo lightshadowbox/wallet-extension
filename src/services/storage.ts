@@ -11,9 +11,8 @@ interface StorageAPI {
 }
 
 export class LocalStorage implements StorageAPI {
-
   constructor() {
-    console.info("[INFO] using localStorage for sync wallet data")
+    console.info('[INFO] using localStorage for sync wallet data')
   }
 
   encryptedKeyValue(key: string, value: any) {
@@ -49,9 +48,8 @@ export class LocalStorage implements StorageAPI {
 }
 
 export class ChromeStorage implements StorageAPI {
-
   constructor() {
-    console.info("[INFO] using chromeStorage to sync wallet data")
+    console.info('[INFO] using chromeStorage to sync wallet data')
   }
 
   encryptedKeyValue(key: string, value: any) {
@@ -73,7 +71,7 @@ export class ChromeStorage implements StorageAPI {
     // const keyEncrypted = crypto.HmacSHA1(key, storageSecret).toString()
     return new Promise((resolve, reject) => {
       chrome.storage.sync.get([key], function (response) {
-        let encryptedValue;
+        let encryptedValue
         try {
           encryptedValue = response[key]
         } catch (e) {
@@ -97,6 +95,5 @@ export class ChromeStorage implements StorageAPI {
     chrome.storage.sync.remove(keyEncrypted)
   }
 }
-
 
 export const storageService = IS_RUNNING_AS_EXTENSION ? new ChromeStorage() : new LocalStorage()

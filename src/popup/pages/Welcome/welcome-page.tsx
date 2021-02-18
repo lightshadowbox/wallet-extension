@@ -2,13 +2,13 @@ import classNames from 'classnames'
 import { useHistory } from 'react-router-dom'
 import React, { useState } from 'react'
 import { useBoolean } from '@uifabric/react-hooks'
+import { ImportAccountPanel } from 'popup/pages/import-account/Connect-panel'
 import styles from './welcome-page.module.css'
 import { Logo } from '../logo/logo'
 import { RecCreate } from '../rec-create/rec-create'
 import { RecImport } from '../rec-import/rec-import'
 import { CreatePanel } from '../create/create-panel'
 import { Terms } from '../create/components/terms/terms'
-import { ImportAccountPanel } from '../connect/Connect-panel'
 
 const WelcomeContainer: React.FC<{
   logo: React.ReactNode

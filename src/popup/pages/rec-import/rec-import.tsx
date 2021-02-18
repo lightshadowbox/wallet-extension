@@ -4,7 +4,7 @@
 import classNames from 'classnames'
 import React from 'react'
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react'
-import { SecondaryButton } from 'popup/components/button'
+import { SecondaryButton } from 'popup/components'
 import styles from './rec-import.module.css'
 
 const iconClass = mergeStyles({

@@ -4,7 +4,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { useGetListAccountName, useGetAccountBasicInfo } from 'queries/account.queries'
 import { FontIcon, Persona, Spinner } from '@fluentui/react'
-import { Shimmer } from 'popup/components/shimmer/shimmer'
+import { Shimmer } from 'popup/components'
 import { store } from 'popup/stores'
 import { useBoolean } from '@uifabric/react-hooks'
 import { settingSlices, useSettingStore } from 'popup/stores/features/settings'
@@ -28,9 +28,9 @@ const AccountItem: React.FC<{ name: string; dismissPanel: () => void }> = ({ nam
   const { data: accountInfo } = useGetAccountBasicInfo(name)
 
   return (
-    <li onClick={() => switchAccount(name)} key={name} className={styles.item}>
+    <li key={name} className={styles.item}>
       {isModalOpen ? <ModalRenameAccount isModalOpen={isModalOpen} showModal={showModal} hideModal={hideModal} /> : null}
-      <div className={styles.container}>
+      <div onClick={() => switchAccount(name)} className={styles.container}>
         <Persona
           text={name}
           imageAlt={name}
@@ -38,7 +38,6 @@ const AccountItem: React.FC<{ name: string; dismissPanel: () => void }> = ({ nam
             accountInfo ? (
               <>
                 <div className={`flex flex-row mt-2 ${styles.balance}`}>
-                  {/* <p>USD: {accountInfo.USD}</p> */}
                   <p className="">PRV: {accountInfo.PRV}</p>
                 </div>
               </>

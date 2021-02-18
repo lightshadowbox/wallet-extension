@@ -3,3 +3,6 @@
   transition: all 0.3s;
   color: black;
 }
+.container-tokenHistory .container {
+  display: none;
+}

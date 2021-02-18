@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import { useGetTokenBalance } from 'queries/token.queries'
 import { Label } from '@fluentui/react'
 import { useSettingStore } from 'popup/stores/features/settings'
-import { Button, SecondaryButton } from 'popup/components/button'
+import { Button, SecondaryButton } from 'popup/components'
 import styles from './detail-cover.module.css'
 
 export const DetailCover: React.FC<{ tokenId: string; showPanelReceive: () => void; showPanelSend: (e, tokenId, accountName) => void }> = ({

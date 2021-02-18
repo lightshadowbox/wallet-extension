@@ -1,0 +1,16 @@
+.seed-phrase {
+    background-color: white;
+    @apply w-full;
+    @apply h-full;
+    position: absolute;
+    top:0;
+    left:0;
+    z-index: 100000;
+    animation: moveInBottom .3s;
+    animation-fill-mode: forwards;
+    font-family: 'Google Sans';
+    color:#BDBDBD;
+}
+.content {
+    padding: 15px;
+}

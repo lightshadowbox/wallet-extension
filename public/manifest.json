@@ -8,7 +8,7 @@
     "128": "logo.png"
   },
   "externally_connectable": {
-    "matches": ["http://localhost/*","http://*/*"]
+    "matches": ["http://localhost/*","http://*/*","https://trading-a2ftfwz3n.vercel.app/"]
   },
   "permissions": [
     "<all_urls>",

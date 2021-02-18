@@ -1,8 +1,11 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable default-case */
 /* eslint-disable import/no-mutable-exports */
 import * as Mnemonic from 'bitcore-mnemonic'
 import { cloneDeep } from 'lodash'
 import { passwordSecret } from 'constants/crypto'
 import crypto from 'crypto-js'
+import { queryCache } from 'services/query-cache'
 import * as i from 'incognito-sdk/build/web/browser'
 import { WalletInstance, CONSTANT, PrivacyTokenInstance } from 'incognito-sdk/build/web/browser'
 import { serializeAccount } from 'models/account-model'
@@ -10,7 +13,8 @@ import { createDraft, finishDraft } from 'immer'
 import { WritableDraft } from 'immer/dist/internal'
 import { MAX_DEX_FEE, PRV_ID } from 'constants/fee.constant'
 import { TokenItemInterface } from 'queries/token.queries'
-import { AxiosResponse } from 'axios'
+import axios, { AxiosResponse } from 'axios'
+import { GET_WALLET_KEY } from 'queries/wallet.queries'
 import * as CONSTANTS from '../constants/app'
 import { sdk } from './incognito/sdk'
 import { storageService } from './storage'
@@ -89,11 +93,9 @@ export const createWalletWithPassword = async (name: string, password: string) =
   await backupWallet()
   if (name && password) {
     const date = new Date()
-    downloadBackupWallet(password)
     localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
   }
 }
-
 export const isHaveBackupWallet = async () => {
   const backup = await storageService.get(CONSTANTS.WALLET_BACKUP_KEY)
   if (backup) {
@@ -123,9 +125,9 @@ export const backupWallet = async () => {
   storageService.set(CONSTANTS.WALLET_BACKUP_KEY, backupStr)
 }
 
-export const downloadBackupWallet = async (password) => {
+export const downloadBackupWallet = async () => {
   const wallet = await getWalletInstance()
-  console.log('wallet', wallet)
+  const password = await storageService.get(CONSTANTS.PASS_KEY)
   const text = ['NAME:', wallet.name, 'WALLET: ', wallet.seed, 'MNEMONIC: ', wallet.mnemonic, 'PASSWORD: ', password, 'SEED: ', wallet.seed.toString()].join(
     '\n',
   )
@@ -159,6 +161,7 @@ export const downloadAccountBackup = async (accountName: string) => {
   element.setAttribute('download', `backup-account-${accountName}-${new Date().toISOString()}.txt`)
   element.style.display = 'none'
   element.click()
+  await queryCache.invalidateQueries(GET_WALLET_KEY)
 }
 
 export type SendInNetWorkPayload = {
@@ -182,13 +185,13 @@ export const sendInNetwork = async (payload: SendInNetWorkPayload) => {
       throw new Error(`Currently balance is not enough: ${balance}`)
     }
 
-    const payment = new i.PaymentInfoModel({
-      paymentAddress: payload.targetAccountAddress,
-      amount: payload.nanoOfAmount.toString(),
-      message: payload.message,
-    })
+    // const payment = new i.PaymentInfoModel({
+    //   paymentAddress: payload.targetAccountAddress,
+    //   amount: payload.nanoOfAmount.toString(),
+    //   message: payload.message,
+    // })
 
-    return account.nativeToken.transfer([payment], '0')
+    // return account.nativeToken.transfer([payment], '0')
   }
 
   throw new Error('Not supported yet!')
@@ -392,11 +395,62 @@ export const requestTrade = async (
   tradingFee: string,
 ) => {
   const account = await getAccountRuntime(selectedAccount)
+  const historyTrade = JSON.parse(localStorage.getItem('his_trade')) // history of trade
   if (tokenIdSell !== PRV_ID) {
     const token = (await account.getFollowingPrivacyToken(tokenIdSell)) as PrivacyTokenInstance
     const history = await token.requestTrade(tokenIdBuy, sellAmount, minimumAcceptableAmount, nativeFee, privacyFee, tradingFee)
+    if (history) {
+      if (historyTrade) {
+        historyTrade.push({
+          date: new Date().toString(),
+          txId: history.txId,
+          tokenId: tokenIdSell,
+          accountName: selectedAccount,
+        })
+        localStorage.setItem('his_trade', JSON.stringify(historyTrade))
+      } else {
+        const tempHistory = []
+        tempHistory.push({
+          date: new Date().toString(),
+          txId: history.txId,
+          tokenId: tokenIdSell,
+          accountName: selectedAccount,
+        })
+        localStorage.setItem('his_trade', JSON.stringify(tempHistory))
+      }
+    }
     return history
   }
   const history = await account.nativeToken.requestTrade(tokenIdBuy, sellAmount, minimumAcceptableAmount, nativeFee, tradingFee)
+  if (history) {
+    if (historyTrade) {
+      historyTrade.push({
+        date: new Date().toString(),
+        txId: history.txId,
+        tokenId: tokenIdSell,
+        accountName: selectedAccount,
+      })
+      localStorage.setItem('his_trade', JSON.stringify(historyTrade))
+    } else {
+      const tempHistory = []
+      tempHistory.push({
+        date: new Date().toString(),
+        txId: history.txId,
+        tokenId: tokenIdSell,
+        accountName: selectedAccount,
+      })
+      localStorage.setItem('his_trade', JSON.stringify(tempHistory))
+    }
+  }
   return history
+}
+export const getTransactionByTxId = async (txId: string) => {
+  const data = {
+    jsonrpc: '1.0',
+    method: 'gettransactionbyhash',
+    params: [txId],
+    id: 3,
+  }
+  const transaction = await axios.post('https://mainnet.incognito.org/fullnode', data)
+  return transaction
 }

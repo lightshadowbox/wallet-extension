@@ -6,7 +6,7 @@ import { useId } from '@uifabric/react-hooks'
 import { SearchInput, ListGhostingExample } from './components/index'
 import styles from './add-token-panel.module.css'
 import './add-token-panel.css'
-import { Header } from 'popup/components/header/header'
+import { Header } from 'popup/components'
 
 interface Props {
   isPanelOpen: boolean

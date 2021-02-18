@@ -25,9 +25,9 @@ import { useSettingStore } from 'popup/stores/features/settings'
 import classNames from 'classnames'
 import { useSendToken, useBurningToken } from 'queries/create-account.mutation'
 import { useGetTokenForAccount, useGetTokenBalance, getTokenFromTokenIds } from 'queries/token.queries'
-import { Header } from 'popup/components/header/header'
+import { Header, Message } from 'popup/components'
 import { estimateFee } from 'services/wallet'
-import { Message } from './message/message'
+
 import styles from './send.module.css'
 
 import './send.css'

@@ -1,7 +1,9 @@
+/* eslint-disable no-await-in-loop */
 import { AccountModelType, serializeAccount } from 'models/account-model'
 import { useSettingStore } from 'popup/stores/features/settings'
-import { useQuery } from 'react-query'
 import { getAccountListName, getAccountRuntime, getBackupAccount } from 'services/wallet'
+import { useQuery } from 'react-query'
+
 import * as i from 'incognito-sdk/build/web/browser'
 
 export const useGetAccount = () => {
@@ -36,6 +38,25 @@ export const useGetAccountBasicInfo = (accountName: string) => {
       USD: '0.00',
       PRV: (nanoPRV.toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2),
     }
+  })
+}
+
+export const useGetListAccountBasicInfo = (accountsName: string[]) => {
+  return useQuery(['useGetAccountListBasicInfo.name', accountsName], async () => {
+    const listInfo = []
+    for (let index = 0; index < accountsName.length; index += 1) {
+      const account = await getAccountRuntime(accountsName[index])
+      const nanoPRV = await account.nativeToken.getAvaiableBalance()
+      console.log(account)
+      listInfo.push({
+        accountName: accountsName[index],
+        USD: '0.00',
+        PRV: (nanoPRV.toNumber() * i.CONSTANT.WALLET_CONSTANT.NanoUnit).toFixed(2),
+        paymentAddress: account.key.keySet.paymentAddressKeySerialized,
+      })
+    }
+
+    return listInfo
   })
 }
 

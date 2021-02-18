@@ -6,10 +6,9 @@ import React, { useState } from 'react'
 
 import classNames from 'classnames'
 import { useTheme } from 'popup/services'
-import { FaButton, Button } from 'popup/components/button'
+import { FaButton, Button } from 'popup/components'
 import { Customizer, IFocusTrapZoneProps, ILayerProps, LayerHost, mergeStyles, Panel, MessageBar, MessageBarType } from '@fluentui/react'
 import { useId } from '@uifabric/react-hooks'
-
 import { useCreateWallet } from 'queries/create-account.mutation'
 import { useHistory } from 'react-router-dom'
 import { ConfirmPassword, Header, Password, WalletName } from './components'
@@ -123,9 +122,7 @@ export const CreatePanel: React.FC<Props> = ({ isPanelOpen, showPanel, dismissPa
               btn={<Button full>Next</Button>}
               name={<WalletName setName={setNameWallet} />}
               onNext={onNext}
-            >
-              <div>Button password coming soon</div>
-            </CreateContainer>
+            />
           </Panel>
         </Customizer>
         <LayerHost id={layerHostId} className={layerHostClass} />

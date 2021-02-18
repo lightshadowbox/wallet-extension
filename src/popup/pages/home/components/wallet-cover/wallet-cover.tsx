@@ -4,8 +4,8 @@ import { ActionButton, Icon, Label, Persona, PersonaSize, Stack, TooltipHost } f
 import Avatar from 'popup/assets/avatar.png'
 import styled from 'styled-components'
 import { useTheme } from 'popup/services'
-import { Button, SecondaryButton } from 'popup/components/button'
-import { SpinnerWallet } from 'popup/components/spinner/spinner-wallet'
+import { Button, SecondaryButton, SpinnerWallet } from 'popup/components'
+
 import { useGetAccount } from 'queries/account.queries'
 
 import { useId, useConst } from '@uifabric/react-hooks'
@@ -89,7 +89,7 @@ const PersonaOutline = styled.div`
   padding: 4px;
 `
 
-const TextButton = styled(ActionButton) <{ color?: string; hoverColor?: string }>`
+const TextButton = styled(ActionButton)<{ color?: string; hoverColor?: string }>`
   height: 28px;
 
   .ms-Button-flexContainer {

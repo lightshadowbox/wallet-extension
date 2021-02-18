@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query'
 import { getFromCache } from 'services/query-cache'
-import { historyServices, CONSTANT } from 'incognito-sdk/build/web/browser'
+import { CONSTANT } from 'incognito-sdk/build/web/browser'
+import { PRV_ID } from 'constants/fee.constant'
 import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
 import { getUsdEvolution } from 'services/usd-revolution'
-
 import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
 
 import { useSettingStore } from 'popup/stores/features/settings'
@@ -102,7 +102,6 @@ export type TokenAPIResultItem = {
   volume24: number
 }
 
-const PRV_TOKEN_ID = '0000000000000000000000000000000000000000000000000000000000000004'
 export const getTokenList = async () => {
   const tokens = await api.get<{ Result: TokenAPIResultItem[] }>('https://api-service.incognito.org/ptoken/list')
 
@@ -131,18 +130,18 @@ export const useGetUSDEvolution = (tokenID: string, agg: any) => {
 }
 export const useGetHistory = (tokenId: string) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-  return useQuery(['useGetHistory.name', selectedAccount, tokenId], () => getHistory(selectedAccount, tokenId), {
-    enabled: tokenId,
-  })
+  return useQuery(['useGetHistory.name', selectedAccount, tokenId], () => getHistory(selectedAccount, tokenId))
 }
 const getHistory = async (AccountName: string, tokenId: string) => {
   const account = await getAccountRuntime(AccountName)
-  await historyServices.checkCachedHistories()
-  const histories = await historyServices.getTxHistoryByPublicKey(
-    account.key.keySet.publicKeySerialized, // publicKeySerialized of the account
-    tokenId === PRV_TOKEN_ID ? null : tokenId,
-  )
-  console.log(histories)
+  if (tokenId === PRV_ID) {
+    const histories = await account.nativeToken.getTxHistories()
+    console.log('Native token tx histories', histories)
+    return histories
+  }
+  const token = (await account.getFollowingPrivacyToken(tokenId)) as any
+  const histories = await token.getTxHistories()
+  console.log('Token tx histories', histories)
   return histories
 }
 

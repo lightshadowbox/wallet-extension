@@ -1,0 +1,13 @@
+.input {
+}
+.input label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.input input {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 400;
+  outline: none;
+}

@@ -1,0 +1,21 @@
+.QRCamContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  position: relative;
+  padding: 16px;
+}
+.QRCamContainer section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  font-size: 14px;
+  text-align: center;
+  color: #757575;
+  margin-bottom: 20px;
+}
