@@ -2,8 +2,9 @@
 import React from 'react'
 import classNames from 'classnames'
 import { useBoolean } from '@uifabric/react-hooks'
+
 import { TokenDetailPanel } from 'popup/pages/token-detail/token-detail'
-import { Loading, Message } from 'popup/components'
+import { Loading, Message, Guide } from 'popup/components'
 import { SeedPhrase } from 'popup/pages/seed-phrase/seed-phrase'
 import { ImportAccountPanel } from 'popup/pages/import-account/Connect-panel'
 import { useAddToken } from 'queries/create-account.mutation'
@@ -36,6 +37,8 @@ const HomeContainer: React.FC<{
   isLoadingTrade: boolean
   seedPhrase: React.ReactNode
   isSeedPhraseOpen: boolean
+  isImportAccount: boolean
+  onDismissGuide: any
 }> = ({
   children,
   cover,
@@ -57,8 +60,15 @@ const HomeContainer: React.FC<{
   isLoadingTrade,
   seedPhrase,
   isSeedPhraseOpen,
+  isImportAccount,
+  onDismissGuide,
 }) => (
   <div className={classNames('flex flex-col relative w-full h-full overflow-hidden')}>
+    {isImportAccount ? (
+      <div className={`absolute z-50 ${styles.guide}`}>
+        <Guide onDismiss={onDismissGuide} />
+      </div>
+    ) : null}
     {isSeedPhraseOpen ? <div className="w-full absolute inset-0">{seedPhrase}</div> : null}
     <div className={classNames('absolute self-center mt-20 shadow-md w-11/12 h-56 z-10 bg-white')}>{cover}</div>
     <div className={classNames(`flex flex-row align-top justify-between w-full h-48 p-4 ${styles.bgContainer}`)}>{menu}</div>
@@ -87,7 +97,18 @@ export const HomePage: React.FC<{
   onDismissModal: () => void
   setAccountTrade: (value) => void
   isLoadingTrade: boolean
-}> = ({ isModalConnectOpen, setIsModalConnectOpen, setIsAcceptConnect, message, setMessage, onDismissModal, setAccountTrade, isLoadingTrade }) => {
+  accountTrade: any
+}> = ({
+  isModalConnectOpen,
+  setIsModalConnectOpen,
+  setIsAcceptConnect,
+  message,
+  setMessage,
+  onDismissModal,
+  setAccountTrade,
+  isLoadingTrade,
+  accountTrade,
+}) => {
   const [addToken] = useAddToken()
   const [preTokenId, setTokenPreId] = React.useState('')
   const [isPanelOpenNetwork, { setTrue: showPanelNetwork, setFalse: dismissPanelNetwork }] = useBoolean(false)
@@ -102,10 +123,15 @@ export const HomePage: React.FC<{
   const [isPanelOpenImport, { setTrue: showPanelImport, setFalse: dismissPanelImport }] = useBoolean(false)
   const [accountName, setAccountName] = React.useState(null)
   const [isSeedPhraseOpen, setIsSeedPhraseOpen] = React.useState(false)
+  const [isImportAccount, setIsImportAccount] = React.useState(JSON.parse(localStorage.getItem('import-account')))
   const onShowPanelSend = (event = null, tokenId = null, accountName = null) => {
     showPanelSend()
     setTokenId(tokenId)
     setAccountName(accountName)
+  }
+  const onDismissGuide = () => {
+    setIsImportAccount(false)
+    localStorage.removeItem('import-account')
   }
   const onShowPanelTokenDetail = (tokenId) => {
     showPanelTokenDetail()
@@ -170,7 +196,9 @@ export const HomePage: React.FC<{
       setIsSeedPhraseOpen(false)
     }, 180)
   }
+
   React.useEffect(() => {
+    // Check date expiration to log out
     const dateExpiration = JSON.parse(localStorage.getItem('de'))
     const date = new Date()
     if (dateExpiration) {
@@ -185,6 +213,7 @@ export const HomePage: React.FC<{
       localStorage.setItem('de', JSON.stringify(date.getTime() + 86400000))
     }
     if (!JSON.parse(localStorage.getItem('isDownloadBackup'))) {
+      // check is downloaded seed phrase
       setIsSeedPhraseOpen(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -216,6 +245,8 @@ export const HomePage: React.FC<{
   }, [selectedAccount])
   return (
     <HomeContainer
+      onDismissGuide={onDismissGuide}
+      isImportAccount={isImportAccount}
       isSeedPhraseOpen={isSeedPhraseOpen}
       seedPhrase={<SeedPhrase dismissPanel={onDismissSeedPhrase} />}
       isLoadingTrade={isLoadingTrade}
@@ -225,6 +256,7 @@ export const HomePage: React.FC<{
       message={<Message message={message.message} name={message.name} />}
       modalConnect={
         <ModalConnectTrade
+          accountTrade={accountTrade}
           isModalOpen={isModalConnectOpen}
           showModal={() => setIsModalConnectOpen(true)}
           hideModal={() => setIsModalConnectOpen(false)}

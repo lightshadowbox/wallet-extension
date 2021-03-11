@@ -104,7 +104,6 @@ const DropdownCoins: React.FC<{
 }> = React.memo(({ accountName, active, setActive, tokenId, activeMode }) => {
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false)
   const { data: tokenAccounts, status } = useGetTokenForAccount(accountName)
-  console.log(tokenAccounts)
 
   const onChangeCoin = (id) => {
     setActive(id)
@@ -409,7 +408,6 @@ export const SendContainer: React.FC<SendProps> = ({ primary = false, background
   }
   const { data: balance, isSuccess: balanceStatus } = useGetTokenBalance(!tokenId ? active : tokenId, selectedAccount)
   const rowProps: IStackProps = { horizontal: true, verticalAlign: 'center' }
-  console.log(activeMode)
   React.useEffect(() => {
     const useToken = !tokenId ? active : tokenId
     const tokenDetail = getTokenFromTokenIds([useToken])

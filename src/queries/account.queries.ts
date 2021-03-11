@@ -8,7 +8,6 @@ import * as i from 'incognito-sdk/build/web/browser'
 
 export const useGetAccount = () => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
-
   return useQuery<AccountModelType>(
     ['useGetAccount.name', selectedAccount],
     async () => {
@@ -47,7 +46,6 @@ export const useGetListAccountBasicInfo = (accountsName: string[]) => {
     for (let index = 0; index < accountsName.length; index += 1) {
       const account = await getAccountRuntime(accountsName[index])
       const nanoPRV = await account.nativeToken.getAvaiableBalance()
-      console.log(account)
       listInfo.push({
         accountName: accountsName[index],
         USD: '0.00',

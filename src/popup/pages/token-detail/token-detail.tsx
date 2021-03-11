@@ -63,7 +63,6 @@ export const TokenDetailPanel: React.FC<Props> = ({ isPanelOpen, showPanel, dism
   }
   const onDismissPanelRight = (panel) => {
     const element = document.querySelector('.receive') as HTMLElement
-    console.log(element)
 
     element.style.animation = 'moveOutRightReceive 0.3s'
     element.style.animationFillMode = 'forwards'

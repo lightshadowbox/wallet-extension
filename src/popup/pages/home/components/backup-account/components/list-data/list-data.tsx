@@ -15,7 +15,6 @@ const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block
 
 export const ListData: React.FC<Props> = ({ account, selectedAccount }) => {
   const tooltipId = useId('tooltip')
-  console.log(selectedAccount)
   const [contentTooltip, setContentTooltip] = React.useState('Copy')
   const onClickCopy = React.useCallback((value: string) => {
     const text = value

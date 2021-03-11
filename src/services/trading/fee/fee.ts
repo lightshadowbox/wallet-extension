@@ -20,7 +20,6 @@ export const estimateFeeTrade = ({ inputToken, outputToken, pairs }) => {
 
   if (inputToken.id !== PRV_ID && prvPair) {
     const outputValue = Math.max(calculateOutputValue(prvPair, PRV, prvFee, inputToken), MAX_PDEX_TRADE_STEPS * 20)
-    console.log(outputValue)
     feeToken = inputToken
     fee = outputValue * 4
   } else {

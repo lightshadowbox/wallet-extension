@@ -8,7 +8,7 @@ import classNames from 'classnames'
 import { useGetHistory } from 'queries/token.queries'
 import { TxHistoryModel } from 'incognito-sdk/build/web/browser'
 import { SpinnerWallet } from 'popup/components'
-
+import { PRV_ID } from 'constants/constants'
 import styles from './token-history.module.css'
 import './token-history.css'
 
@@ -69,15 +69,31 @@ export const TokenHistory: React.FC<{ tokenId: string; accountName: string }> = 
   )
 }
 const HistoryTradeReturn = ({ trade, accountName, tokenId }) => {
-  if (trade.accountName === accountName && tokenId === trade.tokenId) {
+  if (trade.accountName === accountName && tokenId === trade.tokenIdSell) {
     return (
       <li
         key={trade.date}
         onClick={() => window.open(`https://mainnet.incognito.org/tx/${trade.txId}`, '_blank')}
-        className={classNames(`flex cursor-pointer flex-row justify-between p-4 ${styles.container}`)}
+        className={classNames(`flex cursor-pointer flex-row justify-between  trade-history ${styles.container}`)}
       >
-        <span className={styles.price}>{`${trade.txId.toString().substr(0, 8)}...`}</span>
-        <p className={styles.day}>{`${trade.date.toString().substr(0, 25)}...`}</p>
+        <div className="left-frame">
+          <h3>Send</h3>
+          <span>{`${trade.date.toString().substr(0, 25)}`}</span>
+        </div>
+        <div className="right-frame">
+          <span>
+            <b>From:</b>{' '}
+            {trade.tokenIdSell !== PRV_ID
+              ? `...${trade?.tokenIdSell?.toString().substr(trade?.tokenIdSell?.toString().length - 5, trade?.tokenIdSell?.toString().length)}`
+              : 'PRV'}
+          </span>
+          <span>
+            <b>To:</b>{' '}
+            {trade.tokenIdBuy !== PRV_ID
+              ? `...${trade?.tokenIdBuy?.toString().substr(trade?.tokenIdBuy?.toString().length - 5, trade?.tokenIdBuy?.toString().length)}`
+              : 'PRV'}
+          </span>
+        </div>
       </li>
     )
   }

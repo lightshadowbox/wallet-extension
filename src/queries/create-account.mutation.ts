@@ -18,7 +18,6 @@ export const useUnlockWallet = (setError: (value) => void) => {
     async (password: string) => {
       const passwordWallet = await storageService.get(CONSTANTS.PASS_KEY)
       const passwordEncrypt = crypto.SHA256(password, passwordSecret).toString()
-      console.log('password', password, passwordWallet)
       if (passwordWallet === passwordEncrypt || password === passwordWallet) {
         return () => {}
       }
@@ -68,7 +67,6 @@ export const useRemoveAccount = () => {
 }
 export const removeAccount = async (accountName: string) => {
   runtime.walletRuntime.masterAccount.removeAccount(accountName)
-  console.log(`Removed: ${accountName}`)
   return accountName
 }
 
@@ -249,8 +247,6 @@ const sendToken = async (payload: SendInNetworkPayload) => {
 }
 export const addAccount = async (accountName: string) => {
   const account = await runtime.walletRuntime.masterAccount.addAccount(accountName, 3)
-  console.log('Account with shard ID 3', account)
-  console.log(runtime.walletRuntime.masterAccount.getAccounts())
 }
 
 export const useImportAccountFromPrivateKey = (onSuccess?: CallableFunction) => {
@@ -282,7 +278,6 @@ export const useRequestTrade = (setMessage: (value: any) => void) => {
       tradingFee: string
       accountName: string
     }) => {
-      console.log(variables)
       if (variables.accountName) {
         return requestTrade(
           variables.accountName,

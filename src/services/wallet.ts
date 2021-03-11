@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-case-declarations */
 /* eslint-disable default-case */
 /* eslint-disable import/no-mutable-exports */
@@ -55,7 +56,24 @@ export const loadingWallet = async () => {
     return runtime.walletRuntime
   }
 }
-
+export const getWalletInstance = async () => {
+  await loadingWallet()
+  return runtime.walletRuntime
+}
+export const getAccountRuntime = async (accountName: string) => {
+  const wa = await getWalletInstance()
+  const account = wa.masterAccount.getAccountByName(accountName)
+  if (!account) {
+    return wa.masterAccount.getAccounts()[0]
+  }
+  return account
+}
+export const backupWallet = async () => {
+  const wallet = await getWalletInstance()
+  const password = await storageService.get(CONSTANTS.PASS_KEY)
+  const backupStr = wallet.backup(password)
+  storageService.set(CONSTANTS.WALLET_BACKUP_KEY, backupStr)
+}
 export const removeAccount = async (accountName: string) => {
   const wallet = await getWalletInstance()
   wallet.masterAccount.removeAccount(accountName)
@@ -64,19 +82,6 @@ export const getBackupAccount = async (accountName: string) => {
   const accountInstance = await getAccountRuntime(accountName)
   const accountSerizialed = await serializeAccount(accountInstance)
   return accountSerizialed
-}
-export const getWalletInstance = async () => {
-  await loadingWallet()
-  return runtime.walletRuntime
-}
-
-export const getAccountRuntime = async (accountName: string) => {
-  const wa = await getWalletInstance()
-  const account = wa.masterAccount.getAccountByName(accountName)
-  if (!account) {
-    return wa.masterAccount.getAccounts()[0]
-  }
-  return account
 }
 
 export const createWalletWithPassword = async (name: string, password: string) => {
@@ -117,14 +122,18 @@ export const unlockWallet = async () => {
 
   runtime = finishDraft(runtimeDraft)
 }
-
-export const backupWallet = async () => {
+export const getBackupWallet = async () => {
   const wallet = await getWalletInstance()
   const password = await storageService.get(CONSTANTS.PASS_KEY)
-  const backupStr = wallet.backup(password)
-  storageService.set(CONSTANTS.WALLET_BACKUP_KEY, backupStr)
+  const backup = {
+    name: wallet.name,
+    wallet: wallet.seed,
+    mnemonic: wallet.mnemonic,
+    password,
+    seed: wallet.seed.toString(),
+  }
+  return backup
 }
-
 export const downloadBackupWallet = async () => {
   const wallet = await getWalletInstance()
   const password = await storageService.get(CONSTANTS.PASS_KEY)
@@ -247,7 +256,18 @@ export const getTokenBalanceForAccount = async (accountName: string, tokenId: st
   const result = await tokenInstance.getAvaiableBalance()
   return (result.toNumber() * Math.pow(10, -pDecimals)).toFixed(2)
 }
+export const getTokensBalanceForAccount = async (tokens: any[], accountName: string) => {
+  const tokensBalance = []
+  for (let i = 0; i < tokens.length; i += 1) {
+    const tokenBalance = await getTokenBalanceForAccount(accountName, tokens[i])
 
+    tokensBalance.push({
+      tokenId: tokens[i],
+      tokenBalance,
+    })
+  }
+  return tokensBalance
+}
 export const getAccountListName = async () => {
   const wallet = await getWalletInstance()
   return wallet.masterAccount.getAccounts().map((i) => i.name)
@@ -337,6 +357,7 @@ export const estimateFee = async (
       return totalInNetworkFee
     case 'out-network':
       const internalFee = Math.min(Math.floor(feeEst), MAX_DEX_FEE)
+      // eslint-disable-next-line radix
       const externalFee = Math.floor(parseInt(userFee))
       const totalOutNetworkFee = internalFee + externalFee
       console.info('[Info] Token tokenId', tokenId, 'totalFee in nano', totalOutNetworkFee)
@@ -399,13 +420,17 @@ export const requestTrade = async (
   if (tokenIdSell !== PRV_ID) {
     const token = (await account.getFollowingPrivacyToken(tokenIdSell)) as PrivacyTokenInstance
     const history = await token.requestTrade(tokenIdBuy, sellAmount, minimumAcceptableAmount, nativeFee, privacyFee, tradingFee)
+    console.log(history)
     if (history) {
       if (historyTrade) {
         historyTrade.push({
           date: new Date().toString(),
           txId: history.txId,
-          tokenId: tokenIdSell,
           accountName: selectedAccount,
+          tokenIdSell: history.meta.TokenIDToSellStr,
+          tokenIdBuy: history.meta.TokenIDToBuyStr,
+          sellAmount: history.meta.SellAmount,
+          minAcceptable: history.meta.MinAcceptableAmount,
         })
         localStorage.setItem('his_trade', JSON.stringify(historyTrade))
       } else {
@@ -413,8 +438,11 @@ export const requestTrade = async (
         tempHistory.push({
           date: new Date().toString(),
           txId: history.txId,
-          tokenId: tokenIdSell,
           accountName: selectedAccount,
+          tokenIdSell: history.meta.TokenIDToSellStr,
+          tokenIdBuy: history.meta.TokenIDToBuyStr,
+          sellAmount: history.meta.SellAmount,
+          minAcceptable: history.meta.MinAcceptableAmount,
         })
         localStorage.setItem('his_trade', JSON.stringify(tempHistory))
       }
@@ -427,28 +455,35 @@ export const requestTrade = async (
       historyTrade.push({
         date: new Date().toString(),
         txId: history.txId,
-        tokenId: tokenIdSell,
         accountName: selectedAccount,
+        tokenIdSell: history.meta.TokenIDToSellStr,
+        tokenIdBuy: history.meta.TokenIDToBuyStr,
+        sellAmount: history.meta.SellAmount,
+        minAcceptable: history.meta.MinAcceptableAmount,
       })
+      console.log(history)
       localStorage.setItem('his_trade', JSON.stringify(historyTrade))
     } else {
       const tempHistory = []
       tempHistory.push({
         date: new Date().toString(),
         txId: history.txId,
-        tokenId: tokenIdSell,
         accountName: selectedAccount,
+        tokenIdSell: history.meta.TokenIDToSellStr,
+        tokenIdBuy: history.meta.TokenIDToBuyStr,
+        sellAmount: history.meta.SellAmount,
+        minAcceptable: history.meta.MinAcceptableAmount,
       })
       localStorage.setItem('his_trade', JSON.stringify(tempHistory))
     }
   }
   return history
 }
-export const getTransactionByTxId = async (txId: string) => {
+export const getTransactionByTxId = async (txId: string[]) => {
   const data = {
     jsonrpc: '1.0',
     method: 'gettransactionbyhash',
-    params: [txId],
+    params: txId,
     id: 3,
   }
   const transaction = await axios.post('https://mainnet.incognito.org/fullnode', data)

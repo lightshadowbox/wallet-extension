@@ -6,3 +6,27 @@
 .container-tokenHistory .container {
   display: none;
 }
+.container-tokenHistory .trade-history .left-frame {
+  display: flex;
+  flex-direction: column;
+}
+.container-tokenHistory .trade-history {
+  padding: 10px 15px;
+  transition:all .3s;
+}
+.container-tokenHistory .trade-history span {
+  font-size: 13px;
+  margin-top: 5px;
+  color:#848484;
+}
+.container-tokenHistory .trade-history:hover {
+  background-color: #F2F2F2;
+}
+.container-tokenHistory .trade-history .left-frame h3 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.container-tokenHistory .trade-history .right-frame {
+    display: flex;
+    flex-direction: column;
+}

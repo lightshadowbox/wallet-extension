@@ -82,9 +82,6 @@ export const withCalculateOutput = (WrappedComp) => (props) => {
         setMinimumAmount(0)
         setQuote(null)
       }
-      console.log('quote: ')
-      console.log(quote)
-      console.log(minimumAmount)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputToken, inputValue, outputToken, pair])

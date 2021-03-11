@@ -20,7 +20,6 @@ export const SearchInput: React.FC<{ placeholder: string; setValueInput: (value)
   const onHandleKeyDown = (e: any) => {
     if (e.nativeEvent.key === 'Enter') {
       const nodes = document.querySelectorAll('.list-token .ms-Persona-primaryText .ms-TooltipHost')
-      console.log(nodes)
       for (const key in allTokens) {
         if (allTokens[key].TokenID === valueInput) {
           return addToken(valueInput)

@@ -6,11 +6,10 @@ import { concat, get, keyBy, pick } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { AxiosError } from 'axios'
 import { getUsdEvolution } from 'services/usd-revolution'
-import { getAccountRuntime, getTokenBalanceForAccount } from 'services/wallet'
+import { getAccountRuntime, getTokenBalanceForAccount, getTokensBalanceForAccount, getTransactionByTxId } from 'services/wallet'
 
 import { useSettingStore } from 'popup/stores/features/settings'
 import { createTokenSearchIndex } from 'services/fulltext'
-import { useGetWallet } from './wallet.queries'
 
 export interface TokenReceivedModel {
   id: number
@@ -178,15 +177,14 @@ export const getTokenFromTokenIds = (tokenIds: string[]) => {
 
 export const useGetTokenForAccount = (selectedAccount: string) => {
   const { data: tokenRemoteData } = useFetchToken()
-  const { data: wallet } = useGetWallet()
   return useQuery(
     ['useGetTokenForAccount.name', selectedAccount],
     async () => {
       const account = await getAccountRuntime(selectedAccount)
       const tokens = [CONSTANT.WALLET_CONSTANT.PRVIDSTR, ...account.privacyTokenIds]
-
       const remoteData = tokens.map((TokenId) => {
         const d = get(tokenRemoteData, TokenId)
+
         return {
           TokenId,
           Name: d?.Name || 'UNKNOWN',
@@ -196,7 +194,21 @@ export const useGetTokenForAccount = (selectedAccount: string) => {
       })
       return remoteData
     },
-    { enabled: wallet && selectedAccount && tokenRemoteData },
+    { enabled: tokenRemoteData },
+  )
+}
+export const useGetTokensForAccount = (selectedAccount: string) => {
+  return useQuery(
+    ['useGetTokensForAccount.name', selectedAccount],
+    async () => {
+      const account = await getAccountRuntime(selectedAccount)
+      const tokens = [CONSTANT.WALLET_CONSTANT.PRVIDSTR, ...account.privacyTokenIds]
+
+      return tokens
+    },
+    {
+      enabled: selectedAccount,
+    },
   )
 }
 export const useGenerateDepositAddress = (tokenId: string) => {
@@ -220,16 +232,30 @@ export const useGenerateDepositAddress = (tokenId: string) => {
 
 export const useGetTokenBalance = (token: string = CONSTANT.WALLET_CONSTANT.PRVIDSTR, accountName: string | null = null) => {
   const selectedAccount = useSettingStore((s) => s.selectAccountName)
+  return useQuery(['useGetTokenBalance.name', accountName, selectedAccount, token], () => {
+    if (!accountName) {
+      return getTokenBalanceForAccount(selectedAccount, token)
+    }
+    return getTokenBalanceForAccount(accountName, token)
+  })
+}
+
+export const useGetTokensBalance = (accountName = null, tokens) => {
+  const selectedAccount = useSettingStore((s) => s.selectAccountName)
   return useQuery(
-    ['useGetTokenBalance.name', accountName, selectedAccount, token],
+    ['useGetTokensBalance.name', accountName],
     () => {
-      if (!accountName) {
-        return getTokenBalanceForAccount(selectedAccount, token)
-      }
-      return getTokenBalanceForAccount(accountName, token)
+      return getTokensBalanceForAccount(tokens, accountName || selectedAccount)
     },
     {
-      enabled: selectedAccount,
+      enabled: tokens,
     },
   )
+}
+export const useGetTradeDetail = () => {
+  const hisTrade = JSON.parse(localStorage.getItem('his_trade'))
+  const txIds = hisTrade.map((trade) => trade.txId)
+  return useQuery(['useGetTransaction', txIds], () => {
+    return getTransactionByTxId(txIds)
+  })
 }

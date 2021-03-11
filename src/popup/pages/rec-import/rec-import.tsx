@@ -31,7 +31,7 @@ export const RecImport: React.FC<{ showPanel: () => void }> = ({ showPanel }) =>
       }}
       className={`flex w-full ${styles.btn}`}
     >
-      <SecondaryButton full>Create</SecondaryButton>
+      <SecondaryButton full>Import</SecondaryButton>
     </div>
   </div>
 )

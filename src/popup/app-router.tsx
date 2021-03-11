@@ -17,7 +17,9 @@ export const AppRouter = () => {
   const [isModalConnectOpen, setIsModalConnectOpen] = React.useState(false)
   const [isAcceptConnect, setIsAcceptConnect] = React.useState(null)
   const [isLoadingTrade, setIsLoadingTrade] = React.useState(false)
-  const [accountTrade, setAccountTrade] = React.useState('')
+  const [accountTrade, setAccountTrade] = React.useState({
+    accountName: '',
+  })
   const onDismissPanelBottom = () => {
     const element = document.querySelector('.trading-connect-modal') as HTMLElement
     element.style.animation = 'none'
@@ -37,7 +39,6 @@ export const AppRouter = () => {
       })
     }
     if (request.title === 'request_swap_token') {
-      console.log('rq data', request.data)
       sendResponse({
         status: 'failed',
         title: 'response_swap_token',
@@ -99,14 +100,13 @@ export const AppRouter = () => {
     chrome.runtime.onMessageExternal.removeListener(onResponseSuccess)
     // return window.close()
   }
-  // React.useEffect(() => {
-  //   console.log('isAcceptConnect', isAcceptConnect)
-  //   if (selectedAccount) {
-  //     chrome.runtime.onMessageExternal.addListener(onResponseSuccess)
-  //   } else {
-  //     chrome.runtime.onMessageExternal.addListener(onResponseFailed)
-  //   }
-  // }, [selectedAccount, isAcceptConnect])
+  React.useEffect(() => {
+    if (selectedAccount) {
+      chrome.runtime.onMessageExternal.addListener(onResponseSuccess)
+    } else {
+      chrome.runtime.onMessageExternal.addListener(onResponseFailed)
+    }
+  }, [selectedAccount, isAcceptConnect])
   if (!selectedAccount && isLogout) {
     return (
       <Router>
@@ -136,6 +136,7 @@ export const AppRouter = () => {
         <Switch>
           <Route>
             <HomePage
+              accountTrade={accountTrade}
               setAccountTrade={setAccountTrade}
               message={message}
               setMessage={setMessage}

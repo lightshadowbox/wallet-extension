@@ -9,8 +9,52 @@
     animation: moveInBottom .3s;
     animation-fill-mode: forwards;
     font-family: 'Google Sans';
-    color:#BDBDBD;
+    color:#A4A4A4;
 }
 .content {
     padding: 15px;
+}
+.seed-phrase-text h2{
+    font-size: 20px;
+    margin:16px 0px;
+    margin-bottom: 7px;
+    color: black;
+    font-weight: 600;
+}
+.seed-phrase-text .txt-frame{
+    padding:10px;
+    background-color: #F2F2F2;
+    border:1px solid #E6E6E6;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    height:120px;
+    overflow: scroll;
+}
+.seed-phrase-text .txt-frame span {
+    margin-bottom:5px;
+    font-size: 15px;
+    
+}
+.seed-phrase-text .btn-icon {
+    background-color: #F2F2F2;
+    color:black;
+    width:35px;
+    height:35px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border:1px solid #E6E6E6;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all .3s;
+
+}
+.seed-phrase-text .btn-icon:hover {
+    background-color: #D8D8D8;
+}
+.seed-phrase-text .btn-icon:active {
+    background-color: #848484;
 }

@@ -1,13 +1,16 @@
 import { WalletModelType } from 'models/wallet-model'
 import { useQuery } from 'react-query'
 import { getFromCache } from 'services/query-cache'
-import { getWalletInstance } from 'services/wallet'
+import { getWalletInstance, getBackupWallet } from 'services/wallet'
 
 export const GET_WALLET_KEY = 'getWalletSerialized'
 
 export const useGetWallet = () => {
   const hook = useQuery(useGetWallet.name, getWalletInstance)
   return hook
+}
+export const useGetBackupWallet = () => {
+  return useQuery(['useGetBackupWallet.name'], () => getBackupWallet())
 }
 
 export const getWalletSerializedFromCache = () => getFromCache<WalletModelType>(GET_WALLET_KEY)
